@@ -1,3 +1,3 @@
-const examRouter = require('express').Router;
+const examRouter = require('express').Router();
 
 module.exports = examRouter;

@@ -1,3 +1,3 @@
-const questionRouter = require('express').Router;
+const questionRouter = require('express').Router();
 
 module.exports = questionRouter;

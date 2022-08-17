@@ -1,3 +1,3 @@
-const licenseRouter = require('express').Router;
+const licenseRouter = require('express').Router();
 
 module.exports = licenseRouter;

@@ -5,6 +5,13 @@ const mongoose = require("mongoose");
 const config = require("./utils/config");
 const logger = require("./utils/logger");
 const middleware = require("./utils/middleware");
+const userRouter = require("./routes/user");
+const stateRouter = require("./routes/state");
+const questionRouter = require("./routes/question");
+const moduleRouter = require("./routes/module");
+const messageRouter = require("./routes/message");
+const licenseRouter = require("./routes/license");
+const examRouter = require("./routes/exam");
 
 const app = express();
 
@@ -24,8 +31,15 @@ app.use(express.json());
 app.use(middleware.requestLogger);
 app.use(middleware.tokenExtractor);
 
-//routes
-readdirSync("./routes").map((r) => app.use("/api/", require("./routes/" + r)));
+//Router
+app.use("/api/user",userRouter);
+app.use("/api/state",stateRouter);
+app.use("/api/question",questionRouter);
+app.use("/api/module",moduleRouter);
+app.use("/api/message",messageRouter);
+app.use("/api/license",licenseRouter);
+app.use("/api/exam",examRouter);
 
+app.use(middleware.unknownEndpoint);
 
 module.exports = app;

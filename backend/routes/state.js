@@ -1,3 +1,3 @@
-const stateRouter = require('express').Router;
+const stateRouter = require('express').Router();
 
 module.exports = stateRouter;
