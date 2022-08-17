@@ -9,7 +9,7 @@ const moduleSchema = mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "License",
   },
-  question: [
+  questions: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Question",
