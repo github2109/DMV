@@ -1,10 +1,12 @@
 const express = require("express");
-const app = express();
+const { readdirSync } = require("fs");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const config = require("./utils/config");
 const logger = require("./utils/logger");
 const middleware = require("./utils/middleware");
+
+const app = express();
 
 logger.info("connecting to", config.MONGODB_URL);
 mongoose
@@ -21,7 +23,9 @@ app.use(express.static("build"));
 app.use(express.json());
 app.use(middleware.requestLogger);
 app.use(middleware.tokenExtractor);
+
 //routes
-readdirSync("./routes").map((r) => app.use("api/", require("./routes/" + r)));
+readdirSync("./routes").map((r) => app.use("/api/", require("./routes/" + r)));
+
 
 module.exports = app;
