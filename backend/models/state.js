@@ -10,4 +10,4 @@ const stateSchema = mongoose.Schema({
   },
   modules: [{ type: mongoose.Schema.Types.ObjectId, ref: "Module" }],
 });
-module.exports = mongoose.model("State", examSchema);
+module.exports = mongoose.model("State", stateSchema);
