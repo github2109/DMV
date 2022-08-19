@@ -1,5 +1,10 @@
 const Module = require("../models/module");
 const State = require("../models/state");
+
+exports.getModuleByModuleId = async(moduleId) => {
+  return await Module.findById(moduleId);
+}
+
 exports.updateModuleAfterRemoveState = async (stateId) => {
   try {
     const modules = await Module.updateMany(
@@ -15,6 +20,7 @@ exports.updateModuleAfterRemoveState = async (stateId) => {
     console.log(error);
   }
 };
+
 exports.updateModuleAfterRemoveLicense = async (licenseId) => {
   try {
     const modules = await Module.updateMany(
@@ -30,17 +36,23 @@ exports.updateModuleAfterRemoveLicense = async (licenseId) => {
     console.log(error);
   }
 };
-exports.getModuleByStateIdAndLicenseId = async (req, res, next) => {
+
+const getModuleByStateIdAndLicenseId = async (stateId, licenseId) => {
+  return await Module.find({ license: licenseId, states: stateId });
+};
+exports.getModuleByStateIdAndLicenseId = getModuleByStateIdAndLicenseId;
+
+exports.getModuleByStateIdAndLicenseIdAPI = async (req, res, next) => {
   try {
-    const { stateId, licenseId } = req.body;
-    const modules = await Module.find({ license: licenseId, states: stateId });
+    const { stateId, licenseId } = req.query;
+    const modules = await getModuleByStateIdAndLicenseId(stateId, licenseId);
     res.json(modules);
   } catch (error) {
     next(error);
   }
 };
 
-exports.createModule = async (req, res, next) => {
+exports.createModuleAPI = async (req, res, next) => {
   try {
     const module = req.body;
     const check = await Module.findOne({ name: module.name });
@@ -54,9 +66,9 @@ exports.createModule = async (req, res, next) => {
   }
 };
 
-exports.addModuleToState = async (req, res, next) => {
+exports.addModuleToStateAPI = async (req, res, next) => {
   try {
-    const { moduleId, stateId } = req.body;
+    const { stateId } = req.query;
     const module = await Module.findById(moduleId);
     if (!module) {
       return res.status(404).json({ message: "Can't not find module" });
@@ -72,6 +84,21 @@ exports.addModuleToState = async (req, res, next) => {
     module.states.push(stateId);
     const moduleSaved = await module.save();
     return res.status(200).json({ moduleSaved });
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.getDescriptionByModuleIdAPI = async (req, res, next) => {
+  try {
+    const { moduleId } = req.params;
+    console.log(req.params);
+    const description = await Module.findById(moduleId).select({
+      titleDescription: 1,
+      contentDescription: 1,
+      imageDescription: 1,
+    });
+    res.status(200).json(description);
   } catch (error) {
     next(error);
   }

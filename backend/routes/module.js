@@ -1,12 +1,14 @@
 const moduleRouter = require("express").Router();
 const {
-  getModuleByStateIdAndLicenseId,
-  createModule,
-  addModuleToState,
+  getModuleByStateIdAndLicenseIdAPI,
+  createModuleAPI,
+  addModuleToStateAPI,
+  getDescriptionByModuleIdAPI
 } = require("../controllers/module");
 
-moduleRouter.get("/", getModuleByStateIdAndLicenseId);
-moduleRouter.post("/", createModule);
-moduleRouter.post("/addModuleToState", addModuleToState);
+moduleRouter.get("/:stateId?/:licenseId?", getModuleByStateIdAndLicenseIdAPI);
+moduleRouter.post("/", createModuleAPI);
+moduleRouter.post("/:stateId?", addModuleToStateAPI);
+moduleRouter.get("/:moduleId",getDescriptionByModuleIdAPI);
 
 module.exports = moduleRouter;
