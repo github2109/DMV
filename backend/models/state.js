@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const { ObjectId } = mongoose.Schema;
 
 const stateSchema = mongoose.Schema({
   name: {
@@ -8,6 +7,5 @@ const stateSchema = mongoose.Schema({
     trim: true,
     text: true,
   },
-  modules: [{ type: mongoose.Schema.Types.ObjectId, ref: "Module" }],
 });
 module.exports = mongoose.model("State", stateSchema);

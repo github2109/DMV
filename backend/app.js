@@ -32,7 +32,7 @@ app.use(middleware.requestLogger);
 app.use(middleware.tokenExtractor);
 
 //Router
-app.use("/api/user",userRouter);
+app.use("/api",userRouter);
 app.use("/api/state",stateRouter);
 app.use("/api/question",questionRouter);
 app.use("/api/module",moduleRouter);
