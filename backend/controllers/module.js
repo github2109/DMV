@@ -8,7 +8,7 @@ exports.getModuleByModuleId = async (moduleId) => {
 exports.updateModuleAfterRemoveQuestion = async (moduleId, questionId) => {
   const module = await Module.findById(moduleId);
   module.questions = module.questions.filter(
-    (question) => question !== questionId
+    (question) => question.toString() !== questionId
   );
   return await module.save();
 };
