@@ -69,7 +69,7 @@ exports.getModuleByStateIdAndLicenseIdAPI = async (req, res, next) => {
 exports.getModuleByLicenseIdAPI = async (req, res, next) => {
   try {
     const { licenseId } = req.query;
-    const modules = await Module.find({ license:licenseId });
+    const modules = await Module.find({ license: licenseId });
     res.status(200).json(modules);
   } catch (error) {
     next(error);

@@ -1,7 +1,10 @@
 const config = require("../utils/config");
 const Question = require("../models/question");
-const { getModuleByModuleId } = require("../controllers/module");
-const question = require("../models/question");
+const {
+  getModuleByModuleId,
+  updateModuleAfterCreateQuestion,
+  updateModuleAfterRemoveQuestion,
+} = require("../controllers/module");
 
 exports.getAllQuestionsForExamAPI = async (req, res, next) => {
   try {
@@ -12,9 +15,7 @@ exports.getAllQuestionsForExamAPI = async (req, res, next) => {
         message: "No questions found",
       });
     }
-    res
-      .status(200)
-      .json({ questions, message: "Get list questions for exam successfully" });
+    res.status(200).json(questions);
   } catch (error) {
     next(error);
   }
@@ -29,7 +30,7 @@ exports.getAllQuestionsForModuleAPI = async (req, res, next) => {
         message: "No questions found",
       });
     }
-    res.status(200).json({ questions, message: "List questions of module" });
+    res.status(200).json(questions);
   } catch (error) {
     next(error);
   }
@@ -49,6 +50,7 @@ const getAllQuestionsForModule = async (moduleId, isExam) => {
 
 exports.createQuestionAPI = async (req, res, next) => {
   try {
+    const moduleId = req.query.moduleId;
     const { questionContent, answers, isTestQuestion, image, handBook } =
       req.body;
     const check = await Question.findOne({ questionContent: questionContent });
@@ -66,6 +68,15 @@ exports.createQuestionAPI = async (req, res, next) => {
       handBook,
     });
     const savedQuestion = await newQuestion.save();
+    const addIntoModule = await updateModuleAfterCreateQuestion(
+      moduleId,
+      savedQuestion.id
+    );
+    if (!addIntoModule) {
+      return res.status(500).json({
+        message: "Something went wrong",
+      });
+    }
     res
       .status(201)
       .json({ savedQuestion, message: "Question was created successfully" });
@@ -75,12 +86,20 @@ exports.createQuestionAPI = async (req, res, next) => {
 };
 exports.deleteQuestionByIdAPI = async (req, res, next) => {
   try {
-    const questionId = req.params.id;
+    const questionId = req.query.id;
+    const moduleId = req.query.moduleId;
     const deletedQuestion = await Question.findByIdAndRemove({
       _id: questionId,
     });
     if (!deletedQuestion) {
       return res.status(500).json({ message: "Question not found" });
+    }
+    const deleteQuestionInModule = await updateModuleAfterRemoveQuestion(
+      moduleId,
+      questionId
+    );
+    if (!deleteQuestionInModule) {
+      return res.status(500).json({ message: "Something went wrong" });
     }
     res
       .status(200)
