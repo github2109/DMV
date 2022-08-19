@@ -2,7 +2,7 @@ const Module = require("../models/module");
 const State = require("../models/state");
 
 exports.getModuleByModuleId = async (moduleId) => {
-  return await Module.findById(moduleId);
+  return await Module.findById(moduleId).populate("questions");
 };
 
 exports.updateModuleAfterRemoveQuestion = async (moduleId, questionId) => {

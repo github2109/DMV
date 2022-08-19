@@ -1,5 +1,6 @@
 const config = require("../utils/config");
 const License = require("../models/license");
+const { updateModuleAfterRemoveLicense } = require("../controllers/module");
 
 exports.createLicense = async (req, res, next) => {
   try {
@@ -44,6 +45,9 @@ exports.deleLicenseById = async (req, res, next) => {
         message: "License not found",
       });
     }
+    const updateModuleAfterRemoveLicense = await updateModuleAfterRemoveLicense(
+      licenseId
+    );
     res
       .status(200)
       .json({ deletedLicense, message: "License was deleted successfully" });

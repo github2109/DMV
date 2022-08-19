@@ -1,5 +1,6 @@
 const config = require("../utils/config");
 const State = require("../models/state");
+const { updateModuleAfterRemoveState } = require("../controllers/module");
 
 exports.getAllStates = async (req, res, next) => {
   try {
@@ -43,6 +44,7 @@ exports.deleteStateById = async (req, res, next) => {
         message: "The state was not found",
       });
     }
+    const test = await updateModuleAfterRemoveState(stateId);
     res
       .status(200)
       .json({ deletedState, message: "State was deleted successfully" });
