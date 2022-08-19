@@ -8,6 +8,5 @@ const stateSchema = mongoose.Schema({
     trim: true,
     text: true,
   },
-  modules: [{ type: mongoose.Schema.Types.ObjectId, ref: "Module" }],
 });
 module.exports = mongoose.model("State", stateSchema);
