@@ -1,11 +1,9 @@
-const config = require("../utils/config");
 const User = require("../models/user");
-const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-
-exports.register = async (req, res, next) => {
+const { generateToken } = require("../helpers/tokens");
+exports.registerForAdmin = async (req, res, next) => {
   try {
-    const { username, password, role } = req.body;
+    const { username, password } = req.body;
     const check = await User.findOne({ username });
     if (check) {
       return res.status(500).json({
@@ -17,7 +15,8 @@ exports.register = async (req, res, next) => {
     const user = await new User({
       username,
       password: cryptedPassword,
-      role,
+      role: "Admin",
+      deviceId: null,
     });
     const userSaved = await user.save();
     res.status(201).json(userSaved);
@@ -26,4 +25,50 @@ exports.register = async (req, res, next) => {
   }
 };
 
-exports.login = async (req, res) => {};
+exports.loginForAdmin = async (req, res, next) => {
+  try {
+    const { username, password } = req.body;
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res.status(500).json({ message: "Username not found" });
+    }
+    if (!(await bcrypt.compare(password, user.password))) {
+      return res
+        .status(500)
+        .json({ message: "Invalid credentials. Please try again." });
+    }
+    if (user.role !== "Admin") {
+      return res
+        .status(500)
+        .json({ message: "You are not allowed login to this role." });
+    }
+    const token = generateToken({ id: user._id.toString() }, "7d");
+    res.status(200).send({
+      id: user._id,
+      username: user.username,
+      role: user.role,
+      token: token,
+      message: "Login successful",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.registerForClient = async (req, res, next) => {
+  try {
+    const { deviceId } = req.body;
+    const user = await User.findOne({ deviceId });
+    if (user)
+      return res.status(500).json({ message: "User already registered." });
+    const newUser = await new User({
+      username: null,
+      password: null,
+      role: "Client",
+      deviceId: deviceId,
+    }).save();
+    res.status(200).json(newUser);
+  } catch (error) {
+    next(error);
+  }
+};

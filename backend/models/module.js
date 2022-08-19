@@ -1,10 +1,6 @@
 const mongoose = require("mongoose");
 
 const moduleSchema = mongoose.Schema({
-  state: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "State",
-  },
   license: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "License",
@@ -36,14 +32,20 @@ const moduleSchema = mongoose.Schema({
     required: [true, "Image description is required"],
     trim: true,
   },
-  position: {
-    type: Number,
-    required: [true, "Position is required"],
-  },
   isPremium: {
     type: Boolean,
     required: [true, "Premium is required"],
   },
+  position: {
+    type: Number,
+    required: [true, "Position is required"],
+  },
+  states: [
+    {
+      type: mongoose.Types.ObjectId,
+      ref: "State",
+    },
+  ],
 });
 
 module.exports = mongoose.model("Module", moduleSchema);

@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const { ObjectId } = mongoose.Schema;
 
 const messageSchema = mongoose.Schema({
   content: {
@@ -11,7 +10,7 @@ const messageSchema = mongoose.Schema({
   image: {
     type: String,
   },
-  isAdmin: {
+  isAdminSending: {
     type: Boolean,
     required: [true, "This item is required"],
   },
@@ -19,7 +18,7 @@ const messageSchema = mongoose.Schema({
     type: Date,
     require: [true, "Sending time is required"],
   },
-  user: {
+  client: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   },
