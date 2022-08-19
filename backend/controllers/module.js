@@ -1,9 +1,21 @@
 const Module = require("../models/module");
 const State = require("../models/state");
 
-exports.getModuleByModuleId = async(moduleId) => {
+exports.getModuleByModuleId = async (moduleId) => {
   return await Module.findById(moduleId);
+};
+
+exports.updateModuleAfterRemoveQuestion = async (moduleId,questionId) => {
+  const module = await Module.findById(moduleId);
+  module.questions = module.questions.filter(question => question !== questionId);
+  return await module.save();
 }
+
+exports.updateModuleAfterCreateQuestion = async (moduleId,questionId) => {
+  const module = await Module.findById(moduleId);
+  module.questions.push(questionId);
+  return await module.save();
+};
 
 exports.updateModuleAfterRemoveState = async (stateId) => {
   try {
@@ -66,9 +78,18 @@ exports.createModuleAPI = async (req, res, next) => {
   }
 };
 
+exports.deleteModuleAPI = async (req, res, next) => {
+  try {
+    await Module.findByIdAndDelete(req.params.moduleId);
+    res.status(200).json({ message: "Module deleted" });
+  } catch (error) {
+    next(error);
+  }
+};
+
 exports.addModuleToStateAPI = async (req, res, next) => {
   try {
-    const { stateId } = req.query;
+    const { stateId,moduleId } = req.query;
     const module = await Module.findById(moduleId);
     if (!module) {
       return res.status(404).json({ message: "Can't not find module" });
@@ -89,10 +110,24 @@ exports.addModuleToStateAPI = async (req, res, next) => {
   }
 };
 
+exports.removeModuleOfStateAPI = async (req, res,next) => {
+  try {
+    const { stateId,moduleId } = req.query;
+    const module = await Module.findOne({_id: moduleId,states:stateId});
+    if (!module) {
+      return res.status(404).json({ message: "Can't find module" });
+    }
+    module.states = module.states.filter(state => state !== stateId);
+    await module.save();
+    return res.status(200).json({message: "Module removed from state successfully"});
+  } catch (error) {
+    next(error);
+  }
+}
+
 exports.getDescriptionByModuleIdAPI = async (req, res, next) => {
   try {
     const { moduleId } = req.params;
-    console.log(req.params);
     const description = await Module.findById(moduleId).select({
       titleDescription: 1,
       contentDescription: 1,
