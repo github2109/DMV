@@ -51,15 +51,14 @@ exports.updateModuleAfterRemoveLicense = async (licenseId) => {
   }
 };
 
-const getModuleByStateIdAndLicenseId = async (stateId, licenseId) => {
+exports.getModuleByStateIdAndLicenseId = async (stateId, licenseId) => {
   return await Module.find({ license: licenseId, states: stateId });
 };
-exports.getModuleByStateIdAndLicenseId = getModuleByStateIdAndLicenseId;
 
 exports.getModuleByStateIdAndLicenseIdAPI = async (req, res, next) => {
   try {
     const { stateId, licenseId } = req.query;
-    const modules = await getModuleByStateIdAndLicenseId(stateId, licenseId);
+    const modules = await Module.find({ license: licenseId, states: stateId }).select({name:1,position:1}).sort({position:1});
     res.json(modules);
   } catch (error) {
     next(error);
@@ -68,8 +67,10 @@ exports.getModuleByStateIdAndLicenseIdAPI = async (req, res, next) => {
 
 exports.getModuleByLicenseIdAPI = async (req, res, next) => {
   try {
-    const { licenseId } = req.query;
-    const modules = await Module.find({ license:licenseId });
+    const { licenseId } = req.params;
+    const modules = await Module.find({ license: licenseId }).select({
+      name: 1,
+    });
     res.status(200).json(modules);
   } catch (error) {
     next(error);
