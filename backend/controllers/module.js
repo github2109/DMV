@@ -1,9 +1,9 @@
 const Module = require("../models/module");
 const State = require("../models/state");
 
-exports.getModuleByModuleId = async(moduleId) => {
-  return await Module.findById(moduleId);
-}
+exports.getModuleByModuleId = async (moduleId) => {
+  return await Module.findById(moduleId).populate("questions");
+};
 
 exports.updateModuleAfterRemoveState = async (stateId) => {
   try {

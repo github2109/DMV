@@ -9,22 +9,6 @@ const questionSchema = mongoose.Schema({
   },
   answers: [
     {
-      key: Number,
-      content: String,
-      isCorrect: Boolean,
-    },
-    {
-      key: Number,
-      content: String,
-      isCorrect: Boolean,
-    },
-    {
-      key: Number,
-      content: String,
-      isCorrect: Boolean,
-    },
-    {
-      key: Number,
       content: String,
       isCorrect: Boolean,
     },
