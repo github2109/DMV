@@ -5,10 +5,7 @@ const { updateModuleAfterRemoveState } = require("../controllers/module");
 exports.getAllStates = async (req, res, next) => {
   try {
     state = await State.find({});
-    res.status(200).json({
-      state,
-      message: "Get list of states successfully",
-    });
+    res.status(200).json(state);
   } catch (error) {
     next(error);
   }
