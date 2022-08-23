@@ -30,7 +30,7 @@ exports.getListLicenses = async (req, res, next) => {
     const licenses = await License.find({});
     res
       .status(200)
-      .json({ licenses, message: "Get list of licenses successfully" });
+      .json(licenses);
   } catch (error) {
     next(error);
   }

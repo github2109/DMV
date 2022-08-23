@@ -44,11 +44,8 @@ exports.loginForAdmin = async (req, res, next) => {
     }
     const token = generateToken({ id: user._id.toString() }, "7d");
     res.status(200).send({
-      id: user._id,
       username: user.username,
-      role: user.role,
       token: token,
-      message: "Login successful",
     });
   } catch (error) {
     next(error);
