@@ -108,24 +108,19 @@ exports.deleteQuestionByIdAPI = async (req, res, next) => {
     next(error);
   }
 };
-exports.updateQuestionByIdAPI = async (req,res,next) => {
+exports.updateQuestionByIdAPI = async (req, res, next) => {
   try {
-    const {
-      questionContent,handBook,answers,isTestQuestion,image
-    } = req.body
     const questionId = req.query.id;
-    const updatedQuestion = await Question.findByIdAndUpdate({_id:questionId},{
-      questionContent,
-      handBook,
-      answers,
-      isTestQuestion,
-      image
-    },{new:true})
-    if(updatedQuestion){
+    const updatedQuestion = await Question.findByIdAndUpdate(
+      { _id: questionId },
+      req.body,
+      { new: true }
+    );
+    if (!updatedQuestion) {
       return res.status(500).json({ message: "Something went wrong" });
     }
-    res.status(201).json(updatedQuestion)
+    res.status(201).json(updatedQuestion);
   } catch (error) {
     next(error);
   }
-}
+};
