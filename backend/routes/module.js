@@ -7,7 +7,8 @@ const {
   deleteModuleAPI,
   removeModuleOfStateAPI,
   updateModuleAPI,
-  getModuleByLicenseIdAPI
+  getModuleByLicenseIdAPI,
+  updatePositionModuleAPI
 } = require("../controllers/module");
 
 
@@ -19,5 +20,6 @@ moduleRouter.post("/add-module-to-state/:stateId?/:moduleId?", addModuleToStateA
 moduleRouter.delete("/:moduleId", deleteModuleAPI);
 moduleRouter.delete("/remove-module-of-state/:stateId?/:moduleId?", removeModuleOfStateAPI);
 moduleRouter.put("/:moduleId", updateModuleAPI);
+moduleRouter.put("/",updatePositionModuleAPI);
 
 module.exports = moduleRouter;

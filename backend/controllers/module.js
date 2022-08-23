@@ -165,3 +165,15 @@ exports.updateModuleAPI = async (req, res, next) => {
     next(error);
   }
 };
+
+exports.updatePositionModuleAPI = async (req, res, next) => {
+  try {
+    const [listModuleId] = req.body;
+    for (let i = 0; i < listModuleId.length; i++) {
+      await Module.findByIdAndUpdate(listModuleId[i], { position: i + 1 });
+    }
+    res.status(200).json({ message: "Module updated successfully" });
+  } catch (error) {
+    next(error);
+  }
+};
