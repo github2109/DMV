@@ -14,7 +14,7 @@ export const { setModules } = moduleSlice.actions;
 
 export const setModuleByStateIdAndLicenseId = (stateId, licenseId) => {
   return async (dispatch) => {
-    const modules = await moduleService.getModulesByStateIdAndLicenseId(
+    const modules = await moduleService.getModuleByStateIdAndLicenseId(
       stateId,
       licenseId
     );

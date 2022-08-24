@@ -57,7 +57,7 @@ exports.getModuleByStateIdAndLicenseId = async (stateId, licenseId) => {
 
 exports.getModuleByStateIdAndLicenseIdAPI = async (req, res, next) => {
   try {
-    const { stateId, licenseId } = req.query;
+    const { stateId, licenseId } = req.params;
     const modules = await Module.find({ license: licenseId, states: stateId })
       .select({ name: 1, position: 1 })
       .sort({ position: 1 });
@@ -104,7 +104,7 @@ exports.deleteModuleAPI = async (req, res, next) => {
 
 exports.addModuleToStateAPI = async (req, res, next) => {
   try {
-    const { stateId, moduleId } = req.query;
+    const { stateId, moduleId } = req.params;
     const module = await Module.findById(moduleId);
     if (!module) {
       return res.status(404).json({ message: "Can't not find module" });
@@ -127,7 +127,7 @@ exports.addModuleToStateAPI = async (req, res, next) => {
 
 exports.removeModuleOfStateAPI = async (req, res, next) => {
   try {
-    const { stateId, moduleId } = req.query;
+    const { stateId, moduleId } = req.params;
     const module = await Module.findOne({ _id: moduleId, states: stateId });
     if (!module) {
       return res.status(404).json({ message: "Can't find module" });

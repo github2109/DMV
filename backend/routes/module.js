@@ -12,13 +12,13 @@ const {
 } = require("../controllers/module");
 
 
-moduleRouter.get("/description/:moduleId", getDescriptionByModuleIdAPI);
-moduleRouter.get("/license/:licenseId", getModuleByLicenseIdAPI);
-moduleRouter.get("/:stateId?/:licenseId?", getModuleByStateIdAndLicenseIdAPI);
+moduleRouter.get("/:moduleId", getDescriptionByModuleIdAPI);
+moduleRouter.get("/licenses/:licenseId", getModuleByLicenseIdAPI);
+moduleRouter.get("/states/:stateId/licenses/:licenseId", getModuleByStateIdAndLicenseIdAPI);
 moduleRouter.post("/", createModuleAPI);
-moduleRouter.post("/add-module-to-state/:stateId?/:moduleId?", addModuleToStateAPI);
+moduleRouter.post("/:moduleId/states/:stateId", addModuleToStateAPI);
 moduleRouter.delete("/:moduleId", deleteModuleAPI);
-moduleRouter.delete("/remove-module-of-state/:stateId?/:moduleId?", removeModuleOfStateAPI);
+moduleRouter.delete("/:moduleId/states/:stateId", removeModuleOfStateAPI);
 moduleRouter.put("/:moduleId", updateModuleAPI);
 moduleRouter.put("/",updatePositionModuleAPI);
 

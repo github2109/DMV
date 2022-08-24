@@ -33,12 +33,12 @@ app.use(middleware.tokenExtractor);
 
 //Router
 app.use("/api",userRouter);
-app.use("/api/state",stateRouter);
-app.use("/api/question",questionRouter);
-app.use("/api/module",moduleRouter);
-app.use("/api/message",messageRouter);
-app.use("/api/license",licenseRouter);
-app.use("/api/exam",examRouter);
+app.use("/api/states",stateRouter);
+app.use("/api/questions",questionRouter);
+app.use("/api/modules",moduleRouter);
+app.use("/api/messages",messageRouter);
+app.use("/api/licenses",licenseRouter);
+app.use("/api/exams",examRouter);
 
 app.use(middleware.unknownEndpoint);
 app.use(middleware.errorHandler);

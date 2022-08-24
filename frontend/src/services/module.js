@@ -4,7 +4,7 @@ const bareUrl = "/api/modules";
 const getModuleByStateIdAndLicenseId = async (stateId, licenseId) => {
   try {
     const response = await axios.get(
-      `${bareUrl}/state/${stateId}/license/${licenseId}`
+      `${bareUrl}/states/${stateId}/licenses/${licenseId}`
     );
     return response.data;
   } catch (error) {

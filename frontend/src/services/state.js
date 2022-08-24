@@ -1,8 +1,8 @@
 import axios from "axios";
-const bareUrl = "/api/state";
+const bareUrl = "/api/states";
 
 const getAll = async () => {
-    const response = await axios.get(`${bareUrl}/get-all-states`);
+    const response = await axios.get(bareUrl);
     return response.data;
 }
 

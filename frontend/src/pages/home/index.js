@@ -2,6 +2,7 @@ import { connect } from "react-redux";
 import { initializeState } from "../../reducers/stateReducer";
 import { initializeLicense } from "../../reducers/licenseReducer";
 import Select from "../../components/select";
+import Modules from "../../components/modules"
 import "./style.css";
 import { useEffect, useState } from "react";
 
@@ -28,7 +29,7 @@ const Home = (props) => {
         item={licenseId}
         setItem={setLicenseId}
       />
-      <div className="module-container"></div>
+      {stateId && licenseId && <Modules stateId={stateId} licenseId={licenseId}/>}
     </div>
   );
 };
