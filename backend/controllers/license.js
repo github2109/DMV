@@ -17,9 +17,7 @@ exports.createLicense = async (req, res, next) => {
       image,
     });
     const licenseSaved = await license.save();
-    res
-      .status(201)
-      .json({ licenseSaved, message: "License was created successfully" });
+    res.status(201).json(licenseSaved);
   } catch (error) {
     next(error);
   }
@@ -28,9 +26,7 @@ exports.createLicense = async (req, res, next) => {
 exports.getListLicenses = async (req, res, next) => {
   try {
     const licenses = await License.find({});
-    res
-      .status(200)
-      .json(licenses);
+    res.status(200).json(licenses);
   } catch (error) {
     next(error);
   }
@@ -48,9 +44,7 @@ exports.deleLicenseById = async (req, res, next) => {
     const updateModuleAfterRemoveLicense = await updateModuleAfterRemoveLicense(
       licenseId
     );
-    res
-      .status(200)
-      .json({ deletedLicense, message: "License was deleted successfully" });
+    res.status(200).json(deletedLicense);
   } catch (error) {
     next(error);
   }
@@ -73,9 +67,7 @@ exports.updateLicenseData = async (req, res, next) => {
         message: "License not found",
       });
     }
-    return res
-      .status(200)
-      .json({ updatedLisence, message: "License was updated successfully" });
+    return res.status(200).json(updatedLisence);
   } catch (error) {
     next(error);
   }

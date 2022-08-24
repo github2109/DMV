@@ -77,9 +77,7 @@ exports.createQuestionAPI = async (req, res, next) => {
         message: "Something went wrong",
       });
     }
-    res
-      .status(201)
-      .json({ savedQuestion, message: "Question was created successfully" });
+    res.status(201).json(savedQuestion);
   } catch (error) {
     next(error);
   }
@@ -101,16 +99,14 @@ exports.deleteQuestionByIdAPI = async (req, res, next) => {
     if (!deleteQuestionInModule) {
       return res.status(500).json({ message: "Something went wrong" });
     }
-    res
-      .status(200)
-      .json({ deletedQuestion, message: "Question was deleted successfully" });
+    res.status(200).json(deletedQuestion);
   } catch (error) {
     next(error);
   }
 };
 exports.updateQuestionByIdAPI = async (req, res, next) => {
   try {
-    const questionId = req.query.id;
+    const questionId = req.params.id;
     const updatedQuestion = await Question.findByIdAndUpdate(
       { _id: questionId },
       req.body,

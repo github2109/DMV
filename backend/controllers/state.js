@@ -24,9 +24,7 @@ exports.createState = async (req, res, next) => {
       name,
     });
     const stateSaved = await state.save();
-    res
-      .status(201)
-      .json({ stateSaved, message: "State was created successfully" });
+    res.status(201).json(stateSaved);
   } catch (error) {
     next(error);
   }
@@ -42,9 +40,7 @@ exports.deleteStateById = async (req, res, next) => {
       });
     }
     const test = await updateModuleAfterRemoveState(stateId);
-    res
-      .status(200)
-      .json({ deletedState, message: "State was deleted successfully" });
+    res.status(200).json(deletedState);
   } catch (error) {
     next(error);
   }
@@ -64,9 +60,7 @@ exports.updateStateData = async (req, res, next) => {
         message: "The state was not found",
       });
     }
-    return res
-      .status(200)
-      .json({ updatedState, message: "State was updated successfully" });
+    return res.status(200).json(updatedState);
   } catch (error) {
     next(error);
   }

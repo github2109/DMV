@@ -7,16 +7,13 @@ const {
   deleteQuestionByIdAPI,
   updateQuestionByIdAPI,
 } = require("../controllers/question");
-questionRouter.post("/create-question/:moduleId?", createQuestionAPI);
-questionRouter.get("/get-questions-exam", getAllQuestionsForExamAPI);
+questionRouter.post("/module/:moduleId?", createQuestionAPI);
+questionRouter.get("/", getAllQuestionsForExamAPI);
 questionRouter.delete(
-  "/delete-question/:id?/:moduleId?",
+  "/question/:questionId/modules/:moduleId",
   deleteQuestionByIdAPI
 );
-questionRouter.get(
-  "/get-questions-module/:moduleId?",
-  getAllQuestionsForModuleAPI
-);
-questionRouter.put("/update-question/:id?", updateQuestionByIdAPI);
+questionRouter.get("/module/:moduleId?", getAllQuestionsForModuleAPI);
+questionRouter.put("/:id", updateQuestionByIdAPI);
 
 module.exports = questionRouter;

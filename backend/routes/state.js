@@ -6,8 +6,8 @@ const {
   deleteStateById,
 } = require("../controllers/state");
 
-stateRouter.get("/get-all-states", getAllStates);
-stateRouter.post("/create-state", createState);
-stateRouter.delete("/delete-state/:id", deleteStateById);
-stateRouter.put("/update-state/:id", updateStateData);
+stateRouter.get("/", getAllStates);
+stateRouter.post("/", createState);
+stateRouter.delete("/:id", deleteStateById);
+stateRouter.put("/:id", updateStateData);
 module.exports = stateRouter;
