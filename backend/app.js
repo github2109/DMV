@@ -1,5 +1,5 @@
 const express = require("express");
-const { readdirSync } = require("fs");
+const path = require("path");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const config = require("./utils/config");
@@ -26,7 +26,7 @@ mongoose
   });
 
 app.use(cors());
-app.use(express.static("build"));
+app.use(express.static(path.join(__dirname, "./build")));
 app.use(express.json());
 app.use(middleware.requestLogger);
 app.use(middleware.tokenExtractor);
