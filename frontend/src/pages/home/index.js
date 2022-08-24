@@ -28,6 +28,7 @@ const Home = (props) => {
         item={licenseId}
         setItem={setLicenseId}
       />
+      <div className="module-container"></div>
     </div>
   );
 };
