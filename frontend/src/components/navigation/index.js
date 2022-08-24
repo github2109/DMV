@@ -1,5 +1,5 @@
 import "./style.css";
-import "https://kit.fontawesome.com/b96f916ae2.js";
+import "./b96f916ae2.js";
 import { Link } from "react-router-dom";
 const Navigation = ({ handleLogout, user }) => {
   return (

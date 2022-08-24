@@ -1,0 +1,23 @@
+{
+  "files": {
+    "main.css": "/static/css/main.4e914807.css",
+    "main.js": "/static/js/main.d87a86be.js",
+    "static/media/fontawesome-webfont.svg?v=4.7.0": "/static/media/fontawesome-webfont.c1e38fd9e0e74ba58f7a.svg",
+    "static/media/Montserrat-Bold.ttf": "/static/media/Montserrat-Bold.0915f0a8c3367a6d05ec.ttf",
+    "static/media/fontawesome-webfont.eot": "/static/media/fontawesome-webfont.8b43027f47b20503057d.eot",
+    "static/media/fontawesome-webfont.ttf?v=4.7.0": "/static/media/fontawesome-webfont.1e59d2330b4c6deb84b3.ttf",
+    "static/media/Poppins-Regular.ttf": "/static/media/Poppins-Regular.1c701c9a6b587802e3d0.ttf",
+    "static/media/Poppins-Medium.ttf": "/static/media/Poppins-Medium.b59f6a636397975c5409.ttf",
+    "static/media/Poppins-Bold.ttf": "/static/media/Poppins-Bold.e2abc8f5e9a67ea669ea.ttf",
+    "static/media/fontawesome-webfont.woff?v=4.7.0": "/static/media/fontawesome-webfont.f691f37e57f04c152e23.woff",
+    "static/media/fontawesome-webfont.woff2?v=4.7.0": "/static/media/fontawesome-webfont.20fd1704ea223900efa9.woff2",
+    "static/media/tumblr_static_tumblr_static_gaussian_blur_gradient_desktop_1680x943_wallpaper-393751.jpg": "/static/media/tumblr_static_tumblr_static_gaussian_blur_gradient_desktop_1680x943_wallpaper-393751.3c389fa1256ad5e14ce7.jpg",
+    "index.html": "/index.html",
+    "main.4e914807.css.map": "/static/css/main.4e914807.css.map",
+    "main.d87a86be.js.map": "/static/js/main.d87a86be.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.4e914807.css",
+    "static/js/main.d87a86be.js"
+  ]
+}

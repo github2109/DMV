@@ -34,12 +34,18 @@ const App = () => {
     window.localStorage.removeItem("loggedBlogappUser");
     setUser(null);
   };
-  if(!user) return <Login handleSubmitLogin={handleSubmitLogin} messageLogin={messageLogin} />
+  if (!user)
+    return (
+      <Login
+        handleSubmitLogin={handleSubmitLogin}
+        messageLogin={messageLogin}
+      />
+    );
   return (
     <div>
-      <Navigation handleLogout={handleLogout} user={user}/>
+      <Navigation handleLogout={handleLogout} user={user} />
       <Routes>
-          <Route path="/" element={<Home />}/>
+        <Route path="/" element={<Home />} />
       </Routes>
     </div>
   );

@@ -1,10 +1,12 @@
-const Module = ({ module }) => {
+import "./style.css"
+
+const Module = ({ module,position }) => {
   return (
     <article className="leaderboard__profile">
-      <span className="">1</span>
+      <span className="position">{position + 1}</span>
       <span className="leaderboard__name">{module.name}</span>
       <span className="leaderboard__value">
-        35.7<span>B</span>
+        {module.numberOfQuestion}<span> questions</span>
       </span>
     </article>
   );

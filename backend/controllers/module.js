@@ -59,9 +59,18 @@ exports.getModuleByStateIdAndLicenseIdAPI = async (req, res, next) => {
   try {
     const { stateId, licenseId } = req.params;
     const modules = await Module.find({ license: licenseId, states: stateId })
-      .select({ name: 1, position: 1 })
+      .select({ name: 1, position: 1, questions: 1 })
       .sort({ position: 1 });
-    res.json(modules);
+    let modulesExec = [];
+    modules.forEach((module) => {
+      modulesExec.push({
+        _id: module._id,
+        name: module.name,
+        position: module.position,
+        numberOfQuestion: module.questions.length,
+      });
+    });
+    res.json(modulesExec);
   } catch (error) {
     next(error);
   }

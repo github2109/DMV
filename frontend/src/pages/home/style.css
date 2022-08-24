@@ -1,6 +1,6 @@
 .container {
   width: 1200px;
-  height: 630px;
+  height: 650px;
   background-image: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
   border-radius: 10px;
   overflow: hidden;
@@ -10,17 +10,23 @@
   display: -ms-flexbox; 
   display: flex;
   flex-wrap: wrap;
-  padding: 30px 95px 160px 95px;
+  padding: 30px 95px 30px 95px;
   margin-top: 50px;
   margin-left: 170px;
+  justify-content: center;
 }
 
 .select-state{
-  margin-left: 90px;
+  width: 40%;
 }
 
 .select-license{
-  left: 195px;
+  width: 40%;
 }
 
+.select-container{
+  display: flex;
+  justify-content: space-between;
+  width: 90%;
+}
 
