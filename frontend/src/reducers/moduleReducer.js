@@ -22,4 +22,11 @@ export const setModuleByStateIdAndLicenseId = (stateId, licenseId) => {
   };
 };
 
+export const setModuleByModuleId = (moduleId) => {
+  return async (dispatch) => {
+    const module = await moduleService.getModuleByModuleId(moduleId);
+    dispatch(setModules(module));
+  };
+};
+
 export default moduleSlice.reducer;

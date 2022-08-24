@@ -33,7 +33,6 @@ const Home = (props) => {
       {props.filter.stateId && props.filter.licenseId && (
         <Modules  />
       )}
-      <div></div>
     </div>
   );
 };

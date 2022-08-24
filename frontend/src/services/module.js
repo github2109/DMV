@@ -12,4 +12,13 @@ const getModuleByStateIdAndLicenseId = async (stateId, licenseId) => {
   }
 };
 
-export default { getModuleByStateIdAndLicenseId };
+const getModuleByModuleId = async (moduleId) => {
+  try {
+    const response = await axios.get(`${bareUrl}/${moduleId}`);
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export default { getModuleByStateIdAndLicenseId ,getModuleByModuleId};

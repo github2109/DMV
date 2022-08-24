@@ -3,7 +3,7 @@ const {
   getModuleByStateIdAndLicenseIdAPI,
   createModuleAPI,
   addModuleToStateAPI,
-  getDescriptionByModuleIdAPI,
+  getDetailModuleByModuleIdAPI,
   deleteModuleAPI,
   removeModuleOfStateAPI,
   updateModuleAPI,
@@ -12,7 +12,7 @@ const {
 } = require("../controllers/module");
 
 
-moduleRouter.get("/:moduleId", getDescriptionByModuleIdAPI);
+moduleRouter.get("/:moduleId", getDetailModuleByModuleIdAPI);
 moduleRouter.get("/licenses/:licenseId", getModuleByLicenseIdAPI);
 moduleRouter.get("/states/:stateId/licenses/:licenseId", getModuleByStateIdAndLicenseIdAPI);
 moduleRouter.post("/", createModuleAPI);

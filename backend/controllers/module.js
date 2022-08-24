@@ -151,13 +151,16 @@ exports.removeModuleOfStateAPI = async (req, res, next) => {
   }
 };
 
-exports.getDescriptionByModuleIdAPI = async (req, res, next) => {
+exports.getDetailModuleByModuleIdAPI = async (req, res, next) => {
   try {
     const { moduleId } = req.params;
     const description = await Module.findById(moduleId).select({
+      license:1,
       titleDescription: 1,
       contentDescription: 1,
       imageDescription: 1,
+      name:1,
+      isPremium:1
     });
     res.status(200).json(description);
   } catch (error) {
