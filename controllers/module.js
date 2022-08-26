@@ -79,10 +79,23 @@ exports.getModuleByStateIdAndLicenseIdAPI = async (req, res, next) => {
 exports.getModuleByLicenseIdAPI = async (req, res, next) => {
   try {
     const { licenseId } = req.params;
-    const modules = await Module.find({ license: licenseId }).select({
-      name: 1,
+    const modules = await Module.find({ license: licenseId })
+      .select({
+        name: 1,
+        position: 1,
+        questions: 1,
+      })
+      .sort({ position: 1 });
+    let modulesExec = [];
+    modules.forEach((module) => {
+      modulesExec.push({
+        _id: module._id,
+        name: module.name,
+        position: module.position,
+        numberOfQuestion: module.questions.length,
+      });
     });
-    res.status(200).json(modules);
+    res.status(200).json(modulesExec);
   } catch (error) {
     next(error);
   }
@@ -151,13 +164,16 @@ exports.removeModuleOfStateAPI = async (req, res, next) => {
   }
 };
 
-exports.getDescriptionByModuleIdAPI = async (req, res, next) => {
+exports.getDetailModuleByModuleIdAPI = async (req, res, next) => {
   try {
     const { moduleId } = req.params;
     const description = await Module.findById(moduleId).select({
+      license: 1,
       titleDescription: 1,
       contentDescription: 1,
       imageDescription: 1,
+      name: 1,
+      isPremium: 1,
     });
     res.status(200).json(description);
   } catch (error) {
