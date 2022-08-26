@@ -23,7 +23,7 @@ exports.getAllQuestionsForExamAPI = async (req, res, next) => {
 
 exports.getAllQuestionsForModuleAPI = async (req, res, next) => {
   try {
-    const moduleId = req.query.moduleId;
+    const moduleId = req.params.moduleId;
     const questions = await getAllQuestionsForModule(moduleId, false);
     if (!questions) {
       return res.status(500).json({
