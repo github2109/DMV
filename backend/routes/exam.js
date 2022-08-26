@@ -6,9 +6,9 @@ const {
   getListQuestionForExam,
 } = require("../controllers/exam");
 
-examRouter.post("/state/:stateId/license/:licenseId", createExamAPI);
+examRouter.post("/states/:stateId/licenses/:licenseId", createExamAPI);
 examRouter.put("/:id", updateExamAPI);
 examRouter.delete("/:id", deleteExamByIdAPI);
-examRouter.get("/state/:stateId/license/:licenseId", getListQuestionForExam);
+examRouter.get("/states/:stateId/licenses/:licenseId", getListQuestionForExam);
 
 module.exports = examRouter;

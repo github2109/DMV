@@ -1,8 +1,8 @@
-import "./style.css"
+import "../style.css"
 
-const Module = ({ module,position }) => {
+const NormalModule = ({ module,position }) => {
   return (
-    <article className="leaderboard__profile">
+    <article className="leaderboard__normalmodule">
       <span className="position">{position + 1}</span>
       <span className="leaderboard__name">{module.name}</span>
       <span className="leaderboard__value">
@@ -12,4 +12,4 @@ const Module = ({ module,position }) => {
   );
 };
 
-export default Module;
+export default NormalModule;

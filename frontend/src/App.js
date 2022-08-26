@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import Navigation from "./components/navigation";
 import Home from "./pages/home";
 import DetailModule from "./pages/detailModule";
+import ModuleByLicense from "./pages/moduleByLicense";
 const App = () => {
   const [user, setUser] = useState(null);
   const [messageLogin, setMessageLogin] = useState(null);
@@ -46,8 +47,9 @@ const App = () => {
     <div>
       <Navigation handleLogout={handleLogout} user={user} />
       <Routes>
+        <Route path="/modules/licenses" exact={true} element={<ModuleByLicense />}></Route>
         <Route path="/modules/:id" exact={true} element={<DetailModule />}></Route>
-        <Route path="/" element={<Home />} />
+        <Route path="/" exact={true} element={<Home />} />
       </Routes>
     </div>
   );
