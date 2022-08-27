@@ -6,6 +6,13 @@ body {
   color: #fff;
   font-weight: 300;
   overflow: hidden;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;
+  display: flex;
+  justify-content: center;
+  padding: 0px 100px 100px 0px;
 }
 
 .settings {
