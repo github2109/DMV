@@ -3,7 +3,7 @@ const { updateModuleAfterRemoveLicense } = require("../controllers/module");
 
 exports.createLicense = async (req, res, next) => {
   try {
-    const { name, image, decription } = req.body;
+    const { name, image, description } = req.body;
     const checkLicense = await License.findOne({ name });
     if (checkLicense) {
       return res.status(500).json({
@@ -14,7 +14,7 @@ exports.createLicense = async (req, res, next) => {
     const license = await new License({
       name,
       image,
-      decription
+      description,
     });
     const licenseSaved = await license.save();
     res.status(201).json(licenseSaved);
@@ -41,9 +41,7 @@ exports.deleteLicenseById = async (req, res, next) => {
         message: "License not found",
       });
     }
-    await updateModuleAfterRemoveLicense(
-      licenseId
-    );
+    await updateModuleAfterRemoveLicense(licenseId);
     res.status(200).json(deletedLicense);
   } catch (error) {
     next(error);
@@ -59,7 +57,7 @@ exports.updateLicenseData = async (req, res, next) => {
       {
         name: data.name,
         image: data.image,
-        decription: data.decription
+        description: data.description,
       },
       { new: true }
     );

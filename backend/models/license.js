@@ -7,9 +7,9 @@ const licenseSchema = mongoose.Schema({
     trim: true,
     text: true,
   },
-  decription: {
+  description: {
     type: String,
-    required: [true, "Name is required"],
+    required: [true, "Description is required"],
     trim: true,
   },
   image: {

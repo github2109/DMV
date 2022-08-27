@@ -8,6 +8,7 @@ import Home from "./pages/home";
 import DetailModule from "./pages/detailModule";
 import ModuleByLicense from "./pages/moduleByLicense";
 import Licenses from "./pages/licenses";
+import States from "./pages/states";
 const App = () => {
   const [user, setUser] = useState(null);
   const [messageLogin, setMessageLogin] = useState(null);
@@ -60,6 +61,7 @@ const App = () => {
           element={<DetailModule />}
         ></Route>
         <Route path="/" exact={true} element={<Home />} />
+        <Route path="/states" exact={true} element={<States />}></Route>
       </Routes>
     </div>
   );
