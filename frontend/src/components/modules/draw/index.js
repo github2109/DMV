@@ -2,12 +2,8 @@ import "../style.css";
 import { connect } from "react-redux";
 import DrawModule from "../../module/draw";
 import { Droppable, DragDropContext, Draggable } from "react-beautiful-dnd";
-import { useEffect, useState } from "react";
+import { setModules} from "../../../reducers/moduleReducer";
 const DrawModules = (props) => {
-  const [modules, setModules] = useState(props.modules);
-  useEffect(() => {
-    setModules(props.modules);
-  }, [props.modules]);
   const reorder = (list, startIndex, endIndex) => {
     const result = Array.from(list);
     const [removed] = result.splice(startIndex, 1);
@@ -20,22 +16,26 @@ const DrawModules = (props) => {
       return;
     }
     const items = reorder(
-      modules,
+      props.modules,
       result.source.index,
       result.destination.index
     );
 
-    setModules(items);
+    props.setModules(items);
   };
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <div className="modules-container">
         <Droppable droppableId="droppable">
           {(provided, snapshot) => (
-            <div {...provided.droppableProps} ref={provided.innerRef} className="droppable-container">
+            <div
+              {...provided.droppableProps}
+              ref={provided.innerRef}
+              className="droppable-container"
+            >
               <article className="leaderboard">
                 <main className="leaderboard__profiles">
-                  {modules.map((module, position) => (
+                  {props.modules.map((module, position) => (
                     <Draggable
                       key={module._id}
                       draggableId={module._id}
@@ -70,4 +70,10 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps)(DrawModules);
+const mapDispatchToProps = (dispatch) => {
+  return {
+    setModules:(modules) => dispatch(setModules(modules)),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(DrawModules);

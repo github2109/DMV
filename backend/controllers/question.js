@@ -1,15 +1,30 @@
-const config = require("../utils/config");
 const Question = require("../models/question");
 const {
   getModuleByModuleId,
   updateModuleAfterCreateQuestion,
   updateModuleAfterRemoveQuestion,
+  getModuleByStateIdAndLicenseId,
 } = require("../controllers/module");
+const { getExamByExamId } = require("../controllers/exam");
 
-exports.getAllQuestionsForExamAPI = async (req, res, next) => {
+exports.getQuestionsForExamAPI = async (req, res, next) => {
   try {
-    const moduleId = req.query.moduleId;
-    const questions = await getAllQuestionsForModule(moduleId, true);
+    const { examId } = req.params;
+    const exam = await getExamByExamId(examId);
+    const modules = await getModuleByStateIdAndLicenseId(
+      exam.state,
+      exam.license
+    );
+    const listQuestions = [];
+    modules.forEach((module) => listQuestions.push(...module.questions));
+    if (listQuestions.length <= exam.numberOfQuestion)
+      res.status(200).json(listQuestions);
+    const questions = [];
+    for (let i = 0; i < exam.numberOfQuestion; i++) {
+      const index = Math.floor(Math.random() * listQuestions.length);
+      questions.push(listQuestions[index]);
+      listQuestions.splice(index, 1);
+    }
     if (!questions) {
       return res.status(500).json({
         message: "No questions found",
@@ -23,8 +38,11 @@ exports.getAllQuestionsForExamAPI = async (req, res, next) => {
 
 exports.getAllQuestionsForModuleAPI = async (req, res, next) => {
   try {
-    const moduleId = req.query.moduleId;
-    const questions = await getAllQuestionsForModule(moduleId, false);
+    const moduleId = req.params.moduleId;
+    const module = await getModuleByModuleId(moduleId);
+    const questions = module.questions.filter(
+      (question) => question.isTestQuestion === false
+    );
     if (!questions) {
       return res.status(500).json({
         message: "No questions found",
@@ -35,24 +53,11 @@ exports.getAllQuestionsForModuleAPI = async (req, res, next) => {
     next(error);
   }
 };
-const getAllQuestionsForModule = async (moduleId, isExam) => {
-  const module = await getModuleByModuleId(moduleId);
-  if (!module) {
-    return null;
-  } else {
-    const listQuestions = await module.questions;
-    const results = listQuestions.filter(
-      (question) => question.isTestQuestion === isExam
-    );
-    return results;
-  }
-};
 
 exports.createQuestionAPI = async (req, res, next) => {
   try {
-    const moduleId = req.query.moduleId;
-    const { questionContent, answers, isTestQuestion, image, handBook } =
-      req.body;
+    const { moduleId } = req.body;
+    const { question } = req.body;
     const check = await Question.findOne({ questionContent: questionContent });
     if (check) {
       return res.status(200).json({
@@ -61,11 +66,7 @@ exports.createQuestionAPI = async (req, res, next) => {
       });
     }
     const newQuestion = await new Question({
-      questionContent,
-      answers,
-      isTestQuestion,
-      image,
-      handBook,
+      question,
     });
     const savedQuestion = await newQuestion.save();
     const addIntoModule = await updateModuleAfterCreateQuestion(
@@ -84,18 +85,15 @@ exports.createQuestionAPI = async (req, res, next) => {
 };
 exports.deleteQuestionByIdAPI = async (req, res, next) => {
   try {
-    const questionId = req.query.id;
-    const moduleId = req.query.moduleId;
+    const questionId = req.params;
+    const moduleId = req.body;
     const deletedQuestion = await Question.findByIdAndRemove({
       _id: questionId,
     });
     if (!deletedQuestion) {
       return res.status(500).json({ message: "Question not found" });
     }
-    const deleteQuestionInModule = await updateModuleAfterRemoveQuestion(
-      moduleId,
-      questionId
-    );
+    await updateModuleAfterRemoveQuestion(moduleId, questionId);
     if (!deleteQuestionInModule) {
       return res.status(500).json({ message: "Something went wrong" });
     }
@@ -118,5 +116,22 @@ exports.updateQuestionByIdAPI = async (req, res, next) => {
     res.status(201).json(updatedQuestion);
   } catch (error) {
     next(error);
+  }
+};
+
+exports.getListQuestionForExam = async (listModules) => {
+  try {
+    const listQuestions = null;
+    for (let i = 0; i < listModules.length; i++) {
+      listQuestionsOfModule = await Question.getListQuestionForExam(
+        listModules[i],
+        true
+      );
+      listQuestions = await listQuestions.push(listQuestionsOfModule);
+    }
+    if (!listQuestions) return null;
+    return listModule;
+  } catch (error) {
+    console.log(error);
   }
 };

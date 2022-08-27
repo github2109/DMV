@@ -1,0 +1,14 @@
+.licenses-container {
+  width: 50%;
+  height: 550px;
+  display: flex;
+  background: var(--bg);
+  font-family: var(--font);
+  border-radius: 5px;
+  background-color: #fff;
+  justify-content: center;
+  align-self: center;
+  padding: 15px 15px 20px;
+  display: grid;
+  row-gap: 8px;
+}

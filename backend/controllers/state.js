@@ -39,7 +39,7 @@ exports.deleteStateById = async (req, res, next) => {
         message: "The state was not found",
       });
     }
-    const test = await updateModuleAfterRemoveState(stateId);
+    await updateModuleAfterRemoveState(stateId);
     res.status(200).json(deletedState);
   } catch (error) {
     next(error);

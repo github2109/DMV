@@ -2,18 +2,15 @@ const questionRouter = require("express").Router();
 
 const {
   createQuestionAPI,
-  getAllQuestionsForExamAPI,
+  getQuestionsForExamAPI,
   getAllQuestionsForModuleAPI,
   deleteQuestionByIdAPI,
   updateQuestionByIdAPI,
 } = require("../controllers/question");
-questionRouter.post("/modules/:moduleId?", createQuestionAPI);
-questionRouter.get("/", getAllQuestionsForExamAPI);
-questionRouter.delete(
-  "/questions/:questionId/modules/:moduleId",
-  deleteQuestionByIdAPI
-);
-questionRouter.get("/modules/:moduleId?", getAllQuestionsForModuleAPI);
+questionRouter.post("/", createQuestionAPI);
+questionRouter.get("/exams/:examId", getQuestionsForExamAPI);
+questionRouter.delete("/:questionId", deleteQuestionByIdAPI);
+questionRouter.get("/modules/:moduleId", getAllQuestionsForModuleAPI);
 questionRouter.put("/:id", updateQuestionByIdAPI);
 
 module.exports = questionRouter;

@@ -17,16 +17,19 @@
 }
 
 .select-state{
-  width: 40%;
+  width: 100%;
+  justify-content: center;
 }
 
 .select-license{
-  width: 40%;
+  width: 100%;
+  justify-content: center;
 }
 
 .select-container{
   display: flex;
-  justify-content: space-between;
-  width: 90%;
+  width: 100%;
 }
+
+
 

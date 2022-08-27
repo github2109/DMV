@@ -1,10 +1,9 @@
-const config = require("../utils/config");
 const License = require("../models/license");
 const { updateModuleAfterRemoveLicense } = require("../controllers/module");
 
 exports.createLicense = async (req, res, next) => {
   try {
-    const { name, image } = req.body;
+    const { name, image, decription } = req.body;
     const checkLicense = await License.findOne({ name });
     if (checkLicense) {
       return res.status(500).json({
@@ -15,6 +14,7 @@ exports.createLicense = async (req, res, next) => {
     const license = await new License({
       name,
       image,
+      decription
     });
     const licenseSaved = await license.save();
     res.status(201).json(licenseSaved);
@@ -32,7 +32,7 @@ exports.getListLicenses = async (req, res, next) => {
   }
 };
 
-exports.deleLicenseById = async (req, res, next) => {
+exports.deleteLicenseById = async (req, res, next) => {
   try {
     const licenseId = req.params.id;
     const deletedLicense = await License.findByIdAndRemove({ _id: licenseId });
@@ -41,7 +41,7 @@ exports.deleLicenseById = async (req, res, next) => {
         message: "License not found",
       });
     }
-    const updateModuleAfterRemoveLicense = await updateModuleAfterRemoveLicense(
+    await updateModuleAfterRemoveLicense(
       licenseId
     );
     res.status(200).json(deletedLicense);
@@ -59,6 +59,7 @@ exports.updateLicenseData = async (req, res, next) => {
       {
         name: data.name,
         image: data.image,
+        decription: data.decription
       },
       { new: true }
     );

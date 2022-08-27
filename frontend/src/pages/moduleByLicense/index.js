@@ -1,28 +1,35 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { connect } from "react-redux";
 import { setModuleByLicenseId } from "../../reducers/moduleReducer";
 import { useEffect, useState } from "react";
 import DrawModules from "../../components/modules/draw";
 import Select from "../../components/select";
 import { initializeLicense } from "../../reducers/licenseReducer";
+import { savePositionModule } from "../../reducers/moduleReducer";
 import "./style.css";
+import CustomButton from "../../components/button";
 const ModuleByLicense = (props) => {
   const [licenseId, setLicenseId] = useState(null);
   useEffect(() => {
     props.initializeLicense();
-  }, [licenseId]);
+  }, []);
   useEffect(() => {
     if (licenseId) props.setModuleByLicenseId(licenseId);
   }, [licenseId]);
+  const handleSaveClick = () => {
+    props.savePositionModule(props.modules);
+  };
   return (
-    <div className="container">
+    <div className="module-licenses-container">
       <div className="select2-container">
         <Select
           listData={props.licenses}
-          className=""
+          className="licenses-style"
           nameSelect="license"
           item={licenseId}
           setItem={setLicenseId}
         />
+        <CustomButton className="save-button" labelName="Save" handleSaveClick={handleSaveClick}/>
       </div>
       {licenseId && <DrawModules />}
     </div>
@@ -32,6 +39,7 @@ const ModuleByLicense = (props) => {
 const mapStateToProps = (state) => {
   return {
     licenses: state.licenses,
+    modules: state.modules,
   };
 };
 
@@ -43,6 +51,7 @@ const mapDispatchToProps = (dispatch) => {
     initializeLicense: () => {
       dispatch(initializeLicense());
     },
+    savePositionModule: (modules) => dispatch(savePositionModule(modules)),
   };
 };
 

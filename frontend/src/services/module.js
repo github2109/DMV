@@ -4,7 +4,7 @@ const bareUrl = "/api/modules";
 const getModuleByStateIdAndLicenseId = async (stateId, licenseId) => {
   try {
     const response = await axios.get(
-      `${bareUrl}/states/${stateId}/licenses/${licenseId}`
+      `${bareUrl}?stateId=${stateId}&licenseId=${licenseId}`
     );
     return response.data;
   } catch (error) {
@@ -30,4 +30,17 @@ const getModuleByLicenseId = async (licenseId) => {
   }
 };
 
-export default { getModuleByStateIdAndLicenseId, getModuleByModuleId ,getModuleByLicenseId};
+const updatePositionModule = async (listModuleId) => {
+  try {
+    await axios.put(bareUrl, listModuleId);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export default {
+  getModuleByStateIdAndLicenseId,
+  getModuleByModuleId,
+  getModuleByLicenseId,
+  updatePositionModule,
+};

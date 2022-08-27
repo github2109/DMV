@@ -14,7 +14,7 @@ const {
 
 moduleRouter.get("/:moduleId", getDetailModuleByModuleIdAPI);
 moduleRouter.get("/licenses/:licenseId", getModuleByLicenseIdAPI);
-moduleRouter.get("/states/:stateId/licenses/:licenseId", getModuleByStateIdAndLicenseIdAPI);
+moduleRouter.get("/:stateId?/:licenseId?", getModuleByStateIdAndLicenseIdAPI);
 moduleRouter.post("/", createModuleAPI);
 moduleRouter.post("/:moduleId/states/:stateId", addModuleToStateAPI);
 moduleRouter.delete("/:moduleId", deleteModuleAPI);

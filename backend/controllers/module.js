@@ -52,12 +52,13 @@ exports.updateModuleAfterRemoveLicense = async (licenseId) => {
 };
 
 exports.getModuleByStateIdAndLicenseId = async (stateId, licenseId) => {
-  return await Module.find({ license: licenseId, states: stateId });
+  return await Module.find({ license: licenseId, states: stateId }).populate("questions");
 };
 
 exports.getModuleByStateIdAndLicenseIdAPI = async (req, res, next) => {
   try {
-    const { stateId, licenseId } = req.params;
+    const { stateId, licenseId } = req.query;
+    console.log(req.query);
     const modules = await Module.find({ license: licenseId, states: stateId })
       .select({ name: 1, position: 1, questions: 1 })
       .sort({ position: 1 });
@@ -193,7 +194,7 @@ exports.updateModuleAPI = async (req, res, next) => {
 
 exports.updatePositionModuleAPI = async (req, res, next) => {
   try {
-    const [listModuleId] = req.body;
+    const listModuleId = req.body;
     for (let i = 0; i < listModuleId.length; i++) {
       await Module.findByIdAndUpdate(listModuleId[i], { position: i + 1 });
     }

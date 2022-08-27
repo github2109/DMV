@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const { ObjectId } = mongoose.Schema;
 
 const examSchema = mongoose.Schema({
   // name: {
@@ -8,6 +7,15 @@ const examSchema = mongoose.Schema({
   //   trim: true,
   //   text: true,
   // },
+  name:{
+    type:String,
+    required: [true, "Name of exam is required"],
+    trim:true
+  },
+  timeOfExam:{
+    type:Number,
+    required: [true, "Time of exam is required"],
+  },
   numberOfQuestion: {
     type: Number,
     required: [true, "Number of question is required"],
