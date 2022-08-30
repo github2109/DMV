@@ -8,17 +8,24 @@ const licenseSlice = createSlice({
     setLicense(state, action) {
       return action.payload;
     },
+    appendLicense(state, action) {
+      state.push(action.payload);
+    },
   },
 });
-
-export const { setLicense } = licenseSlice.actions;
 
 export const initializeLicense = () => {
   return async (dispatch) => {
     const licenses = await licenseService.getAll();
-    dispatch(setLicense(licenses));
+    dispatch(licenseSlice.actions.setLicense(licenses));
+  };
+};
+
+export const createLicense = (license) => {
+  return async (dispatch) => {
+    const licenseSaved = await licenseService.createLicense(license);
+    dispatch(licenseSlice.actions.appendLicense(licenseSaved));
   };
 };
 
 export default licenseSlice.reducer;
-

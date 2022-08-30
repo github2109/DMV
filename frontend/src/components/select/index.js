@@ -59,7 +59,7 @@ const Select = ({ listData, className, nameSelect, item, setItem }) => {
       </div>
       <Link to={`/${nameSelect}s`} style={{ textDecoration: 'none' }}>
         <div className="setting-button">
-          <i class="setting-icon fa fa-cog" aria-hidden="true"></i>
+          <i className="setting-icon fa fa-cog" aria-hidden="true"></i>
         </div>
       </Link>
     </div>
