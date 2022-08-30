@@ -7,7 +7,7 @@ import Select from "../../components/select";
 import { initializeLicense } from "../../reducers/licenseReducer";
 import { savePositionModule } from "../../reducers/moduleReducer";
 import "./style.css";
-import CustomButton from "../../components/button";
+import CustomButton from "../../components/button/CustomButton";
 const ModuleByLicense = (props) => {
   const [licenseId, setLicenseId] = useState(null);
   useEffect(() => {

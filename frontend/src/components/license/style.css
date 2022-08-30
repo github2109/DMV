@@ -1,0 +1,68 @@
+.license-leaderboard {
+  box-sizing: border-box;
+  position: relative;
+  width: 100%;
+  min-height: 108px;
+  background: #ffffff;
+  border: 2px solid #f3f5f9;
+  border-radius: 10px;
+  box-shadow: 0 5px 7px -1px rgba(51, 51, 51, 0.23);
+  cursor: pointer;
+  transition: transform 0.25s cubic-bezier(0.7, 0.98, 0.86, 0.98),
+    box-shadow 0.25s cubic-bezier(0.7, 0.98, 0.86, 0.98);
+}
+.license-description {
+  position: absolute;
+  left: 26.71%;
+  right: 24.43%;
+  top: 45.37%;
+  bottom: 21.3%;
+  font-family: "SF Pro";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 18px;
+  color: #727b86;
+}
+
+.license-image {
+  position: absolute;
+  width: 72px;
+  height: 72px;
+  top: 18px;
+  left: 16px;
+}
+.license-name {
+  width: 160px;
+  position: absolute;
+  height: 22px;
+  left: 26.71%;
+  right: 61.71%;
+  top: calc(50% - 22px / 2 - 20px);
+  font-family: "SF Pro";
+  font-style: normal;
+  font-weight: 590;
+  font-size: 20px;
+  line-height: 22px;
+  color: #212b38;
+}
+.TrashButton {
+  height: 100%;
+  float: right;
+  display: flex;
+  justify-content: center;
+  width: 40px;
+  background-color: crimson;
+  border-radius: 10px;
+  color: black;
+}
+
+.trash-icon {
+  width: 100%;
+  font-size: 25px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #f3f5f9;
+}
+
