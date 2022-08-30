@@ -1,5 +1,6 @@
 const cloudinary = require("cloudinary");
 const fs = require("fs");
+const jwt = require("jsonwebtoken");
 const config = require("../utils/config");
 cloudinary.config({
   cloud_name: config.CLOUD_NAME,
@@ -8,6 +9,10 @@ cloudinary.config({
 });
 exports.uploadImages = async (req, res) => {
   try {
+    const token = req.token;
+    const decodeToken = jwt.verify(token, config.SECRET);
+    if(!decodeToken.id || !decodeToken.role) return res.status(403).json({message: "Token missing or invalid"});
+    if(decodeToken.role !== "ADMIN") return res.status(403).json({message: "Role is not allowed"});
     const { path } = req.body;
     let files = Object.values(req.files).flat();
     let images = [];
@@ -50,6 +55,10 @@ const removeTmp = (path) => {
 
 exports.removeImageFromCloudinary = async (req, res, next) => {
   try {
+    const token = req.token;
+    const decodeToken = jwt.verify(token, config.SECRET);
+    if(!decodeToken.id || !decodeToken.role) return res.status(403).json({message: "Token missing or invalid"});
+    if(decodeToken.role !== "ADMIN") return res.status(403).json({message: "Role is not allowed"});
     const { path } = req.body;
     const getPublicId = (path) => {
       const arrayPath = path.split("/");

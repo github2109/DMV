@@ -24,10 +24,10 @@ const Licenses = (props) => {
     setLicense(license);
     toggle();
   };
-  const handleSaveModel = (license, isCreate) => {
+  const handleSaveModel = async (license, isCreate) => {
     if (isCreate) {
       console.log(license);
-      props.createLicense(license);
+      await props.createLicense(license);
     }
     toggle();
   };

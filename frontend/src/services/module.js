@@ -1,4 +1,5 @@
 import axios from "axios";
+import { token } from "./token";
 const bareUrl = "/api/modules";
 
 const getModuleByStateIdAndLicenseId = async (stateId, licenseId) => {
@@ -32,7 +33,12 @@ const getModuleByLicenseId = async (licenseId) => {
 
 const updatePositionModule = async (listModuleId) => {
   try {
-    await axios.put(bareUrl, listModuleId);
+    const config = {
+      headers: { 
+        Authorization: token 
+      },
+    };
+    await axios.put(bareUrl, listModuleId,config);
   } catch (error) {
     console.log(error);
   }

@@ -1,4 +1,5 @@
 import axios from "axios";
+import { token } from "./token";
 const bareUrl = "/api/states";
 
 const getAll = async () => {
@@ -6,16 +7,31 @@ const getAll = async () => {
   return response.data;
 };
 const createNewState = async (data) => {
-  const response = await axios.post(bareUrl, { name: data });
+  const config = {
+    headers: {
+      Authorization: token,
+    },
+  };
+  const response = await axios.post(bareUrl, { name: data }, config);
   console.log("check state", response);
   return response.data;
 };
 const updateState = async (id, data) => {
-  const response = await axios.put(`${bareUrl}/${id}`, { name: data });
+  const config = {
+    headers: {
+      Authorization: token,
+    },
+  };
+  const response = await axios.put(`${bareUrl}/${id}`, { name: data }, config);
   return response.data;
 };
 const deleteState = async (id) => {
-  const response = await axios.delete(`${bareUrl}/${id}`);
+  const config = {
+    headers: {
+      Authorization: token,
+    },
+  };
+  const response = await axios.delete(`${bareUrl}/${id}`, config);
   return response.data;
 };
 export default { getAll, createNewState, updateState, deleteState };

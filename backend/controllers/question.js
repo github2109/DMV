@@ -1,4 +1,6 @@
 const Question = require("../models/question");
+const jwt = require("jsonwebtoken");
+const config = require("../utils/config");
 const {
   getModuleByModuleId,
   updateModuleAfterCreateQuestion,
@@ -56,6 +58,10 @@ exports.getAllQuestionsForModuleAPI = async (req, res, next) => {
 
 exports.createQuestionAPI = async (req, res, next) => {
   try {
+    const token = req.token;
+    const decodeToken = jwt.verify(token, config.SECRET);
+    if(!decodeToken.id || !decodeToken.role) return res.status(403).json({message: "Token missing or invalid"});
+    if(decodeToken.role !== "ADMIN") return res.status(403).json({message: "Role is not allowed"});
     const { moduleId } = req.body;
     const { question } = req.body;
     const check = await Question.findOne({ questionContent: questionContent });
@@ -85,6 +91,10 @@ exports.createQuestionAPI = async (req, res, next) => {
 };
 exports.deleteQuestionByIdAPI = async (req, res, next) => {
   try {
+    const token = req.token;
+    const decodeToken = jwt.verify(token, config.SECRET);
+    if(!decodeToken.id || !decodeToken.role) return res.status(403).json({message: "Token missing or invalid"});
+    if(decodeToken.role !== "ADMIN") return res.status(403).json({message: "Role is not allowed"});
     const questionId = req.params;
     const moduleId = req.body;
     const deletedQuestion = await Question.findByIdAndRemove({
@@ -104,6 +114,10 @@ exports.deleteQuestionByIdAPI = async (req, res, next) => {
 };
 exports.updateQuestionByIdAPI = async (req, res, next) => {
   try {
+    const token = req.token;
+    const decodeToken = jwt.verify(token, config.SECRET);
+    if(!decodeToken.id || !decodeToken.role) return res.status(403).json({message: "Token missing or invalid"});
+    if(decodeToken.role !== "ADMIN") return res.status(403).json({message: "Role is not allowed"});
     const questionId = req.params.id;
     const updatedQuestion = await Question.findByIdAndUpdate(
       { _id: questionId },
