@@ -9,6 +9,8 @@ import DetailModule from "./pages/detailModule";
 import ModuleByLicense from "./pages/moduleByLicense";
 import Licenses from "./pages/licenses";
 import States from "./pages/states";
+import "./style.css";
+
 const App = () => {
   const [user, setUser] = useState(null);
   const [messageLogin, setMessageLogin] = useState(null);
@@ -46,7 +48,7 @@ const App = () => {
       />
     );
   return (
-    <div>
+    <div className="parent-container">
       <Navigation handleLogout={handleLogout} user={user} />
       <Routes>
         <Route path="/licenses" exact={true} element={<Licenses />}></Route>

@@ -1,0 +1,29 @@
+.modal-state-body{
+  border-radius: 5px;
+  background-color: #f2f2f2;
+  padding: 20px;
+      
+  }
+  input[type=text] {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    resize: vertical;
+  }
+  
+  .input-container{
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+.invalid input:required:invalid {
+  background: #BE4C54;
+}
+
+.invalid input:required:valid {
+  background: #17D654;
+}

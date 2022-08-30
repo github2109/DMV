@@ -1,4 +1,4 @@
-.states-container {
+container {
     width: 50%;
     height: 550px;
     display: flex;
@@ -12,4 +12,3 @@
     display: grid;
     row-gap: 8px;
   }
-  

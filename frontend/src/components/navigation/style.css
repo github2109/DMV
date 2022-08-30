@@ -1,20 +1,3 @@
-body {
-  margin: 0px;
-  padding: 0px;
-  font-family: "Open Sans", arial;
-  background: url("./tumblr_static_tumblr_static_gaussian_blur_gradient_desktop_1680x943_wallpaper-393751.jpg");
-  color: #fff;
-  font-weight: 300;
-  overflow: hidden;
-  background-position: center center;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  background-size: cover;
-  display: flex;
-  justify-content: center;
-  padding: 0px 100px 100px 0px;
-}
-
 .settings {
   padding-top: 18px;
   display: flex;
@@ -96,6 +79,7 @@ nav.main-menu.expanded {
   -webkit-transform: translateZ(0) scale(1, 1);
   box-shadow: 1px 0 15px rgba(0, 0, 0, 0.07);
   opacity: 1;
+  z-index: 1;
 }
 
 .main-menu > ul {
