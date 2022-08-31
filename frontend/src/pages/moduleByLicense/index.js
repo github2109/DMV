@@ -8,6 +8,7 @@ import { initializeLicense } from "../../reducers/licenseReducer";
 import { savePositionModule } from "../../reducers/moduleReducer";
 import "./style.css";
 import CustomButton from "../../components/button/CustomButton";
+import PlusButton from "../../components/button/PlusButton";
 const ModuleByLicense = (props) => {
   const [licenseId, setLicenseId] = useState(null);
   useEffect(() => {
@@ -29,9 +30,18 @@ const ModuleByLicense = (props) => {
           item={licenseId}
           setItem={setLicenseId}
         />
-        <CustomButton className="save-button" labelName="Save" handleSaveClick={handleSaveClick}/>
+        <CustomButton
+          className="save-button"
+          labelName="Save"
+          handleSaveClick={handleSaveClick}
+        />
       </div>
-      {licenseId && <DrawModules />}
+      <div className="modules-container">
+        {licenseId && <DrawModules />}
+        {licenseId && <div className="create-module-into-license">
+          <PlusButton />
+        </div>}
+      </div>
     </div>
   );
 };

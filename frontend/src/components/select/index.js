@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/aria-proptypes */
 import "./style.css";
 import "../../fontawesome/b96f916ae2";
 import { Link } from "react-router-dom";
@@ -38,7 +39,7 @@ const Select = ({ listData, className, nameSelect, item, setItem }) => {
           ))}
           <img
             className="select-box__icon"
-            src="http://cdn.onlinewebfonts.com/svg/img_295694.svg"
+            src="./img_295694.svg"
             alt="Arrow Icon"
             aria-hidden="true"
           />

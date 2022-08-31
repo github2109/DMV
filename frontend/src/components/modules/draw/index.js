@@ -25,7 +25,7 @@ const DrawModules = (props) => {
   };
   return (
     <DragDropContext onDragEnd={onDragEnd}>
-      <div className="modules-container">
+      <div className="drag-drop-container">
         <Droppable droppableId="droppable">
           {(provided, snapshot) => (
             <div

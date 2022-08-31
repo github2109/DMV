@@ -1,59 +1,59 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
-import { useEffect, useState } from "react";
-import "./style.css";
-const ModalLicense = ({ modal, toggle, license ,handleSaveModel}) => {
-  const [tmpLicense, setTmpLicense] = useState(null);
+import { useState,useEffect } from "react";
+const ModalModule = ({ modal, toggle, module, handleSaveModel }) => {
+  const [tmpModule, setTmpModule] = useState(null);
   const [imageUrl, setImageUrl] = useState(null);
-  const [isCreated,setIsCreated] = useState(false);
+  const [isCreated, setIsCreated] = useState(false);
   useEffect(() => {
-    if (license === null) {
+    if (module === null) {
       setIsCreated(true);
-      setTmpLicense({
+      setTmpModule({
         name: "",
-        image: "",
-        description: "",
+        titleDescription:"",
+        contentDescription: "",
+        imageDescription:"",
+        isPremium:false,
       });
     } else {
-      setTmpLicense(license);
-      setImageUrl(license.image);
+      setTmpModule(module);
+      setImageUrl(module.image);
       setIsCreated(false);
     }
   }, [modal]);
   const onImageChange = (e) => {
     const [file] = e.target.files;
-    setTmpLicense({
-      ...tmpLicense,
+    setTmpModule({
+      ...tmpModule,
       image: file,
     });
     setImageUrl(URL.createObjectURL(file));
   };
   const handleInputChange = (e) => {
-    setTmpLicense({
-      ...tmpLicense,
+    setTmpModule({
+      ...tmpModule,
       [e.target.name]: e.target.value,
     });
   };
   return (
     <Modal isOpen={modal} toggle={toggle} size="md">
-      <ModalHeader toggle={toggle}>License</ModalHeader>
+      <ModalHeader toggle={toggle}>module</ModalHeader>
       <ModalBody>
-        <div className="license-modal-container">
-          <div className="license-form">
+        <div className="module-modal-container">
+          <div className="module-form">
             <input
               name="name"
-              className="input-text-license"
+              className="input-text-module"
               type="text"
-              placeholder="License name"
-              value={tmpLicense && tmpLicense.name}
+              placeholder="module name"
+              value={tmpModule && tmpModule.name}
               onChange={handleInputChange}
             />
             <input
-              name="description"
-              className="input-text-license"
+              name="titleDescription"
+              className="input-text-module"
               type="text"
-              placeholder="License description"
-              value={tmpLicense && tmpLicense.description}
+              placeholder="Title description"
+              value={tmpModule && tmpModule.titleDescription}
               onChange={handleInputChange}
             />
             <div className="image-upload">
@@ -63,11 +63,11 @@ const ModalLicense = ({ modal, toggle, license ,handleSaveModel}) => {
               </div>
               <div className="image-preview">
                 <div id="imagePreview">
-                  {tmpLicense && tmpLicense.image !== ""? <img
-                    src={imageUrl}
-                    alt=""
-                    className="image-license"
-                  ></img>:<span className="import-text">Import image</span>}
+                  {tmpModule && tmpModule.image !== "" ? (
+                    <img src={imageUrl} alt="" className="image-module"></img>
+                  ) : (
+                    <span className="import-text">Import image</span>
+                  )}
                 </div>
               </div>
             </div>
@@ -75,7 +75,10 @@ const ModalLicense = ({ modal, toggle, license ,handleSaveModel}) => {
         </div>
       </ModalBody>
       <ModalFooter>
-        <Button color="primary" onClick={(e)=>handleSaveModel(license,tmpLicense,isCreated)}>
+        <Button
+          color="primary"
+          onClick={(e) => handleSaveModel(module, tmpModule, isCreated)}
+        >
           Save
         </Button>{" "}
         <Button color="secondary" onClick={toggle}>
@@ -85,5 +88,3 @@ const ModalLicense = ({ modal, toggle, license ,handleSaveModel}) => {
     </Modal>
   );
 };
-
-export default ModalLicense;

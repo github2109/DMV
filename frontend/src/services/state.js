@@ -34,4 +34,5 @@ const deleteState = async (id) => {
   const response = await axios.delete(`${bareUrl}/${id}`, config);
   return response.data;
 };
+// eslint-disable-next-line import/no-anonymous-default-export
 export default { getAll, createNewState, updateState, deleteState };

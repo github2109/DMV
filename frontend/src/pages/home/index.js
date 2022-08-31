@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { connect } from "react-redux";
 import { initializeState } from "../../reducers/stateReducer";
 import { initializeLicense } from "../../reducers/licenseReducer";

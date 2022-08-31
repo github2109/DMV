@@ -1,6 +1,4 @@
-/* eslint-disable no-unused-expressions */
-/* eslint-disable no-undef */
-/* eslint-disable strict */
+/* eslint-disable */
 window.FontAwesomeKitConfig = {
   asyncLoading: { enabled: false },
   autoA11y: { enabled: true },
