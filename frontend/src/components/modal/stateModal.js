@@ -19,7 +19,7 @@ const StateModal = ({ isOpen, toggleFromParent, AddNewState }) => {
           <div className="input-container">
             <label>Name</label>
             <input
-              className="input100"
+              className="input-text-state"
               type="text"
               onChange={(event) => setName(event.target.value)}
               value={name}
