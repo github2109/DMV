@@ -1,74 +1,44 @@
 const Exam = require("../models/exam");
-const Module = require("../controllers/module");
-const Question = require("../controllers/question");
-
+const config = require("../utils/config");
+const jwt = require("jsonwebtoken");
 exports.createExamAPI = async (req, res, next) => {
   try {
-    const stateId = req.params.stateId;
-    const licenseId = req.params.licenseId;
-    console.log(stateId);
+    const token = req.token;
+    const decodeToken = jwt.verify(token, config.SECRET);
+    if(!decodeToken.id || !decodeToken.role) return res.status(403).json({message: "Token missing or invalid"});
+    if(decodeToken.role !== "ADMIN") return res.status(403).json({message: "Role is not allowed"});
+    const { stateId, licenseId } = req.query;
     if (!stateId || !licenseId) {
       return res.status(500).json({
         message: "Invalid state ID or license ID",
       });
     }
-    const { numberOfQuestion } = req.body;
-    const exam = await new Exam({
-      numberOfQuestion,
+    const exam = req.body;
+    const examSaved = await new Exam({
+      exam,
       state: stateId,
       license: licenseId,
-    });
-    const examSaved = await exam.save();
+    }).save();
     res.status(201).json(examSaved);
   } catch (error) {
     next(error);
   }
 };
-exports.getExamInfoAPI = async (req, res, next) => {
+exports.getListExamByStateAndLicenseAPI = async (req, res, next) => {
   try {
-    const stateId = req.query.stateId;
-    const licenseId = req.query.licenseId;
-    if (!stateId || !licenseId) {
-      return res.status(500).json({
-        message: "Invalid state ID or license ID",
-      });
-    }
+    const { stateId, licenseId } = req.query;
+    const exams = await Exam.find({ state: stateId, license: licenseId });
+    res.status(200).json(exams);
   } catch (error) {
     next(error);
-  }
-};
-exports.getListQuestionForExam = async (req, res, next) => {
-  try {
-    const stateId = req.params.stateId;
-    const licenseId = req.params.licenseId;
-    const listModules = await Module.getModuleByStateIdAndLicenseId(
-      stateId,
-      licenseId
-    );
-    const listQuestions = await this.getListQuestionForExam(listModules);
-    res.status(201).json(listQuestions);
-  } catch (error) {
-    next(error);
-  }
-};
-exports.getListQuestionForExam = async (listModules) => {
-  try {
-    const listQuestions = null;
-    for (let i = 0; i < listModules.length; i++) {
-      listQuestionsOfModule = await Question.getListQuestionForExam(
-        listModules[i],
-        true
-      );
-      listQuestions = await listQuestions.push(listQuestionsOfModule);
-    }
-    if (!listQuestions) return null;
-    return listModule;
-  } catch (error) {
-    console.log(error);
   }
 };
 exports.updateExamAPI = async (req, res, next) => {
   try {
+    const token = req.token;
+    const decodeToken = jwt.verify(token, config.SECRET);
+    if(!decodeToken.id || !decodeToken.role) return res.status(403).json({message: "Token missing or invalid"});
+    if(decodeToken.role !== "ADMIN") return res.status(403).json({message: "Role is not allowed"});
     const examId = req.params.id;
     if (!examId) {
       return res.status(500).json({
@@ -92,6 +62,10 @@ exports.updateExamAPI = async (req, res, next) => {
 };
 exports.deleteExamByIdAPI = async (req, res, next) => {
   try {
+    const token = req.token;
+    const decodeToken = jwt.verify(token, config.SECRET);
+    if(!decodeToken.id || !decodeToken.role) return res.status(403).json({message: "Token missing or invalid"});
+    if(decodeToken.role !== "ADMIN") return res.status(403).json({message: "Role is not allowed"});
     const examId = req.params.id;
     if (!examId) {
       return res.status(500).json({
@@ -105,6 +79,37 @@ exports.deleteExamByIdAPI = async (req, res, next) => {
       });
     }
     res.status(200).json(deleteExam);
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.getExamByExamId = async (examId) => {
+  try {
+    if (!examId) {
+      return res.status(500).json({
+        message: "Invalid exam ID",
+      });
+    }
+    return await Exam.findById(examId);
+  } catch (error) {
+    next(error);
+  }
+};
+exports.getExamByExamIdAPI = async (req, res, next) => {
+  try {
+    const { examId } = req.params;
+    if (!examId) {
+      return res.status(500).json({
+        message: "Invalid exam ID",
+      });
+    }
+    const exam = await Exam.findById(examId).select({
+      numberOfQuestion: 1,
+      timeOfExam: 1,
+      name: 1,
+    });
+    res.status(200).json(exam);
   } catch (error) {
     next(error);
   }

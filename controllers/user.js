@@ -15,7 +15,7 @@ exports.registerForAdmin = async (req, res, next) => {
     const user = await new User({
       username,
       password: cryptedPassword,
-      role: "Admin",
+      role: "ADMIN",
       deviceId: null,
     });
     const userSaved = await user.save();
@@ -37,12 +37,12 @@ exports.loginForAdmin = async (req, res, next) => {
         .status(500)
         .json({ message: "Invalid credentials. Please try again." });
     }
-    if (user.role !== "Admin") {
+    if (user.role !== "ADMIN") {
       return res
         .status(500)
         .json({ message: "You are not allowed login to this role." });
     }
-    const token = generateToken({ id: user._id.toString() }, "7d");
+    const token = generateToken({ id: user._id.toString(),role:user.role }, "7d");
     res.status(200).send({
       username: user.username,
       token: token,
@@ -61,7 +61,7 @@ exports.registerForClient = async (req, res, next) => {
     const newUser = await new User({
       username: null,
       password: null,
-      role: "Client",
+      role: "CLIENT",
       deviceId: deviceId,
     }).save();
     res.status(200).json(newUser);

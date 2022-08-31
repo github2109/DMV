@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/static/css/main.005b05b2.css",
-    "main.js": "/static/js/main.77cae9c2.js",
+    "main.css": "/static/css/main.14449e31.css",
+    "main.js": "/static/js/main.23e955a9.js",
     "static/media/fontawesome-webfont.svg?v=4.7.0": "/static/media/fontawesome-webfont.c1e38fd9e0e74ba58f7a.svg",
     "static/media/Montserrat-Bold.ttf": "/static/media/Montserrat-Bold.0915f0a8c3367a6d05ec.ttf",
     "static/media/fontawesome-webfont.eot": "/static/media/fontawesome-webfont.8b43027f47b20503057d.eot",
@@ -13,11 +13,11 @@
     "static/media/fontawesome-webfont.woff2?v=4.7.0": "/static/media/fontawesome-webfont.20fd1704ea223900efa9.woff2",
     "static/media/tumblr_static_tumblr_static_gaussian_blur_gradient_desktop_1680x943_wallpaper-393751.jpg": "/static/media/tumblr_static_tumblr_static_gaussian_blur_gradient_desktop_1680x943_wallpaper-393751.3c389fa1256ad5e14ce7.jpg",
     "index.html": "/index.html",
-    "main.005b05b2.css.map": "/static/css/main.005b05b2.css.map",
-    "main.77cae9c2.js.map": "/static/js/main.77cae9c2.js.map"
+    "main.14449e31.css.map": "/static/css/main.14449e31.css.map",
+    "main.23e955a9.js.map": "/static/js/main.23e955a9.js.map"
   },
   "entrypoints": [
-    "static/css/main.005b05b2.css",
-    "static/js/main.77cae9c2.js"
+    "static/css/main.14449e31.css",
+    "static/js/main.23e955a9.js"
   ]
 }
