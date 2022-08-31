@@ -1,6 +1,7 @@
 /* eslint-disable jsx-a11y/aria-proptypes */
 import "./style.css";
 import "../../fontawesome/b96f916ae2";
+import icon from "../../images/img_295694.svg"
 import { Link } from "react-router-dom";
 const Select = ({ listData, className, nameSelect, item, setItem }) => {
   const handleClick = (event) => {
@@ -39,7 +40,7 @@ const Select = ({ listData, className, nameSelect, item, setItem }) => {
           ))}
           <img
             className="select-box__icon"
-            src="./img_295694.svg"
+            src={icon}
             alt="Arrow Icon"
             aria-hidden="true"
           />
