@@ -14,13 +14,13 @@ const NormalState = ({
         <button className="btn-edit">
           <i
             className="fas fa-pencil-alt"
-            onClick={(event) => handleUpdateState(event, state)}
+            onClick={(event) => handleUpdateState(state)}
           ></i>
         </button>
         <button className="btn-delete">
           <i
             className="fas fa-trash"
-            onClick={(event) => handleDeleteState(event, state._id)}
+            onClick={(event) => handleDeleteState(event, state)}
           ></i>
         </button>
       </span>
