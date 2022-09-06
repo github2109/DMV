@@ -84,20 +84,10 @@ exports.getModuleByLicenseIdAPI = async (req, res, next) => {
     const modules = await Module.find({ license: licenseId })
       .select({
         name: 1,
-        position: 1,
-        questions: 1,
+        position: 1
       })
       .sort({ position: 1 });
-    let modulesExec = [];
-    modules.forEach((module) => {
-      modulesExec.push({
-        _id: module._id,
-        name: module.name,
-        position: module.position,
-        numberOfQuestion: module.questions.length,
-      });
-    });
-    res.status(200).json(modulesExec);
+    res.status(200).json(modules);
   } catch (error) {
     next(error);
   }
@@ -206,7 +196,7 @@ exports.updateModuleAPI = async (req, res, next) => {
     if(!decodeToken.id || !decodeToken.role) return res.status(403).json({message: "Token missing or invalid"});
     if(decodeToken.role !== "ADMIN") return res.status(403).json({message: "Role is not allowed"});
     const { moduleId } = req.params;
-    const moduleUpdated = await Module.findByIdAndUpdate(moduleId, req.body);
+    const moduleUpdated = await Module.findByIdAndUpdate(moduleId, req.body,{new:true});
     res.status(200).json(moduleUpdated);
   } catch (error) {
     next(error);

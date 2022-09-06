@@ -42,15 +42,12 @@ exports.getAllQuestionsForModuleAPI = async (req, res, next) => {
   try {
     const moduleId = req.params.moduleId;
     const module = await getModuleByModuleId(moduleId);
-    const questions = module.questions.filter(
-      (question) => question.isTestQuestion === false
-    );
-    if (!questions) {
+    if (!module.questions) {
       return res.status(500).json({
         message: "No questions found",
       });
     }
-    res.status(200).json(questions);
+    res.status(200).json(module.questions);
   } catch (error) {
     next(error);
   }
