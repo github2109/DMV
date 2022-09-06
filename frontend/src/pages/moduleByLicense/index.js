@@ -35,6 +35,7 @@ const ModuleByLicense = (props) => {
   };
   const handleSaveModel = async (oldModule, newModule, isCreate) => {
     if (isCreate) {
+      newModule.licenseId = licenseId;
       await props.createModule(newModule);
     } else {
       await props.updateModule(oldModule, newModule);

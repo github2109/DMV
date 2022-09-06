@@ -46,7 +46,7 @@ const Home = (props) => {
           {props.filter.stateId && props.filter.licenseId && <NormalModules />}
         </div>
         <div className="footer-modules-container">
-          {props.filter.stateId && props.filter.licenseId && (
+          {props.filter.stateId && props.filter.licenseId ? (
             <div>
               <Link
                 to={"/modules/license"}
@@ -58,6 +58,10 @@ const Home = (props) => {
                 <span>Manage module</span>
               </Link>
             </div>
+          ) : (
+            <Link to={"/modules"} className="link-manage-module-center">
+              <span>Manage module</span>
+            </Link>
           )}
         </div>
       </div>

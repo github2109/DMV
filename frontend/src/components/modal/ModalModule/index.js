@@ -41,7 +41,7 @@ const ModalModule = ({
     const [file] = e.target.files;
     setTmpModule({
       ...tmpModule,
-      image: file,
+      imageDescription: file,
     });
     setImageUrl(URL.createObjectURL(file));
   };
