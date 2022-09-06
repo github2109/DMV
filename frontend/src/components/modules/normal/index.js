@@ -3,7 +3,6 @@ import { connect } from "react-redux";
 import NormalModule from "../../module/normal";
 const NormalModules = (props) => {
   return (
-    <div className="modules-container">
       <article className="leaderboard">
         <main className="leaderboard__profiles">
           {props.modules.map((module, position) => (
@@ -15,7 +14,6 @@ const NormalModules = (props) => {
           ))}
         </main>
       </article>
-    </div>
   );
 };
 

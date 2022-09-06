@@ -1,9 +1,9 @@
 import "./style.css";
 
-const CustomButton = ({ labelName,className ,handleSaveClick}) => {
+const CustomButton = ({ labelName,className ,handleClick}) => {
   return (
     <div className={`button-container ${className}`}>
-      <div className="labelName-feedback" onClick={handleSaveClick}>{labelName}</div>
+      <div className="labelName-feedback" onClick={handleClick}>{labelName}</div>
     </div>
   );
 };

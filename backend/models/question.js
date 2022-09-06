@@ -18,8 +18,7 @@ const questionSchema = mongoose.Schema({
     required: [true, "Is test question is required"],
   },
   image: {
-    type: String,
-    required: [true, "Image is required"],
+    type: String
   },
   handBook: {
     type: String,

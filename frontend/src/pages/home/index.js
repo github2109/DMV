@@ -4,6 +4,7 @@ import { initializeState } from "../../reducers/stateReducer";
 import { initializeLicense } from "../../reducers/licenseReducer";
 import { setStateId, setLicenseId } from "../../reducers/filterReducer";
 import { setModuleByStateIdAndLicenseId } from "../../reducers/moduleReducer";
+import { Link } from "react-router-dom";
 import Select from "../../components/select";
 import NormalModules from "../../components/modules/normal";
 import "./style.css";
@@ -40,7 +41,26 @@ const Home = (props) => {
           setItem={props.setLicenseId}
         />
       </div>
-      {props.filter.stateId && props.filter.licenseId && <NormalModules />}
+      <div className="modules-container">
+        <div className="modules-content">
+          {props.filter.stateId && props.filter.licenseId && <NormalModules />}
+        </div>
+        <div className="footer-modules-container">
+          {props.filter.stateId && props.filter.licenseId && (
+            <div>
+              <Link
+                to={"/modules/license"}
+                className="link-add-module-license-state"
+              >
+                <span>Add module</span>
+              </Link>
+              <Link to={"/modules"} className="link-manage-module">
+                <span>Manage module</span>
+              </Link>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 };

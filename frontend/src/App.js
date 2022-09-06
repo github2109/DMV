@@ -52,7 +52,7 @@ const App = () => {
       <Routes>
         <Route path="/licenses" exact={true} element={<Licenses />}></Route>
         <Route
-          path="/modules/licenses"
+          path="/modules"
           exact={true}
           element={<ModuleByLicense />}
         ></Route>
