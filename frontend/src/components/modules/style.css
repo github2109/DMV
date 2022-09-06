@@ -1,12 +1,3 @@
-.modules-container {
-  width: 100%;
-  height: 500px;
-  display: flex;
-  background: var(--bg);
-  font-family: var(--font);
-  border-radius: 5px;
-  background-color: #fff;
-}
 .leaderboard {
   width: 100%;
   border-radius: 12px;
@@ -20,4 +11,10 @@
 
 .droppable-container {
   width: 100%;
+}
+.drag-drop-container {
+  width: 100%;
+  height: 90%;
+  padding-bottom: 8px;
+  overflow-y: auto;
 }

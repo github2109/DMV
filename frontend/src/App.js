@@ -5,7 +5,6 @@ import tokenService from "./services/token";
 import { useEffect, useState } from "react";
 import Navigation from "./components/navigation";
 import Home from "./pages/home";
-import DetailModule from "./pages/detailModule";
 import ModuleByLicense from "./pages/moduleByLicense";
 import Licenses from "./pages/licenses";
 import States from "./pages/states";
@@ -53,14 +52,9 @@ const App = () => {
       <Routes>
         <Route path="/licenses" exact={true} element={<Licenses />}></Route>
         <Route
-          path="/modules/licenses"
+          path="/modules"
           exact={true}
           element={<ModuleByLicense />}
-        ></Route>
-        <Route
-          path="/modules/:id"
-          exact={true}
-          element={<DetailModule />}
         ></Route>
         <Route path="/" exact={true} element={<Home />} />
         <Route path="/states" exact={true} element={<States />}></Route>

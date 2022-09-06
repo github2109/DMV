@@ -17,6 +17,7 @@ const ModalLicense = ({ modal, toggle, license ,handleSaveModel}) => {
     } else {
       setTmpLicense(license);
       setImageUrl(license.image);
+      setIsCreated(false);
     }
   }, [modal]);
   const onImageChange = (e) => {
@@ -74,7 +75,7 @@ const ModalLicense = ({ modal, toggle, license ,handleSaveModel}) => {
         </div>
       </ModalBody>
       <ModalFooter>
-        <Button color="primary" onClick={(e)=>handleSaveModel(tmpLicense,isCreated)}>
+        <Button color="primary" onClick={(e)=>handleSaveModel(license,tmpLicense,isCreated)}>
           Save
         </Button>{" "}
         <Button color="secondary" onClick={toggle}>

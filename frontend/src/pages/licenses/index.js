@@ -5,6 +5,8 @@ import License from "../../components/license";
 import {
   initializeLicense,
   createLicense,
+  updateLicense,
+  deleteLicense
 } from "../../reducers/licenseReducer";
 import PlusButton from "../../components/button/PlusButton";
 import ModalLicense from "../../components/modal/ModalLicense";
@@ -24,13 +26,18 @@ const Licenses = (props) => {
     setLicense(license);
     toggle();
   };
-  const handleSaveModel = async (license, isCreate) => {
+  const handleSaveModel = async (oldLicense,newLicense, isCreate) => {
     if (isCreate) {
-      console.log(license);
-      await props.createLicense(license);
+      await props.createLicense(newLicense);
+    }else{
+      await props.updateLicense(oldLicense, newLicense);
     }
     toggle();
   };
+  const handleDeleteLicense = (e,license) => {
+    e.stopPropagation();
+    props.deleteLicense(license);
+  }
   return (
     <div className="container">
       <ModalLicense
@@ -47,6 +54,7 @@ const Licenses = (props) => {
               key={license._id}
               license={license}
               handleSelectLicense={handleSelectLicense}
+              handleDeleteLicense={handleDeleteLicense}
             />
           ))}
         </div>
@@ -68,6 +76,8 @@ const mapDispatchToProps = (dispatch) => {
   return {
     initializeLicense: () => dispatch(initializeLicense()),
     createLicense: (license) => dispatch(createLicense(license)),
+    updateLicense: (oldLicense,newLicense) => dispatch(updateLicense(oldLicense,newLicense)),
+    deleteLicense: (license) => dispatch(deleteLicense(license)),
   };
 };
 

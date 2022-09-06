@@ -25,7 +25,7 @@ const DrawModules = (props) => {
   };
   return (
     <DragDropContext onDragEnd={onDragEnd}>
-      <div className="modules-container">
+      <div className="drag-drop-container">
         <Droppable droppableId="droppable">
           {(provided, snapshot) => (
             <div
@@ -40,6 +40,7 @@ const DrawModules = (props) => {
                       key={module._id}
                       draggableId={module._id}
                       index={position}
+                      
                     >
                       {(provided, snapshot) => (
                         <div
@@ -47,7 +48,7 @@ const DrawModules = (props) => {
                           {...provided.draggableProps}
                           {...provided.dragHandleProps}
                         >
-                          <DrawModule module={module} position={position} />
+                          <DrawModule module={module} position={position} handleSelectModule = {(e) => props.handleSelectModule(e,module._id)} handleDeleteModule={(e) => props.handleDeleteModule(e,module._id)}/>
                         </div>
                       )}
                     </Draggable>
