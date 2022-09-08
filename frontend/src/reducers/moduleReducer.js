@@ -67,7 +67,12 @@ export const updateModule = (oldModule, newModule) => {
 export const createModule = (newModule) => {
   return async (dispatch) => {
     const module = await moduleService.createModule(newModule);
-    dispatch(moduleSlice.actions.createModule(module));
+    dispatch(moduleSlice.actions.createModule({
+      _id: module._id,
+      name: module.name,
+      position:module.position
+    }));
+    return module;
   }
 }
 

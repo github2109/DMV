@@ -33,14 +33,14 @@ const ModuleByLicense = (props) => {
     setModuleId(null);
     toggle();
   };
-  const handleSaveModel = async (oldModule, newModule, isCreate) => {
+  const handleSaveModal = async (oldModule, newModule, isCreate) => {
     if (isCreate) {
-      newModule.licenseId = licenseId;
-      await props.createModule(newModule);
+      newModule.license = licenseId;
+      newModule.position = props.modules.length + 1;
+      return await props.createModule(newModule);
     } else {
       await props.updateModule(oldModule, newModule);
     }
-    toggle();
   };
   const handleSelectModule = (e, moduleId) => {
     e.stopPropagation();
@@ -57,7 +57,7 @@ const ModuleByLicense = (props) => {
         modal={modal}
         toggle={toggle}
         moduleId={moduleId}
-        handleSaveModel={handleSaveModel}
+        handleSaveModal={handleSaveModal}
       />
       <div className="select2-container">
         <Select
@@ -74,7 +74,12 @@ const ModuleByLicense = (props) => {
         />
       </div>
       <div className="modules-container">
-        {licenseId && <DrawModules handleSelectModule={handleSelectModule} handleDeleteModule={handleDeleteModule}/>}
+        {licenseId && (
+          <DrawModules
+            handleSelectModule={handleSelectModule}
+            handleDeleteModule={handleDeleteModule}
+          />
+        )}
         {licenseId && (
           <div className="create-module-into-license">
             <PlusButton handleClick={handleClickCreateModule} />

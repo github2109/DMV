@@ -1,159 +1,233 @@
-// import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
-// import { useState, useEffect } from "react";
-// import { connect } from "react-redux";
-// import "./style.css";
-// const ModalQuestion = ({
-//   modal,
-//   toggle,
-//   question,
-//   handleSaveModel,
-//   ...props
-// }) => {
-//   const [oldQuestion, setOldQuestion] = useState(null);
-//   const [tmpQuestion, setTmpQuestion] = useState(null);
-//   const [imageUrl, setImageUrl] = useState(null);
-//   const [isCreated, setIsCreated] = useState(false);
-//   useEffect(() => {
-//     if (question === null) {
-//       setIsCreated(true);
-//       setTmpQuestion({
-//         name: "",
-//         titleDescription: "",
-//         contentDescription: "",
-//         imageDescription: "",
-//         isPremium: false,
-//       });
-//     } else {
-//       props.getDetailQuestionByQuestionId().then((res) => {
-//         setTmpQuestion(res);
-//         setImageUrl(res.imageDescription);
-//         setIsCreated(false);
-//         setOldQuestion(res);
-//       });
-//     }
-//   }, [modal]);
-//   const onImageChange = (e) => {
-//     const [file] = e.target.files;
-//     setTmpQuestion({
-//       ...tmpQuestion,
-//       image: file,
-//     });
-//     setImageUrl(URL.createObjectURL(file));
-//   };
-//   const handleInputChange = (e) => {
-//     setTmpQuestion({
-//       ...tmpQuestion,
-//       [e.target.name]: e.target.value,
-//     });
-//   };
-//   const handleCheckRadioButton = (e) => {
-//     setTmpQuestion({
-//       ...tmpQuestion,
-//       isPremium: e.target.value === "true" ? true : false,
-//     });
-//   };
-//   return (
-//     <Modal isOpen={modal} toggle={toggle} size="lg">
-//       <ModalHeader toggle={toggle}>Detail Question</ModalHeader>
-//       <ModalBody>
-//         <ModalQuestion modal={} toggle={toggleChildren} QuestionId={QuestionId} />
-//         <div className="Question-modal-container">
-//           <div className="Question-form">
-//             <label>Question name :</label>
-//             <input
-//               name="name"
-//               className="input-text-Question"
-//               type="text"
-//               placeholder="Question name"
-//               value={tmpQuestion && tmpQuestion.name}
-//               onChange={handleInputChange}
-//             />
-//             <label>Title description :</label>
-//             <input
-//               name="titleDescription"
-//               className="input-text-Question"
-//               type="text"
-//               placeholder="Title description"
-//               value={tmpQuestion && tmpQuestion.titleDescription}
-//               onChange={handleInputChange}
-//             />
-//             <label>Content description :</label>
-//             <textarea
-//               name="contentDescription"
-//               className="input-text-Question content-description"
-//               type="text"
-//               placeholder="Content description"
-//               value={tmpQuestion && tmpQuestion.contentDescription}
-//               onChange={handleInputChange}
-//             />
-//             <label>Image description :</label>
-//             <div className="image-upload-Question">
-//               <div className="image-edit-Question">
-//                 <input
-//                   type="file"
-//                   id="imageUpload-Question"
-//                   onChange={onImageChange}
-//                 />
-//                 <label htmlFor="imageUpload-Question"></label>
-//               </div>
-//               <div className="image-preview-Question">
-//                 <div id="imagePreview-Question">
-//                   {tmpQuestion && tmpQuestion.image !== "" ? (
-//                     <img src={imageUrl} alt="" className="image-Question"></img>
-//                   ) : (
-//                     <span className="import-text-Question">Import image</span>
-//                   )}
-//                 </div>
-//               </div>
-//             </div>
-//             <div
-//               className="radio-group-Question"
-//               onChange={handleCheckRadioButton}
-//             >
-//               <input
-//                 type="radio"
-//                 value="true"
-//                 name="isPremium"
-//                 defaultChecked={tmpQuestion && tmpQuestion.isPremium === true}
-//               />{" "}
-//               Premium
-//               <input
-//                 type="radio"
-//                 value="false"
-//                 name="isPremium"
-//                 className="radio-Question"
-//                 defaultChecked={tmpQuestion && tmpQuestion.isPremium === false}
-//               />{" "}
-//               Basic
-//             </div>
-//             <CustomButton
-//               className="manage-question-button"
-//               labelName="Manage questions"
-//               handleClick={toggleChildren}
-//             />
-//           </div>
-//         </div>
-//       </ModalBody>
-//       <ModalFooter>
-//         <Button
-//           color="primary"
-//           onClick={(e) => handleSaveModel(oldQuestion, tmpQuestion, isCreated)}
-//         >
-//           Save
-//         </Button>{" "}
-//         <Button color="secondary" onClick={toggle}>
-//           Cancel
-//         </Button>
-//       </ModalFooter>
-//     </Modal>
-//   );
-// };
+/* eslint-disable react-hooks/exhaustive-deps */
+import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
+import { useState, useEffect } from "react";
+import PlusButton from "../../button/PlusButton";
+import "./style.css";
+const ModalQuestion = ({
+  modal,
+  toggle,
+  question,
+  handleSaveModal,
+  ...props
+}) => {
+  const [oldQuestion, setOldQuestion] = useState(null);
+  const [tmpQuestion, setTmpQuestion] = useState(null);
+  const [imageUrl, setImageUrl] = useState(null);
+  const [isCreated, setIsCreated] = useState(false);
+  useEffect(() => {
+    if (question === null) {
+      setIsCreated(true);
+      setTmpQuestion({
+        questionContent: "",
+        answers: [],
+        isTestQuestion: false,
+        image: null,
+        handBook: "",
+      });
+    } else {
+      setOldQuestion(question);
+      setTmpQuestion(question);
+      setImageUrl(question.image);
+    }
+  }, [modal]);
+  const onImageChange = (e) => {
+    const [file] = e.target.files;
+    setTmpQuestion({
+      ...tmpQuestion,
+      image: file,
+    });
+    setImageUrl(URL.createObjectURL(file));
+  };
+  const handleClickAddAnswer = () => {
+    setTmpQuestion({
+      ...tmpQuestion,
+      answers: [
+        ...tmpQuestion.answers,
+        {
+          content: "",
+          isCorrect: false,
+        },
+      ],
+    });
+  };
+  const handleInputChange = (e) => {
+    setTmpQuestion({
+      ...tmpQuestion,
+      [e.target.name]: e.target.value,
+    });
+  };
+  const handleInputAnswerChange = (e, i) => {
+    let answers = tmpQuestion.answers;
+    answers[i].content = e.target.value;
+    setTmpQuestion({
+      ...tmpQuestion,
+      answers: answers,
+    });
+  };
+  const handleCheckRadioButtonAnswer = (e, i) => {
+    let answers = tmpQuestion.answers;
+    answers[i].isCorrect = e.target.value === "true" ? true : false;
+    setTmpQuestion({
+      ...tmpQuestion,
+      answers: answers,
+    });
+  };
+  const handleCheckRadioButtonIsTestQuestion = (e) => {
+    const value = e.target.value === "true" ? true : false;
+    setTmpQuestion({
+      ...tmpQuestion,
+      isTestQuestion: value,
+      handBook: value ? null : "",
+    });
+  };
+  const handleRemoveAnswer = (i) => {
+    let answers = tmpQuestion.answers;
+    answers.splice(i, 1);
+    setTmpQuestion({
+      ...tmpQuestion,
+      answers: answers,
+    });
+  };
+  const handleRemoveImage = () => {
+    setTmpQuestion({
+      ...tmpQuestion,
+      image: null,
+    });
+    setImageUrl(null);
+  };
+  if (tmpQuestion === null) return null;
+  return (
+    <Modal isOpen={modal} toggle={toggle} size="lg">
+      <ModalHeader toggle={toggle}>Detail Question</ModalHeader>
+      <ModalBody>
+        <div className="form-question">
+          <label>Content question :</label>
+          <textarea
+            name="questionContent"
+            className="input-text-question"
+            type="text"
+            placeholder="Content question"
+            value={tmpQuestion.questionContent}
+            onChange={handleInputChange}
+          />
+          <label>Image :</label>
+          <div className="image-upload-question">
+            <div className="image-edit-question">
+              <input
+                type="file"
+                id="imageUpload-question"
+                onChange={onImageChange}
+                key={tmpQuestion.image}
+              />
+              <label htmlFor="imageUpload-question"></label>
+            </div>
+            <div className="image-preview-question">
+              <div id="imagePreview-question">
+                {imageUrl !== null ? (
+                  <img src={imageUrl} alt="" className="image-question"></img>
+                ) : (
+                  <span className="import-text-question">Import image</span>
+                )}
+              </div>
+            </div>
+            <div className="image-remove-question" onClick={handleRemoveImage}>
+              <i className="icon-x fa-solid fa-x"></i>
+            </div>
+          </div>
 
-// const mapDispatchToProps = (dispatch) => {
-//   return {
-//     getDetailQuestionByQuestionId: (QuestionId) =>
-//       dispatch(getDetailQuestionByQuestionId(QuestionId)),
-//   };
-// };
+          <label>Answers :</label>
+          <div className="answers-container">
+            {tmpQuestion.answers.map((answer, i) => (
+              <div key={i}>
+                <span>Answer {i + 1} : </span>
+                <input
+                  name={`answers[${i}]`}
+                  className="input-text-answer"
+                  type="text"
+                  placeholder="Content"
+                  value={tmpQuestion.answers[i].content}
+                  onChange={(e) => handleInputAnswerChange(e, i)}
+                />
+                <div
+                  className="button-remove-answer"
+                  onClick={(e) => handleRemoveAnswer(i)}
+                >
+                  <i className="trash-icon fa-solid fa-trash"></i>
+                </div>
+                <div
+                  className="radio-group-module"
+                  onChange={(e) => handleCheckRadioButtonAnswer(e, i)}
+                >
+                  <input
+                    type="radio"
+                    value="true"
+                    name={`answer${i}`}
+                    defaultChecked={answer.isCorrect === true}
+                  />{" "}
+                  True
+                  <input
+                    type="radio"
+                    value="false"
+                    name={`answer${i}`}
+                    className="radio-module"
+                    defaultChecked={answer.isCorrect === false}
+                  />{" "}
+                  False
+                </div>
+              </div>
+            ))}
+            <div className="add-answer-button">
+              <PlusButton handleClick={handleClickAddAnswer} />
+            </div>
+          </div>
+          <div
+            className="radio-group-module"
+            onChange={handleCheckRadioButtonIsTestQuestion}
+          >
+            <input
+              type="radio"
+              value="true"
+              name="isTestQuestion"
+              defaultChecked={tmpQuestion.isTestQuestion === true}
+            />{" "}
+            Test question
+            <input
+              type="radio"
+              value="false"
+              name="isTestQuestion"
+              className="radio-module"
+              defaultChecked={tmpQuestion.isTestQuestion === false}
+            />{" "}
+            Learning question
+          </div>
+          {tmpQuestion.isTestQuestion === false && (
+            <div className="handBook-container">
+              <label>Handbook :</label>
+              <textarea
+                name="handBook"
+                className="input-text-question"
+                type="text"
+                placeholder="Handbook"
+                value={tmpQuestion.handBook}
+                onChange={handleInputChange}
+              />
+            </div>
+          )}
+        </div>
+      </ModalBody>
+      <ModalFooter>
+        <Button
+          color="primary"
+          onClick={(e) => handleSaveModal(oldQuestion, tmpQuestion, isCreated)}
+        >
+          Save
+        </Button>{" "}
+        <Button color="secondary" onClick={toggle}>
+          Cancel
+        </Button>
+      </ModalFooter>
+    </Modal>
+  );
+};
 
-// export default connect(null, mapDispatchToProps)(ModalQuestion);
+export default ModalQuestion;

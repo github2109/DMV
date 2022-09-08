@@ -1,15 +1,16 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
 import { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import "./style.css";
 import { getDetailModuleByModuleId } from "../../../reducers/moduleReducer";
 import CustomButton from "../../button/CustomButton";
-import ModalQuestion from "../ModalQuestion"
+import ModalQuestion from "../ModalQuestion";
 const ModalModule = ({
   modal,
   toggle,
   moduleId,
-  handleSaveModel,
+  handleSaveModal,
   ...props
 }) => {
   const [oldModule, setOldModule] = useState(null);
@@ -25,9 +26,10 @@ const ModalModule = ({
         name: "",
         titleDescription: "",
         contentDescription: "",
-        imageDescription: "",
+        imageDescription: null,
         isPremium: false,
       });
+      setImageUrl(null);
     } else {
       props.getDetailModuleByModuleId(moduleId).then((res) => {
         setTmpModule(res);
@@ -57,11 +59,28 @@ const ModalModule = ({
       isPremium: e.target.value === "true" ? true : false,
     });
   };
+  const handleBeforeSaveModal = async (oldModule, tmpModule, isCreated) => {
+    const module = await handleSaveModal(oldModule, tmpModule, isCreated);
+    if(isCreated){
+      setTmpModule(module);
+      setOldModule(module);
+      toggleChildren();
+      setIsCreated(false);
+    }else{
+      toggle()
+    }
+  };
   return (
     <Modal isOpen={modal} toggle={toggle} size="lg">
       <ModalHeader toggle={toggle}>Detail module</ModalHeader>
       <ModalBody>
-        <ModalQuestion modal={modalChildren} toggle={toggleChildren} moduleId={moduleId} />
+        {modalChildren === true && (
+          <ModalQuestion
+            modal={modalChildren}
+            toggle={toggleChildren}
+            moduleId={tmpModule._id}
+          />
+        )}
         <div className="module-modal-container">
           <div className="module-form">
             <label>Module name :</label>
@@ -103,7 +122,7 @@ const ModalModule = ({
               </div>
               <div className="image-preview-module">
                 <div id="imagePreview-module">
-                  {tmpModule && tmpModule.image !== "" ? (
+                  {tmpModule && tmpModule.imageDescription !== null ? (
                     <img src={imageUrl} alt="" className="image-module"></img>
                   ) : (
                     <span className="import-text-module">Import image</span>
@@ -131,20 +150,24 @@ const ModalModule = ({
               />{" "}
               Basic
             </div>
-            <CustomButton
-              className="manage-question-button"
-              labelName="Manage questions"
-              handleClick={toggleChildren}
-            />
+            {!isCreated && (
+              <CustomButton
+                className="manage-question-button"
+                labelName="Manage questions"
+                handleClick={toggleChildren}
+              />
+            )}
           </div>
         </div>
       </ModalBody>
       <ModalFooter>
         <Button
           color="primary"
-          onClick={(e) => handleSaveModel(oldModule, tmpModule, isCreated)}
+          onClick={(e) =>
+            handleBeforeSaveModal(oldModule, tmpModule, isCreated)
+          }
         >
-          Save
+          {isCreated ? "Next" : "Save"}
         </Button>{" "}
         <Button color="secondary" onClick={toggle}>
           Cancel
@@ -161,4 +184,10 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default connect(null, mapDispatchToProps)(ModalModule);
+const mapStateToProps = (state) => {
+  return {
+    modules: state.modules,
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(ModalModule);

@@ -57,24 +57,26 @@ exports.createQuestionAPI = async (req, res, next) => {
   try {
     const token = req.token;
     const decodeToken = jwt.verify(token, config.SECRET);
-    if(!decodeToken.id || !decodeToken.role) return res.status(403).json({message: "Token missing or invalid"});
-    if(decodeToken.role !== "ADMIN") return res.status(403).json({message: "Role is not allowed"});
+    if (!decodeToken.id || !decodeToken.role)
+      return res.status(403).json({ message: "Token missing or invalid" });
+    if (decodeToken.role !== "ADMIN")
+      return res.status(403).json({ message: "Role is not allowed" });
     const { moduleId } = req.body;
     const { question } = req.body;
-    const check = await Question.findOne({ questionContent: questionContent });
+    const check = await Question.findOne({
+      questionContent: question.questionContent,
+    });
     if (check) {
       return res.status(200).json({
         message:
           "This question was already exists. Please use another question",
       });
     }
-    const newQuestion = await new Question({
-      question,
-    });
+    const newQuestion = await new Question(question);
     const savedQuestion = await newQuestion.save();
     const addIntoModule = await updateModuleAfterCreateQuestion(
       moduleId,
-      savedQuestion.id
+      savedQuestion._id
     );
     if (!addIntoModule) {
       return res.status(500).json({
@@ -90,17 +92,18 @@ exports.deleteQuestionByIdAPI = async (req, res, next) => {
   try {
     const token = req.token;
     const decodeToken = jwt.verify(token, config.SECRET);
-    if(!decodeToken.id || !decodeToken.role) return res.status(403).json({message: "Token missing or invalid"});
-    if(decodeToken.role !== "ADMIN") return res.status(403).json({message: "Role is not allowed"});
-    const questionId = req.params;
-    const moduleId = req.body;
+    if (!decodeToken.id || !decodeToken.role)
+      return res.status(403).json({ message: "Token missing or invalid" });
+    if (decodeToken.role !== "ADMIN")
+      return res.status(403).json({ message: "Role is not allowed" });
+    const {questionId} = req.params;
     const deletedQuestion = await Question.findByIdAndRemove({
       _id: questionId,
     });
     if (!deletedQuestion) {
       return res.status(500).json({ message: "Question not found" });
     }
-    await updateModuleAfterRemoveQuestion(moduleId, questionId);
+    const deleteQuestionInModule = await updateModuleAfterRemoveQuestion(questionId);
     if (!deleteQuestionInModule) {
       return res.status(500).json({ message: "Something went wrong" });
     }
@@ -113,8 +116,10 @@ exports.updateQuestionByIdAPI = async (req, res, next) => {
   try {
     const token = req.token;
     const decodeToken = jwt.verify(token, config.SECRET);
-    if(!decodeToken.id || !decodeToken.role) return res.status(403).json({message: "Token missing or invalid"});
-    if(decodeToken.role !== "ADMIN") return res.status(403).json({message: "Role is not allowed"});
+    if (!decodeToken.id || !decodeToken.role)
+      return res.status(403).json({ message: "Token missing or invalid" });
+    if (decodeToken.role !== "ADMIN")
+      return res.status(403).json({ message: "Role is not allowed" });
     const questionId = req.params.id;
     const updatedQuestion = await Question.findByIdAndUpdate(
       { _id: questionId },

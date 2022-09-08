@@ -7,26 +7,32 @@ const getQuestionByModuleId = async (moduleId) => {
   return response.data;
 };
 
-const createQuestion = async (question) => {
-  const config = {
-    headers: {
-      Authorization: token,
-      "content-type": "multipart/form-data",
-    },
-  };
-  let formData = new FormData();
-  formData.append("file", question.image);
-  const urlRes = await axios.post(
-    "/api/uploads/uploadImages",
-    formData,
-    config
+const createQuestion = async (question, moduleId) => {
+  if (question.image !== null && typeof question.image !== "string") {
+    const config = {
+      headers: {
+        Authorization: token,
+        "content-type": "multipart/form-data",
+      },
+    };
+    let formData = new FormData();
+    formData.append("file", question.image);
+    const urlRes = await axios.post(
+      "/api/uploads/uploadImages",
+      formData,
+      config
+    );
+    question.image = urlRes.data[0].url;
+  }
+  const response = await axios.post(
+    bareUrl,
+    { question, moduleId },
+    {
+      headers: {
+        Authorization: token,
+      },
+    }
   );
-  question.image = urlRes.data[0].url;
-  const response = await axios.post(bareUrl, question, {
-    headers: {
-      Authorization: token,
-    },
-  });
   return response.data;
 };
 
@@ -38,19 +44,23 @@ const updateQuestion = async (oldQuestion, newQuestion) => {
     },
   };
   if (typeof newQuestion.image !== "string") {
-    await axios.post(
-      "/api/uploads/removeImages",
-      { path: oldQuestion.image },
-      config
-    );
-    let formData = new FormData();
-    formData.append("file", newQuestion.image);
-    const urlRes = await axios.post(
-      "/api/uploads/uploadImages",
-      formData,
-      config
-    );
-    newQuestion.image = urlRes.data[0].url;
+    if (oldQuestion.image !== null) {
+      await axios.post(
+        "/api/uploads/removeImages",
+        { path: oldQuestion.image },
+        config
+      );
+    }
+    if (newQuestion.image !== null) {
+      let formData = new FormData();
+      formData.append("file", newQuestion.image);
+      const urlRes = await axios.post(
+        "/api/uploads/uploadImages",
+        formData,
+        config
+      );
+      newQuestion.image = urlRes.data[0].url;
+    }
   }
   const response = await axios.put(
     `${bareUrl}/${oldQuestion._id}`,
@@ -70,11 +80,13 @@ const deleteQuestion = async (question) => {
       Authorization: token,
     },
   };
-  await axios.post(
-    "/api/uploads/removeImages",
-    { path: question.image },
-    config
-  );
+  if (question.image !== null) {
+    await axios.post(
+      "/api/uploads/removeImages",
+      { path: question.image },
+      config
+    );
+  }
   const response = await axios.delete(`${bareUrl}/${question._id}`, config);
   return response.data;
 };

@@ -34,9 +34,9 @@ export const updateQuestion = (oldQuestion, newQuestion) => {
   }
 }
 
-export const createQuestion = (newQuestion) => {
+export const createQuestion = (newQuestion,moduleId) => {
   return async (dispatch) => {
-    const question = await questionService.createQuestion(newQuestion);
+    const question = await questionService.createQuestion(newQuestion,moduleId);
     dispatch(questionSlice.actions.createQuestion(question));
   }
 }
@@ -44,7 +44,7 @@ export const createQuestion = (newQuestion) => {
 export const deleteQuestion = (question) => {
   return async (dispatch) => {
     await questionService.deleteQuestion(question);
-    dispatch(questionSlice.actions.deleteQuestion(question));
+    dispatch(questionSlice.actions.deleteQuestion(question._id));
   }
 }
 

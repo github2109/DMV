@@ -45,20 +45,22 @@ const updatePositionModule = async (listModuleId) => {
 };
 
 const createModule = async (module) => {
-  const config = {
-    headers: {
-      Authorization: token,
-      "content-type": "multipart/form-data",
-    },
-  };
-  let formData = new FormData();
-  formData.append("file", module.imageDescription);
-  const urlRes = await axios.post(
-    "/api/uploads/uploadImages",
-    formData,
-    config
-  );
-  module.imageDescription = urlRes.data[0].url;
+  if (typeof module.imageDescription !== "string") {
+    const config = {
+      headers: {
+        Authorization: token,
+        "content-type": "multipart/form-data",
+      },
+    };
+    let formData = new FormData();
+    formData.append("file", module.imageDescription);
+    const urlRes = await axios.post(
+      "/api/uploads/uploadImages",
+      formData,
+      config
+    );
+    module.imageDescription = urlRes.data[0].url;
+  }
   const response = await axios.post(bareUrl, module, {
     headers: {
       Authorization: token,
@@ -104,10 +106,14 @@ const deleteModule = async (moduleId) => {
     },
   };
   const module = await getModuleByModuleId(moduleId);
-  await axios.post("/api/uploads/removeImages", { path: module.imageDescription }, config);
+  await axios.post(
+    "/api/uploads/removeImages",
+    { path: module.imageDescription },
+    config
+  );
   const response = await axios.delete(`${bareUrl}/${moduleId}`, config);
   return response.data;
-}
+};
 // eslint-disable-next-line import/no-anonymous-default-export
 export default {
   getModuleByStateIdAndLicenseId,
@@ -116,5 +122,5 @@ export default {
   updatePositionModule,
   updateModule,
   createModule,
-  deleteModule
+  deleteModule,
 };
