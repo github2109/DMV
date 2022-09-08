@@ -3,26 +3,37 @@ import { token } from "./token";
 const bareUrl = "/api/states";
 
 const getAll = async () => {
-  const response = await axios.get(bareUrl);
-  return response.data;
+  try {
+    const response = await axios.get(bareUrl);
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
 };
-const createNewState = async (data) => {
+const createState = async (data) => {
+  try {
+    const config = {
+      headers: {
+        Authorization: token,
+      },
+    };
+    const response = await axios.post(bareUrl, { name: data }, config);
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+const updateState = async (oldState, newState) => {
   const config = {
     headers: {
       Authorization: token,
     },
   };
-  const response = await axios.post(bareUrl, { name: data }, config);
-  console.log("check state", response);
-  return response.data;
-};
-const updateState = async (id, data) => {
-  const config = {
-    headers: {
-      Authorization: token,
-    },
-  };
-  const response = await axios.put(`${bareUrl}/${id}`, { name: data }, config);
+  const response = await axios.put(
+    `${bareUrl}/${oldState._id}`,
+    { name: newState },
+    config
+  );
   return response.data;
 };
 const deleteState = async (id) => {
@@ -34,5 +45,4 @@ const deleteState = async (id) => {
   const response = await axios.delete(`${bareUrl}/${id}`, config);
   return response.data;
 };
-// eslint-disable-next-line import/no-anonymous-default-export
-export default { getAll, createNewState, updateState, deleteState };
+export default { getAll, createState, updateState, deleteState };

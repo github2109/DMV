@@ -1,109 +1,65 @@
 import { useEffect } from "react";
 import { connect } from "react-redux";
-import { initializeState } from "../../reducers/stateReducer";
+import {
+  initializeState,
+  createState,
+  deleteState,
+  updateState,
+} from "../../reducers/stateReducer";
 
-import stateService from "../../services/state";
 import NormalStates from "../../components/states/normal";
 import { useState } from "react";
 import "./style.css";
 import StateModal from "../../components/modal/stateModal";
-import StateUpdateModal from "../../components/modal/stateUpdateModal";
 const States = (props) => {
   useEffect(() => {
     props.initializeState();
   }, []);
-  const [currentState, setCurrentState] = useState({});
+  const [currentState, setCurrentState] = useState(null);
   const [message, setMessage] = useState(null);
-  const [isOpenStateModal, setIsOpenStateModal] = useState(false);
-  const [isOpenEditStateModal, setIsOpenEditStateModal] = useState(false);
-
-  const createNewState = async (event, data) => {
-    event.preventDefault();
-    if (!data) {
-      setMessage("Name must be required");
-      return;
-    }
-    try {
-      const state = await stateService.createNewState(data);
-      if (state) {
-        setMessage("create new state successfully");
-      }
-    } catch (error) {
-      setMessage(error.response.data.message);
-    }
+  const [modal, setModal] = useState(false);
+  const toggle = () => setModal(!modal);
+  const handleClickCreateState = () => {
+    setCurrentState(null);
+    toggle();
   };
-  const handleUpdateState = (event, data) => {
-    event.preventDefault();
-    setCurrentState({ id: data._id, name: data.name });
-    setIsOpenEditStateModal(true);
+  const handleClickUpdateState = (state) => {
+    setCurrentState(state);
+    toggle();
   };
-  const doUpdateState = async (event, id, data) => {
-    event.preventDefault();
-    if (!data || !id) {
-      setMessage("Missing parameter ");
-      return;
+  const handleSaveModal = async (oldState, newState, isCreate) => {
+    if (isCreate) {
+      await props.createState(newState);
+    } else {
+      await props.updateState(oldState, newState);
     }
-    try {
-      const state = await stateService.updateState(id, data);
-      if (state) {
-        setMessage("Update state successfully");
-      }
-    } catch (error) {
-      setMessage(error.response.data.message);
-    }
+    toggle();
   };
-  const handleDeleteState = async (event, id) => {
-    event.preventDefault();
-    if (!id) {
-      setMessage("Missing parameter ");
-      return;
-    }
-    try {
-      const state = await stateService.deleteState(id);
-      if (state) {
-        setCurrentState("Delete state successfully");
-      }
-    } catch (error) {
-      setMessage(error.response.data.message);
-    }
-  };
-  const toggleAddState = () => {
-    setIsOpenStateModal(!isOpenStateModal);
-  };
-  const toggleUpdateState = () => {
-    setIsOpenEditStateModal(!isOpenEditStateModal);
-    console.log("toggle update state");
+  const handleDeleteState = (e, state) => {
+    e.stopPropagation();
+    props.deleteState(state);
   };
 
   return (
     <div className="container">
       <StateModal
-        isOpen={isOpenStateModal}
-        AddNewState={createNewState}
-        toggleFromParent={toggleAddState}
+        modal={modal}
+        toggle={toggle}
+        curentState={currentState}
+        handleSaveModal={handleSaveModal}
       />
-      {isOpenEditStateModal && (
-        <StateUpdateModal
-          isOpen={isOpenEditStateModal}
-          updateState={doUpdateState}
-          toggleFromParent={toggleUpdateState}
-          currentState={currentState}
-        />
-      )}
       <div className="mx-1">
         <button
           className="btn btn-primary px-3"
-          onClick={() => toggleAddState()}
+          onClick={() => handleClickCreateState()}
         >
           <i className="fas fa-plus"></i>Add new user
         </button>
       </div>
-      {
-        <NormalStates
-          handleUpdateState={handleUpdateState}
-          handleDeleteState={handleDeleteState}
-        />
-      }
+      <NormalStates
+        handleUpdateState={handleClickUpdateState}
+        handleDeleteState={handleDeleteState}
+      />
     </div>
   );
 };
@@ -114,9 +70,11 @@ const mapStateToProps = (state) => {
 };
 const mapDispatchToProps = (dispatch) => {
   return {
-    initializeState: () => {
-      dispatch(initializeState());
-    },
+    initializeState: () => dispatch(initializeState()),
+    createState: (state) => dispatch(createState(state)),
+    updateState: (oldState, newState) =>
+      dispatch(updateState(oldState, newState)),
+    deleteState: (state) => dispatch(deleteState(state)),
   };
 };
 export default connect(mapStateToProps, mapDispatchToProps)(States);
