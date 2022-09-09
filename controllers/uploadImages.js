@@ -11,8 +11,10 @@ exports.uploadImages = async (req, res) => {
   try {
     const token = req.token;
     const decodeToken = jwt.verify(token, config.SECRET);
-    if(!decodeToken.id || !decodeToken.role) return res.status(403).json({message: "Token missing or invalid"});
-    if(decodeToken.role !== "ADMIN") return res.status(403).json({message: "Role is not allowed"});
+    if (!decodeToken.id || !decodeToken.role)
+      return res.status(403).json({ message: "Token missing or invalid" });
+    if (decodeToken.role !== "ADMIN")
+      return res.status(403).json({ message: "Role is not allowed" });
     const { path } = req.body;
     let files = Object.values(req.files).flat();
     let images = [];
@@ -23,7 +25,7 @@ exports.uploadImages = async (req, res) => {
     }
     res.json(images);
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    next(error);
   }
 };
 
@@ -57,8 +59,10 @@ exports.removeImageFromCloudinary = async (req, res, next) => {
   try {
     const token = req.token;
     const decodeToken = jwt.verify(token, config.SECRET);
-    if(!decodeToken.id || !decodeToken.role) return res.status(403).json({message: "Token missing or invalid"});
-    if(decodeToken.role !== "ADMIN") return res.status(403).json({message: "Role is not allowed"});
+    if (!decodeToken.id || !decodeToken.role)
+      return res.status(403).json({ message: "Token missing or invalid" });
+    if (decodeToken.role !== "ADMIN")
+      return res.status(403).json({ message: "Role is not allowed" });
     const { path } = req.body;
     const getPublicId = (path) => {
       const arrayPath = path.split("/");
