@@ -1,19 +1,26 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import { ModalBody, ModalFooter, ModalHeader, Modal, Button } from "reactstrap";
 import { useState } from "react";
 import "./style.css";
-const StateModal = ({ isOpen, toggleFromParent, AddNewState }) => {
+const StateModal = ({ modal, toggle, curentState, handleSaveModal }) => {
   const [name, setName] = useState("");
-  const handleAddState = (event, state) => {
-    AddNewState(event, state);
-    toggleFromParent();
+  const [isCreted, setIsCreted] = useState(false);
+  useEffect(() => {
+    if (curentState === null) {
+      setIsCreted(true);
+      setName("");
+    } else {
+      setName(curentState.name);
+      setIsCreted(false);
+    }
+  }, [modal]);
+  const handleInputChange = (e) => {
+    setName(e.target.value);
   };
   return (
-    <Modal isOpen={isOpen}>
-      <ModalHeader toggle={() => toggleFromParent()}>
-        Create a new state
-      </ModalHeader>
+    <Modal isOpen={modal} toggle={toggle}>
+      <ModalHeader toggle={() => toggle()}>State</ModalHeader>
       <ModalBody>
         <div className="modal-state-body">
           <div className="input-container">
@@ -21,14 +28,10 @@ const StateModal = ({ isOpen, toggleFromParent, AddNewState }) => {
             <input
               className="input-text-state"
               type="text"
-              onChange={(event) => setName(event.target.value)}
+              onChange={handleInputChange}
               value={name}
               placeholder="Enter state's name"
-              required
             />
-            <div className="invalid-feedback">
-              Please enter a valid email address
-            </div>
           </div>
         </div>
       </ModalBody>
@@ -36,16 +39,12 @@ const StateModal = ({ isOpen, toggleFromParent, AddNewState }) => {
         <Button
           color="primary"
           className="px-3"
-          onClick={(event) => handleAddState(event, name)}
+          onClick={(event) => handleSaveModal(curentState, name, isCreted)}
         >
           {" "}
-          Add new
+          Save
         </Button>{" "}
-        <Button
-          color="secondary"
-          className="px-3"
-          onClick={() => toggleFromParent()}
-        >
+        <Button color="secondary" className="px-3" onClick={() => toggle()}>
           {" "}
           Close
         </Button>

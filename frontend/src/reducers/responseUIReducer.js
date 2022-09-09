@@ -55,10 +55,12 @@ export const offLoading = () => {
   };
 };
 
+let idSetTimeOut;
 export const setSuccessNotification = (mess) => {
   return (dispatch) => {
+    if (idSetTimeOut) clearTimeout(idSetTimeOut);
     dispatch(responseUISlice.actions.setSuccessNotification(mess));
-    setTimeout(() => {
+    idSetTimeOut = setTimeout(() => {
       dispatch(responseUISlice.actions.removeNotification());
     }, 3000);
   };
@@ -66,8 +68,9 @@ export const setSuccessNotification = (mess) => {
 
 export const setErrorNotification = (mess) => {
   return (dispatch) => {
+    if (idSetTimeOut) clearTimeout(idSetTimeOut);
     dispatch(responseUISlice.actions.setErrorNotification(mess));
-    setTimeout(() => {
+    idSetTimeOut = setTimeout(() => {
       dispatch(responseUISlice.actions.removeNotification());
     }, 3000);
   };

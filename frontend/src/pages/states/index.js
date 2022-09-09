@@ -6,17 +6,22 @@ import {
   deleteState,
   updateState,
 } from "../../reducers/stateReducer";
-
+import {
+  onLoading,
+  offLoading,
+  setSuccessNotification,
+  setErrorNotification,
+} from "../../reducers/responseUIReducer";
 import NormalStates from "../../components/states/normal";
 import { useState } from "react";
 import "./style.css";
-import StateModal from "../../components/modal/stateModal";
+import StateModal from "../../components/modal/ModalState/stateModal";
+import PlusButton from "../../components/button/PlusButton";
 const States = (props) => {
   useEffect(() => {
     props.initializeState();
   }, []);
   const [currentState, setCurrentState] = useState(null);
-  const [message, setMessage] = useState(null);
   const [modal, setModal] = useState(false);
   const toggle = () => setModal(!modal);
   const handleClickCreateState = () => {
@@ -28,16 +33,34 @@ const States = (props) => {
     toggle();
   };
   const handleSaveModal = async (oldState, newState, isCreate) => {
-    if (isCreate) {
-      await props.createState(newState);
-    } else {
-      await props.updateState(oldState, newState);
+    try {
+      props.onLoading();
+      if (isCreate) {
+        await props.createState(newState);
+        props.setSuccessNotification("State created successfully")
+      } else {
+        await props.updateState(oldState, newState);
+        props.setSuccessNotification("State updated successfully")
+      }
+      props.offLoading();
+      toggle();
+    } catch (error) {
+      props.offLoading();
+      props.setErrorNotification(error.response.data.message);
     }
-    toggle();
   };
   const handleDeleteState = (e, state) => {
     e.stopPropagation();
-    props.deleteState(state);
+    try {
+      props.onLoading();
+      props.deleteState(state).then((res) => {
+        props.offLoading();
+        props.setSuccessNotification("State removed successfully");
+      });
+    } catch (error) {
+      props.offLoading();
+      props.setErrorNotification(error.response.data.message);
+    }
   };
 
   return (
@@ -48,18 +71,18 @@ const States = (props) => {
         curentState={currentState}
         handleSaveModal={handleSaveModal}
       />
-      <div className="mx-1">
-        <button
-          className="btn btn-primary px-3"
-          onClick={() => handleClickCreateState()}
-        >
-          <i className="fas fa-plus"></i>Add new user
-        </button>
+      <div className="states-container-parent">
+        <div className="states-header">State</div>
+        <div className="states-body">
+          <NormalStates
+            handleUpdateState={handleClickUpdateState}
+            handleDeleteState={handleDeleteState}
+          />
+        </div>
+        <div className="create-state">
+          <PlusButton handleClick={handleClickCreateState} />
+        </div>
       </div>
-      <NormalStates
-        handleUpdateState={handleClickUpdateState}
-        handleDeleteState={handleDeleteState}
-      />
     </div>
   );
 };
@@ -75,6 +98,10 @@ const mapDispatchToProps = (dispatch) => {
     updateState: (oldState, newState) =>
       dispatch(updateState(oldState, newState)),
     deleteState: (state) => dispatch(deleteState(state)),
+    onLoading: () => dispatch(onLoading()),
+    offLoading: () => dispatch(offLoading()),
+    setSuccessNotification: (mess) => dispatch(setSuccessNotification(mess)),
+    setErrorNotification: (mess) => dispatch(setErrorNotification(mess)),
   };
 };
 export default connect(mapStateToProps, mapDispatchToProps)(States);
