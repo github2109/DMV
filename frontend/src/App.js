@@ -8,6 +8,8 @@ import Home from "./pages/home";
 import ModuleByLicense from "./pages/moduleByLicense";
 import Licenses from "./pages/licenses";
 import States from "./pages/states";
+import Loading from "./components/loading";
+import Notification from "./components/notification";
 import "./style.css";
 
 const App = () => {
@@ -46,8 +48,11 @@ const App = () => {
         messageLogin={messageLogin}
       />
     );
+
   return (
     <div className="parent-container">
+      <Loading />
+      <Notification />
       <Navigation handleLogout={handleLogout} user={user} />
       <Routes>
         <Route path="/licenses" exact={true} element={<Licenses />}></Route>

@@ -1,0 +1,49 @@
+.Message {
+  display: table;
+  position: absolute;
+  margin: 40px auto 0;
+  width: 500px;
+  background-color: #0074d9;
+  color: #fff;
+  transition: all 0.2s ease;
+  top: -4%;
+  left: 30%;
+  z-index: 3000;
+}
+.Message--red {
+  background-color: #ff4136;
+}
+.Message--green {
+  background-color: #2ecc40;
+}
+.Message-icon {
+  display: table-cell;
+  vertical-align: middle;
+  width: 60px;
+  padding: 30px;
+  text-align: center;
+  background-color: rgba(0, 0, 0, 0.25);
+}
+.Message-icon > i {
+  width: 20px;
+  font-size: 30px;
+}
+.Message-body {
+  display: table-cell;
+  vertical-align: middle;
+  padding: 20px 20px 30px 10px;
+}
+.Message-body > p {
+  line-height: 1.2;
+  margin-top: 6px;
+  font-family: 'Source Sans Pro';
+  font-weight: 300;
+  font-size: 15px;
+  color: #fff;
+}
+.Message:hover {
+  opacity: 1;
+}
+.u-italic {
+  font-style: italic;
+}

@@ -8,18 +8,23 @@ const moduleSlice = createSlice({
       return action.payload;
     },
     updateModule: (state, action) => {
-      return state.map(module => module._id !== action.payload._id ? module : action.payload);
+      return state.map((module) =>
+        module._id !== action.payload._id ? module : action.payload
+      );
     },
     createModule: (state, action) => {
       state.push(action.payload);
     },
-    deleteModule:(state, action) => {
-      return state.filter(module => module._id !== action.payload);
-    }
+    deleteModule: (state, action) => {
+      return state.filter((module) => module._id !== action.payload);
+    },
   },
 });
 
-export const setModuleByStateIdAndLicenseId = (stateId, licenseId) => {
+export const setModuleByStateIdAndLicenseId = (
+  stateId,
+  licenseId
+) => {
   return async (dispatch) => {
     const modules = await moduleService.getModuleByStateIdAndLicenseId(
       stateId,
@@ -44,43 +49,44 @@ export const setModules = (modules) => {
 
 export const savePositionModule = (modules) => {
   return async (dispatch) => {
-    const listModuleId = modules.map(module => module._id);
+    const listModuleId = modules.map((module) => module._id);
     await moduleService.updatePositionModule(listModuleId);
-  }
-}
+  };
+};
 
-export const getDetailModuleByModuleId =  (moduleId) => {
+export const getDetailModuleByModuleId = (moduleId) => {
   return async (dispatch) => {
     const module = await moduleService.getModuleByModuleId(moduleId);
     return module;
   };
-
-}
+};
 
 export const updateModule = (oldModule, newModule) => {
   return async (dispatch) => {
     const module = await moduleService.updateModule(oldModule, newModule);
     dispatch(moduleSlice.actions.updateModule(module));
-  }
-}
+  };
+};
 
 export const createModule = (newModule) => {
   return async (dispatch) => {
     const module = await moduleService.createModule(newModule);
-    dispatch(moduleSlice.actions.createModule({
-      _id: module._id,
-      name: module.name,
-      position:module.position
-    }));
+    dispatch(
+      moduleSlice.actions.createModule({
+        _id: module._id,
+        name: module.name,
+        position: module.position,
+      })
+    );
     return module;
-  }
-}
+  };
+};
 
 export const deleteModule = (moduleId) => {
   return async (dispatch) => {
     await moduleService.deleteModule(moduleId);
     dispatch(moduleSlice.actions.deleteModule(moduleId));
-  }
-}
+  };
+};
 
 export default moduleSlice.reducer;

@@ -6,6 +6,11 @@ import "./style.css";
 import { getDetailModuleByModuleId } from "../../../reducers/moduleReducer";
 import CustomButton from "../../button/CustomButton";
 import ModalQuestion from "../ModalQuestion";
+import {
+  onLoading,
+  offLoading,
+  setErrorNotification,
+} from "../../../reducers/responseUIReducer";
 const ModalModule = ({
   modal,
   toggle,
@@ -31,12 +36,19 @@ const ModalModule = ({
       });
       setImageUrl(null);
     } else {
-      props.getDetailModuleByModuleId(moduleId).then((res) => {
-        setTmpModule(res);
-        setImageUrl(res.imageDescription);
-        setIsCreated(false);
-        setOldModule(res);
-      });
+      try {
+        props.onLoading();
+        props.getDetailModuleByModuleId(moduleId).then((res) => {
+          setTmpModule(res);
+          setImageUrl(res.imageDescription);
+          setIsCreated(false);
+          setOldModule(res);
+          props.offLoading();
+        });
+      } catch (error) {
+        props.offLoading();
+        props.setErrorNotification(error.response.data.message);
+      }
     }
   }, [modal]);
   const onImageChange = (e) => {
@@ -61,13 +73,14 @@ const ModalModule = ({
   };
   const handleBeforeSaveModal = async (oldModule, tmpModule, isCreated) => {
     const module = await handleSaveModal(oldModule, tmpModule, isCreated);
-    if(isCreated){
+    if (!module) return;
+    if (isCreated) {
       setTmpModule(module);
       setOldModule(module);
       toggleChildren();
       setIsCreated(false);
-    }else{
-      toggle()
+    } else {
+      toggle();
     }
   };
   return (
@@ -181,6 +194,9 @@ const mapDispatchToProps = (dispatch) => {
   return {
     getDetailModuleByModuleId: (moduleId) =>
       dispatch(getDetailModuleByModuleId(moduleId)),
+    onLoading: () => dispatch(onLoading()),
+    offLoading: () => dispatch(offLoading()),
+    setErrorNotification: (mess) => dispatch(setErrorNotification(mess)),
   };
 };
 

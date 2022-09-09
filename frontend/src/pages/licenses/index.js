@@ -6,8 +6,14 @@ import {
   initializeLicense,
   createLicense,
   updateLicense,
-  deleteLicense
+  deleteLicense,
 } from "../../reducers/licenseReducer";
+import {
+  onLoading,
+  offLoading,
+  setSuccessNotification,
+  setErrorNotification,
+} from "../../reducers/responseUIReducer";
 import PlusButton from "../../components/button/PlusButton";
 import ModalLicense from "../../components/modal/ModalLicense";
 import "./style.css";
@@ -26,18 +32,37 @@ const Licenses = (props) => {
     setLicense(license);
     toggle();
   };
-  const handleSaveModel = async (oldLicense,newLicense, isCreate) => {
-    if (isCreate) {
-      await props.createLicense(newLicense);
-    }else{
-      await props.updateLicense(oldLicense, newLicense);
+  const handleSaveModel = async (oldLicense, newLicense, isCreate) => {
+    try {
+      if (isCreate) {
+        props.onLoading();
+        await props.createLicense(newLicense);
+        props.offLoading();
+        props.setSuccessNotification("License created successfully");
+      } else {
+        props.onLoading();
+        await props.updateLicense(oldLicense, newLicense);
+        props.offLoading();
+        props.setSuccessNotification("License updated successfully");
+      }
+      toggle();
+    } catch (error) {
+      props.setErrorNotification(error.response.data.message);
+      props.offLoading();
     }
-    toggle();
   };
-  const handleDeleteLicense = (e,license) => {
+  const handleDeleteLicense = (e, license) => {
     e.stopPropagation();
-    props.deleteLicense(license);
-  }
+    try {
+      props.onLoading();
+      props.deleteLicense(license).then((res) => {
+        props.offLoading();
+        props.setSuccessNotification("License removed successfully");
+      });
+    } catch (error) {
+      props.setErrorNotification(error.response.data.message);
+    }
+  };
   return (
     <div className="container">
       <ModalLicense
@@ -76,8 +101,13 @@ const mapDispatchToProps = (dispatch) => {
   return {
     initializeLicense: () => dispatch(initializeLicense()),
     createLicense: (license) => dispatch(createLicense(license)),
-    updateLicense: (oldLicense,newLicense) => dispatch(updateLicense(oldLicense,newLicense)),
+    updateLicense: (oldLicense, newLicense) =>
+      dispatch(updateLicense(oldLicense, newLicense)),
     deleteLicense: (license) => dispatch(deleteLicense(license)),
+    onLoading: () => dispatch(onLoading()),
+    offLoading: () => dispatch(offLoading()),
+    setSuccessNotification: (mess) => dispatch(setSuccessNotification(mess)),
+    setErrorNotification: (mess) => dispatch(setErrorNotification(mess)),
   };
 };
 

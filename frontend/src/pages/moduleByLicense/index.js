@@ -6,6 +6,12 @@ import DrawModules from "../../components/modules/draw";
 import Select from "../../components/select";
 import { initializeLicense } from "../../reducers/licenseReducer";
 import {
+  onLoading,
+  offLoading,
+  setSuccessNotification,
+  setErrorNotification,
+} from "../../reducers/responseUIReducer";
+import {
   savePositionModule,
   updateModule,
   createModule,
@@ -21,25 +27,50 @@ const ModuleByLicense = (props) => {
     props.initializeLicense();
   }, []);
   useEffect(() => {
-    if (licenseId) props.setModuleByLicenseId(licenseId);
+    if (licenseId) {
+      props.onLoading();
+      props.setModuleByLicenseId(licenseId).then((res) => props.offLoading());
+    }
   }, [licenseId]);
   const [modal, setModal] = useState(false);
   const [moduleId, setModuleId] = useState(null);
   const toggle = () => setModal(!modal);
   const handleSavePositionClick = () => {
-    props.savePositionModule(props.modules);
+    try {
+      props.onLoading();
+      props.savePositionModule(props.modules).then((res) => {
+        props.offLoading();
+        props.setSuccessNotification(
+          "Position of licenses was updated successfully"
+        );
+      });
+    } catch (error) {
+      props.offLoading();
+      props.setErrorNotification(error.response.data.message);
+    }
   };
   const handleClickCreateModule = () => {
     setModuleId(null);
     toggle();
   };
   const handleSaveModal = async (oldModule, newModule, isCreate) => {
-    if (isCreate) {
-      newModule.license = licenseId;
-      newModule.position = props.modules.length + 1;
-      return await props.createModule(newModule);
-    } else {
-      await props.updateModule(oldModule, newModule);
+    try {
+      props.onLoading();
+      if (isCreate) {
+        newModule.license = licenseId;
+        newModule.position = props.modules.length + 1;
+        const newModuleSaved = await props.createModule(newModule);
+        props.setSuccessNotification("Module created successfully");
+        return newModuleSaved;
+      } else {
+        await props.updateModule(oldModule, newModule);
+        props.setSuccessNotification("Module updated successfully");
+      }
+      props.offLoading();
+      toggle();
+    } catch (error) {
+      props.offLoading();
+      props.setErrorNotification(error.response.data.message);
     }
   };
   const handleSelectModule = (e, moduleId) => {
@@ -49,7 +80,16 @@ const ModuleByLicense = (props) => {
   };
   const handleDeleteModule = (e, moduleId) => {
     e.stopPropagation();
-    props.deleteModule(moduleId);
+    try {
+      props.onLoading();
+      props.deleteModule(moduleId).then((res) => {
+        props.offLoading();
+        props.setSuccessNotification("Module removed successfully");
+      });
+    } catch (error) {
+      props.offLoading();
+      props.setErrorNotification(error.response.data.message);
+    }
   };
   return (
     <div className="container">
@@ -110,6 +150,10 @@ const mapDispatchToProps = (dispatch) => {
       dispatch(updateModule(oldModule, newModule)),
     createModule: (newModule) => dispatch(createModule(newModule)),
     deleteModule: (moduleId) => dispatch(deleteModule(moduleId)),
+    onLoading: () => dispatch(onLoading()),
+    offLoading: () => dispatch(offLoading()),
+    setSuccessNotification: (mess) => dispatch(setSuccessNotification(mess)),
+    setErrorNotification: (mess) => dispatch(setErrorNotification(mess)),
   };
 };
 

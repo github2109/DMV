@@ -109,7 +109,6 @@ exports.createModuleAPI = async (req, res, next) => {
     if (check) {
       return res.status(500).json({ message: "This name already exists" });
     }
-    const modules = await Module.find({ license: module.license });
     const moduleSaved = await new Module(module).save();
     return res.status(200).json(moduleSaved);
   } catch (error) {

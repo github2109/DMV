@@ -4,6 +4,7 @@ import { initializeState } from "../../reducers/stateReducer";
 import { initializeLicense } from "../../reducers/licenseReducer";
 import { setStateId, setLicenseId } from "../../reducers/filterReducer";
 import { setModuleByStateIdAndLicenseId } from "../../reducers/moduleReducer";
+import { onLoading, offLoading } from "../../reducers/responseUIReducer";
 import { Link } from "react-router-dom";
 import Select from "../../components/select";
 import NormalModules from "../../components/modules/normal";
@@ -17,11 +18,13 @@ const Home = (props) => {
   }, []);
 
   useEffect(() => {
-    if (props.filter.stateId && props.filter.licenseId)
+    if (props.filter.stateId && props.filter.licenseId) {
+      props.onLoading();
       props.setModuleByStateIdAndLicenseId(
         props.filter.stateId,
         props.filter.licenseId
-      );
+      ).then(res => props.offLoading());
+    }
   }, [props.filter]);
   return (
     <div className="container">
@@ -90,6 +93,8 @@ const mapDispatchToProps = (dispatch) => {
 
     setModuleByStateIdAndLicenseId: (stateId, licenseId) =>
       dispatch(setModuleByStateIdAndLicenseId(stateId, licenseId)),
+    onLoading: () => dispatch(onLoading()),
+    offLoading: () => dispatch(offLoading()),
   };
 };
 export default connect(mapStateToProps, mapDispatchToProps)(Home);

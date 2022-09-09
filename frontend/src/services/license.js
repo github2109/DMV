@@ -2,15 +2,11 @@ import axios from "axios";
 import { token } from "./token";
 const bareUrl = "/api/licenses";
 const getAll = async () => {
-  try {
-    const response = await axios.get(bareUrl);
-    return response.data;
-  } catch (error) {
-    console.log(error);
-  }
+  const response = await axios.get(bareUrl);
+  return response.data;
 };
 const createLicense = async (license) => {
-  try {
+  if(license.image !== null && typeof license.image !== "string") {
     const config = {
       headers: {
         Authorization: token,
@@ -25,15 +21,13 @@ const createLicense = async (license) => {
       config
     );
     license.image = urlRes.data[0].url;
-    const response = await axios.post(bareUrl, license, {
-      headers: {
-        Authorization: token,
-      },
-    });
-    return response.data;
-  } catch (error) {
-    console.log(error);
   }
+  const response = await axios.post(bareUrl, license, {
+    headers: {
+      Authorization: token,
+    },
+  });
+  return response.data;
 };
 
 const updateLicense = async (oldLicense, newLicense) => {
@@ -43,7 +37,7 @@ const updateLicense = async (oldLicense, newLicense) => {
       "content-type": "multipart/form-data",
     },
   };
-  if (typeof(newLicense.image) !== "string") {
+  if (typeof newLicense.image !== "string") {
     await axios.post(
       "/api/uploads/removeImages",
       { path: oldLicense.image },
@@ -77,4 +71,4 @@ const deleteLicense = async (licenseId, urlImage) => {
   return response.data;
 };
 // eslint-disable-next-line import/no-anonymous-default-export
-export default { getAll, createLicense, updateLicense,deleteLicense };
+export default { getAll, createLicense, updateLicense, deleteLicense };

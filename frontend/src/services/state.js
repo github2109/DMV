@@ -3,25 +3,17 @@ import { token } from "./token";
 const bareUrl = "/api/states";
 
 const getAll = async () => {
-  try {
-    const response = await axios.get(bareUrl);
-    return response.data;
-  } catch (error) {
-    console.log(error);
-  }
+  const response = await axios.get(bareUrl);
+  return response.data;
 };
 const createState = async (data) => {
-  try {
-    const config = {
-      headers: {
-        Authorization: token,
-      },
-    };
-    const response = await axios.post(bareUrl, { name: data }, config);
-    return response.data;
-  } catch (error) {
-    console.log(error);
-  }
+  const config = {
+    headers: {
+      Authorization: token,
+    },
+  };
+  const response = await axios.post(bareUrl, { name: data }, config);
+  return response.data;
 };
 const updateState = async (oldState, newState) => {
   const config = {

@@ -11,7 +11,7 @@ const ModalLicense = ({ modal, toggle, license ,handleSaveModel}) => {
       setIsCreated(true);
       setTmpLicense({
         name: "",
-        image: "",
+        image: null,
         description: "",
       });
     } else {
@@ -35,7 +35,7 @@ const ModalLicense = ({ modal, toggle, license ,handleSaveModel}) => {
     });
   };
   return (
-    <Modal isOpen={modal} toggle={toggle} size="md">
+    <Modal isOpen={modal} toggle={toggle} size="md" className="modal-license">
       <ModalHeader toggle={toggle}>License</ModalHeader>
       <ModalBody>
         <div className="license-modal-container">
@@ -63,7 +63,7 @@ const ModalLicense = ({ modal, toggle, license ,handleSaveModel}) => {
               </div>
               <div className="image-preview">
                 <div id="imagePreview">
-                  {tmpLicense && tmpLicense.image !== ""? <img
+                  {tmpLicense && tmpLicense.image !== null? <img
                     src={imageUrl}
                     alt=""
                     className="image-license"

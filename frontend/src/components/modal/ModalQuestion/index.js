@@ -8,6 +8,12 @@ import {
   deleteQuestion,
   createQuestion,
 } from "../../../reducers/questionReducer";
+import {
+  onLoading,
+  offLoading,
+  setSuccessNotification,
+  setErrorNotification,
+} from "../../../reducers/responseUIReducer";
 import ModalDetailQuestion from "../ModalDetailQuestion";
 import PlusButton from "../../button/PlusButton";
 import "./style.css";
@@ -16,47 +22,86 @@ const ModalLicense = ({ modal, toggle, moduleId, ...props }) => {
   const [modalChildren, setModalChildren] = useState(false);
   const toggleChildren = () => setModalChildren(!modalChildren);
   useEffect(() => {
-    props.setQuestionByModuleId(moduleId);
+    props.onLoading();
+    try {
+      props.setQuestionByModuleId(moduleId).then((res) => props.offLoading());
+    } catch (error) {
+      props.setErrorNotification(error.response.data.message);
+    }
   }, []);
   const handleClickCreateQuestion = () => {
     setQuestion(null);
     toggleChildren();
-  }
-  const handleSaveModalDetailQuestion = async (oldQuestion, newQuestion, isCreate) => {
-    if (isCreate) {
-      console.log(newQuestion)
-      await props.createQuestion(newQuestion,moduleId);
-    } else {
-      await props.updateQuestion(oldQuestion, newQuestion);
+  };
+  const handleSaveModalDetailQuestion = async (
+    oldQuestion,
+    newQuestion,
+    isCreate
+  ) => {
+    try {
+      props.onLoading();
+      if (isCreate) {
+        await props.createQuestion(newQuestion, moduleId);
+        props.setSuccessNotification("Question created successfully");
+      } else {
+        await props.updateQuestion(oldQuestion, newQuestion);
+        props.setSuccessNotification("Question updated successfully");
+      }
+      props.offLoading();
+      toggleChildren();
+    } catch (error) {
+      props.offLoading();
+      props.setErrorNotification(error.response.data.message);
     }
-    toggleChildren();
   };
   const handleSelectQuestion = (question) => {
     setQuestion(question);
     toggleChildren();
-  }
-  const handleRemoveQuestion = async(e,question) => {
+  };
+  const handleRemoveQuestion = async (e, question) => {
     e.stopPropagation();
-    await props.deleteQuestion(question);
-  }
+    try {
+      props.onLoading();
+      await props.deleteQuestion(question);
+      props.offLoading();
+      props.setSuccessNotification("Question deleted successfully");
+    } catch (error) {
+      props.offLoading();
+      props.setErrorNotification(error.response.data.message);
+    }
+  };
   return (
     <Modal isOpen={modal} toggle={toggle} size="lg">
       <ModalHeader toggle={toggle}>Question</ModalHeader>
       <ModalBody>
-        {modalChildren && <ModalDetailQuestion modal={modalChildren} toggle={toggleChildren} question={question} handleSaveModal={handleSaveModalDetailQuestion}/>}
+        {modalChildren && (
+          <ModalDetailQuestion
+            modal={modalChildren}
+            toggle={toggleChildren}
+            question={question}
+            handleSaveModal={handleSaveModalDetailQuestion}
+          />
+        )}
         <div className="modal-question-container">
           {props.questions.map((question, i) => (
-            <div className="leaderboard-question" key={i} onClick={(e) => handleSelectQuestion(question)}>
+            <div
+              className="leaderboard-question"
+              key={i}
+              onClick={(e) => handleSelectQuestion(question)}
+            >
               <span>
                 {i + 1}. {question.questionContent}
               </span>
-              <div className="TrashButton-modal-question" onClick={(e) => handleRemoveQuestion(e,question)}>
+              <div
+                className="TrashButton-modal-question"
+                onClick={(e) => handleRemoveQuestion(e, question)}
+              >
                 <i className="trash-icon fa-solid fa-trash"></i>
               </div>
             </div>
           ))}
           <div className="create-modal-question">
-            <PlusButton handleClick={handleClickCreateQuestion}/>
+            <PlusButton handleClick={handleClickCreateQuestion} />
           </div>
         </div>
       </ModalBody>
@@ -79,9 +124,15 @@ const mapDispatchToProps = (dispatch) => {
   return {
     setQuestionByModuleId: (moduleId) =>
       dispatch(setQuestionByModuleId(moduleId)),
-    updateQuestion: (oldQuestion,newQuestion) => dispatch(updateQuestion(oldQuestion,newQuestion)),
+    updateQuestion: (oldQuestion, newQuestion) =>
+      dispatch(updateQuestion(oldQuestion, newQuestion)),
     deleteQuestion: (question) => dispatch(deleteQuestion(question)),
-    createQuestion: (question,moduleId) => dispatch(createQuestion(question,moduleId)),
+    createQuestion: (question, moduleId) =>
+      dispatch(createQuestion(question, moduleId)),
+    onLoading: () => dispatch(onLoading()),
+    offLoading: () => dispatch(offLoading()),
+    setSuccessNotification: (mess) => dispatch(setSuccessNotification(mess)),
+    setErrorNotification: (mess) => dispatch(setErrorNotification(mess)),
   };
 };
 
