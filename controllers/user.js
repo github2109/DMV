@@ -42,7 +42,10 @@ exports.loginForAdmin = async (req, res, next) => {
         .status(500)
         .json({ message: "You are not allowed login to this role." });
     }
-    const token = generateToken({ id: user._id.toString(),role:user.role }, "7d");
+    const token = generateToken(
+      { id: user._id.toString(), role: user.role },
+      "7d"
+    );
     res.status(200).send({
       username: user.username,
       token: token,
@@ -65,6 +68,37 @@ exports.registerForClient = async (req, res, next) => {
       deviceId: deviceId,
     }).save();
     res.status(200).json(newUser);
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.getListClientForMessenger = async (req, res, next) => {
+  try {
+    const token = req.token;
+    const decodeToken = jwt.verify(token, config.SECRET);
+    if (!decodeToken.id || !decodeToken.role)
+      return res.status(403).json({ message: "Token missing or invalid" });
+    if (decodeToken.role !== "ADMIN")
+      return res.status(403).json({ message: "Role is not allowed" });
+    const queryUser = User.aggregate([
+      {
+        $lookup: {
+          from: "Message",
+          localField: "recentMessage",
+          foreignField: "_id",
+          as: "recentMessage",
+        },
+      },
+      {
+        $unwind: "$recentMessage",
+      },
+      {
+        $sort: { "recentMessage.createdAt": -1 },
+      },
+    ]);
+    const users = await queryUser.exec();
+    return res.status(200).json(users);
   } catch (error) {
     next(error);
   }

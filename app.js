@@ -32,6 +32,9 @@ app.use(
     useTempFiles: true,
   })
 );
+
+
+
 app.use(express.static(path.join(__dirname, "./build")));
 app.use(express.json());
 app.use(middleware.requestLogger);
@@ -46,6 +49,8 @@ app.use("/api/messages", messageRouter);
 app.use("/api/licenses", licenseRouter);
 app.use("/api/exams", examRouter);
 app.use("/api/uploads",uploadRouter);
+
 app.use(middleware.unknownEndpoint);
 app.use(middleware.errorHandler);
+
 module.exports = app;
