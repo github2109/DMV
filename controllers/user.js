@@ -1,6 +1,9 @@
 const User = require("../models/user");
 const bcrypt = require("bcrypt");
 const { generateToken } = require("../helpers/tokens");
+const jwt = require("jsonwebtoken");
+const config = require("../utils/config");
+const { timeSince } = require("../helpers/formatDate");
 exports.registerForAdmin = async (req, res, next) => {
   try {
     const { username, password } = req.body;
@@ -84,7 +87,7 @@ exports.getListClientForMessenger = async (req, res, next) => {
     const queryUser = User.aggregate([
       {
         $lookup: {
-          from: "Message",
+          from: "messages",
           localField: "recentMessage",
           foreignField: "_id",
           as: "recentMessage",
@@ -96,9 +99,44 @@ exports.getListClientForMessenger = async (req, res, next) => {
       {
         $sort: { "recentMessage.createdAt": -1 },
       },
+      {
+        $project:{
+          "deviceId":1,
+          "recentMessage":1,
+        }
+      }
     ]);
     const users = await queryUser.exec();
-    return res.status(200).json(users);
+    let userFormatDateMessage = users.map((user) => {
+      const contentMess = user.recentMessage.content;
+      return {
+        ...user,
+        recentMessage:{
+          ...user.recentMessage,
+          content: contentMess.length > 25 ? contentMess.slice(0,25) + "..." : contentMess,
+          createdAt: timeSince(user.recentMessage.createdAt)
+        }
+      };
+    });
+    return res.status(200).json(userFormatDateMessage);
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.getClientByDeviceId = async (req, res, next) => {
+  try {
+    const token = req.token;
+    const decodeToken = jwt.verify(token, config.SECRET);
+    if (!decodeToken.id || !decodeToken.role)
+      return res.status(403).json({ message: "Token missing or invalid" });
+    if (decodeToken.role !== "ADMIN")
+      return res.status(403).json({ message: "Role is not allowed" });
+    const { deviceId } = req.params;
+    const client = await User.findOne({ deviceId: deviceId }).populate(
+      "recentMessage"
+    );
+    return res.status(200).json(client);
   } catch (error) {
     next(error);
   }

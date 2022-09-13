@@ -13,6 +13,14 @@ const io = require("socket.io")(server, {
 
 io.on("connection", (socket) => {
   console.log("User :", socket.id);
+
+  socket.on("join_room",(data) => {
+    socket.join(data);
+  })
+
+  socket.on("send_message",(data) => {
+    socket.to(data.deviceId).emit("receive_message",data);
+  })
 });
 
 server.listen(config.PORT, () => {
