@@ -3,24 +3,6 @@ const Question = require("../models/question");
 const State = require("../models/state");
 const jwt = require("jsonwebtoken");
 const config = require("../utils/config");
-exports.getModuleByModuleId = async (moduleId) => {
-  return await Module.findById(moduleId).populate("questions");
-};
-
-exports.updateModuleAfterRemoveQuestion = async (questionId) => {
-  const module = await Module.findOne({ questions: questionId });
-  module.questions = module.questions.filter(
-    (question) => question.toString() !== questionId
-  );
-  return await module.save();
-};
-
-exports.updateModuleAfterCreateQuestion = async (moduleId, questionId) => {
-  const module = await Module.findById(moduleId);
-  module.questions.push(questionId);
-  return await module.save();
-};
-
 exports.updateModuleAfterRemoveState = async (stateId) => {
   try {
     const modules = await Module.updateMany(
@@ -53,10 +35,8 @@ exports.updateModuleAfterRemoveLicense = async (licenseId) => {
   }
 };
 
-exports.getModuleByStateIdAndLicenseId = async (stateId, licenseId) => {
-  return await Module.find({ license: licenseId, states: stateId }).populate(
-    "questions"
-  );
+exports.getListModuleIdByStateIdAndLicenseId = async (stateId, licenseId) => {
+  return await Module.find({ license: licenseId, states: stateId }).select({_id:1});
 };
 
 exports.getModuleByStateIdAndLicenseIdAPI = async (req, res, next) => {
@@ -64,18 +44,9 @@ exports.getModuleByStateIdAndLicenseIdAPI = async (req, res, next) => {
     const { stateId, licenseId } = req.query;
     console.log(req.query);
     const modules = await Module.find({ license: licenseId, states: stateId })
-      .select({ name: 1, position: 1, questions: 1 })
+      .select({ name: 1, position: 1 })
       .sort({ position: 1 });
-    let modulesExec = [];
-    modules.forEach((module) => {
-      modulesExec.push({
-        _id: module._id,
-        name: module.name,
-        position: module.position,
-        numberOfQuestion: module.questions.length,
-      });
-    });
-    res.json(modulesExec);
+    res.json(modules);
   } catch (error) {
     next(error);
   }

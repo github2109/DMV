@@ -5,12 +5,6 @@ const moduleSchema = mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "License",
   },
-  questions: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Question",
-    },
-  ],
   name: {
     type: String,
     required: [true, "Module name is required"],

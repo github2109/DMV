@@ -16,9 +16,11 @@ import {
 } from "../../../reducers/responseUIReducer";
 import ModalDetailQuestion from "../ModalDetailQuestion";
 import PlusButton from "../../button/PlusButton";
+import CustomButton from "../../button/CustomButton";
 import "./style.css";
 const ModalLicense = ({ modal, toggle, moduleId, ...props }) => {
   const [question, setQuestion] = useState(null);
+  const [isTestQuestion, setIsTestQuestion] = useState(false);
   const [modalChildren, setModalChildren] = useState(false);
   const toggleChildren = () => setModalChildren(!modalChildren);
   useEffect(() => {
@@ -70,6 +72,9 @@ const ModalLicense = ({ modal, toggle, moduleId, ...props }) => {
       props.setErrorNotification(error.response.data.message);
     }
   };
+  const handleClickFilterQuestionButton = () => {
+    setIsTestQuestion(!isTestQuestion);
+  }
   return (
     <Modal isOpen={modal} toggle={toggle} size="lg">
       <ModalHeader toggle={toggle}>Question</ModalHeader>
@@ -82,15 +87,23 @@ const ModalLicense = ({ modal, toggle, moduleId, ...props }) => {
             handleSaveModal={handleSaveModalDetailQuestion}
           />
         )}
+          <CustomButton
+            className="filter-question-button"
+            labelName={isTestQuestion ? "Show learning questions":"Show test questions"}
+            handleClick={handleClickFilterQuestionButton}
+          />
         <div className="modal-question-container">
-          {props.questions.map((question, i) => (
+          {props.questions.filter(question => question.isTestQuestion === isTestQuestion).map((question, i) => (
             <div
               className="leaderboard-question"
               key={i}
               onClick={(e) => handleSelectQuestion(question)}
             >
               <span>
-                {i + 1}. {question.questionContent}
+                {i + 1}.{" "}
+                {question.questionContent.length > 100
+                  ? question.questionContent.slice(0, 100) + "...."
+                  : question.questionContent}
               </span>
               <div
                 className="TrashButton-modal-question"

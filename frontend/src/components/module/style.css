@@ -28,7 +28,8 @@
   font-size: 25px;
   margin-left: 3px;
 }
-.leaderboard__normalmodule,.leaderboard__drawmodule {
+.leaderboard__normalmodule,
+.leaderboard__drawmodule {
   display: grid;
   grid-template-columns: 0.5fr 3fr 2fr;
   align-items: center;
@@ -58,4 +59,10 @@
   shape-outside: ellipse();
   border-top-left-radius: 3px;
   border-bottom-left-radius: 3px;
+}
+
+.module-selected {
+  box-shadow: rgb(87 184 70 / 80%) 2px 2px 4px 1px inset,
+    rgb(87 184 70 / 80%) -3px -3px 6px 3px inset,
+    rgb(87 184 70 / 80%) 0px -2px 19px 0px;
 }

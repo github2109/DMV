@@ -5,16 +5,18 @@ const DrawModule = ({
   position,
   handleSelectModule,
   handleDeleteModule,
+  handleEditModule,
+  isSelected
 }) => {
   return (
-    <article className="leaderboard__drawmodule">
+    <article className={isSelected ? "leaderboard__drawmodule module-selected":"leaderboard__drawmodule"} onClick={handleSelectModule}>
       <span className="position">{position + 1}</span>
       <span className="leaderboard__name">{module.name}</span>
       <span className="leaderboard__value">
         <button className="btn-edit">
           <i
             className="fas fa-pencil-alt"
-            onClick={handleSelectModule}
+            onClick={handleEditModule}
           ></i>
         </button>
         <button className="btn-delete">

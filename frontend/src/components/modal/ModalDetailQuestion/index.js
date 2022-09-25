@@ -57,8 +57,11 @@ const ModalQuestion = ({
     });
   };
   const handleInputAnswerChange = (e, i) => {
-    let answers = tmpQuestion.answers;
-    answers[i].content = e.target.value;
+    let answers = [...tmpQuestion.answers];
+    answers[i] = {
+      ...answers[i],
+      content: e.target.value,
+    };
     setTmpQuestion({
       ...tmpQuestion,
       answers: answers,
@@ -81,7 +84,7 @@ const ModalQuestion = ({
     });
   };
   const handleRemoveAnswer = (i) => {
-    let answers = tmpQuestion.answers;
+    let answers = [...tmpQuestion.answers];
     answers.splice(i, 1);
     setTmpQuestion({
       ...tmpQuestion,

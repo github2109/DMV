@@ -1,6 +1,8 @@
 const User = require("../models/user");
 const bcrypt = require("bcrypt");
 const { generateToken } = require("../helpers/tokens");
+const jwt = require("jsonwebtoken");
+const config = require("../utils/config");
 exports.registerForAdmin = async (req, res, next) => {
   try {
     const { username, password } = req.body;
@@ -42,7 +44,10 @@ exports.loginForAdmin = async (req, res, next) => {
         .status(500)
         .json({ message: "You are not allowed login to this role." });
     }
-    const token = generateToken({ id: user._id.toString(),role:user.role }, "7d");
+    const token = generateToken(
+      { id: user._id.toString(), role: user.role },
+      "7d"
+    );
     res.status(200).send({
       username: user.username,
       token: token,
@@ -65,6 +70,61 @@ exports.registerForClient = async (req, res, next) => {
       deviceId: deviceId,
     }).save();
     res.status(200).json(newUser);
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.getListClientForMessenger = async (req, res, next) => {
+  try {
+    const token = req.token;
+    const decodeToken = jwt.verify(token, config.SECRET);
+    if (!decodeToken.id || !decodeToken.role)
+      return res.status(403).json({ message: "Token missing or invalid" });
+    if (decodeToken.role !== "ADMIN")
+      return res.status(403).json({ message: "Role is not allowed" });
+    const queryUser = User.aggregate([
+      {
+        $lookup: {
+          from: "messages",
+          localField: "recentMessage",
+          foreignField: "_id",
+          as: "recentMessage",
+        },
+      },
+      {
+        $unwind: "$recentMessage",
+      },
+      {
+        $sort: { "recentMessage.createdAt": -1 },
+      },
+      {
+        $project:{
+          "deviceId":1,
+          "recentMessage":1,
+        }
+      }
+    ]);
+    const users = await queryUser.exec();
+    return res.status(200).json(users);
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.getClientByDeviceId = async (req, res, next) => {
+  try {
+    const token = req.token;
+    const decodeToken = jwt.verify(token, config.SECRET);
+    if (!decodeToken.id || !decodeToken.role)
+      return res.status(403).json({ message: "Token missing or invalid" });
+    if (decodeToken.role !== "ADMIN")
+      return res.status(403).json({ message: "Role is not allowed" });
+    const { deviceId } = req.params;
+    const client = await User.findOne({ deviceId: deviceId }).populate(
+      "recentMessage"
+    );
+    return res.status(200).json(client);
   } catch (error) {
     next(error);
   }

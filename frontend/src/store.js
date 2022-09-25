@@ -5,6 +5,8 @@ import moduleReducer from "./reducers/moduleReducer";
 import filterReducer from "./reducers/filterReducer";
 import questionReducer from "./reducers/questionReducer";
 import responseUIReducer from "./reducers/responseUIReducer";
+import userReducer from "./reducers/userReducer";
+import messageReducer from "./reducers/messageReducer";
 const store = configureStore({
   reducer: {
     states: stateReducer,
@@ -12,7 +14,9 @@ const store = configureStore({
     modules: moduleReducer,
     filter: filterReducer,
     questions: questionReducer,
-    responseUI: responseUIReducer
+    responseUI: responseUIReducer,
+    users: userReducer,
+    messages: messageReducer,
   },
 });
 

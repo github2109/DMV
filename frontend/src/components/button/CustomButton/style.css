@@ -13,6 +13,7 @@
   background-color: #ffacac;
   color: #53488d;
   transition: all 0.3s;
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
 .labelName-feedback:hover {
   border-radius: 0px;

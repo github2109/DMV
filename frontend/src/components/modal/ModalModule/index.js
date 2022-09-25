@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import "./style.css";
 import { getDetailModuleByModuleId } from "../../../reducers/moduleReducer";
-import CustomButton from "../../button/CustomButton";
 import ModalQuestion from "../ModalQuestion";
 import {
   onLoading,
@@ -83,6 +82,7 @@ const ModalModule = ({
       toggle();
     }
   };
+  if(!tmpModule) return null;
   return (
     <Modal isOpen={modal} toggle={toggle} size="lg">
       <ModalHeader toggle={toggle}>Detail module</ModalHeader>
@@ -163,13 +163,6 @@ const ModalModule = ({
               />{" "}
               Basic
             </div>
-            {!isCreated && (
-              <CustomButton
-                className="manage-question-button"
-                labelName="Manage questions"
-                handleClick={toggleChildren}
-              />
-            )}
           </div>
         </div>
       </ModalBody>

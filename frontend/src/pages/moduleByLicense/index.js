@@ -21,6 +21,7 @@ import "./style.css";
 import CustomButton from "../../components/button/CustomButton";
 import PlusButton from "../../components/button/PlusButton";
 import ModalModule from "../../components/modal/ModalModule";
+import ModalQuestion from "../../components/modal/ModalQuestion";
 const ModuleByLicense = (props) => {
   const [licenseId, setLicenseId] = useState(null);
   useEffect(() => {
@@ -32,9 +33,11 @@ const ModuleByLicense = (props) => {
       props.setModuleByLicenseId(licenseId).then((res) => props.offLoading());
     }
   }, [licenseId]);
-  const [modal, setModal] = useState(false);
+  const [modalModule, setModalModule] = useState(false);
+  const [modalQuestion, setModalQuestion] = useState(false);
   const [moduleId, setModuleId] = useState(null);
-  const toggle = () => setModal(!modal);
+  const toggleModule = () => setModalModule(!modalModule);
+  const toggleQuestion = () => setModalQuestion(!modalQuestion);
   const handleSavePositionClick = () => {
     try {
       props.onLoading();
@@ -51,7 +54,7 @@ const ModuleByLicense = (props) => {
   };
   const handleClickCreateModule = () => {
     setModuleId(null);
-    toggle();
+    toggleModule();
   };
   const handleSaveModal = async (oldModule, newModule, isCreate) => {
     try {
@@ -67,7 +70,7 @@ const ModuleByLicense = (props) => {
         props.setSuccessNotification("Module updated successfully");
       }
       props.offLoading();
-      toggle();
+      toggleModule();
     } catch (error) {
       props.offLoading();
       props.setErrorNotification(error.response.data.message);
@@ -76,7 +79,11 @@ const ModuleByLicense = (props) => {
   const handleSelectModule = (e, moduleId) => {
     e.stopPropagation();
     setModuleId(moduleId);
-    toggle();
+  };
+  const handleEditModule = (e, moduleId) => {
+    e.stopPropagation();
+    setModuleId(moduleId);
+    toggleModule();
   };
   const handleDeleteModule = (e, moduleId) => {
     e.stopPropagation();
@@ -93,13 +100,25 @@ const ModuleByLicense = (props) => {
   };
   return (
     <div className="container">
-      <ModalModule
-        modal={modal}
-        toggle={toggle}
+      {modalModule && <ModalModule
+        modal={modalModule}
+        toggle={toggleModule}
         moduleId={moduleId}
         handleSaveModal={handleSaveModal}
-      />
+      />}
+      {modalQuestion && <ModalQuestion
+        modal={modalQuestion}
+        toggle={toggleQuestion}
+        moduleId={moduleId}
+      />}
       <div className="select2-container">
+        {moduleId && (
+          <CustomButton
+            className="manage-question-button"
+            labelName="Manage questions"
+            handleClick={toggleQuestion}
+          />
+        )}
         <Select
           listData={props.licenses}
           className="licenses-style"
@@ -116,6 +135,8 @@ const ModuleByLicense = (props) => {
       <div className="modules-container">
         {licenseId && (
           <DrawModules
+            moduleIdSelected={moduleId}
+            handleEditModule={handleEditModule}
             handleSelectModule={handleSelectModule}
             handleDeleteModule={handleDeleteModule}
           />
