@@ -3,7 +3,6 @@ const bcrypt = require("bcrypt");
 const { generateToken } = require("../helpers/tokens");
 const jwt = require("jsonwebtoken");
 const config = require("../utils/config");
-const { timeSince } = require("../helpers/formatDate");
 exports.registerForAdmin = async (req, res, next) => {
   try {
     const { username, password } = req.body;
@@ -107,18 +106,7 @@ exports.getListClientForMessenger = async (req, res, next) => {
       }
     ]);
     const users = await queryUser.exec();
-    let userFormatDateMessage = users.map((user) => {
-      const contentMess = user.recentMessage.content;
-      return {
-        ...user,
-        recentMessage:{
-          ...user.recentMessage,
-          content: contentMess.length > 25 ? contentMess.slice(0,25) + "..." : contentMess,
-          createdAt: timeSince(user.recentMessage.createdAt)
-        }
-      };
-    });
-    return res.status(200).json(userFormatDateMessage);
+    return res.status(200).json(users);
   } catch (error) {
     next(error);
   }

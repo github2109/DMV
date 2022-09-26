@@ -2,7 +2,6 @@ const User = require("../models/user");
 const Message = require("../models/message");
 const jwt = require("jsonwebtoken");
 const config = require("../utils/config");
-const { timeSince } = require("../helpers/formatDate");
 exports.sendMessageFromClient = async (req, res, next) => {
   try {
     const deviceId = req.params.deviceId;
@@ -43,7 +42,7 @@ exports.sendMessageFromAdmin = async (req, res, next) => {
       images: message.images,
       isAdminSending: true,
       client: user._id,
-    });
+    }).save();
     user.recentMessage = messageSaved._id;
     await user.save();
     return res.status(200).json(messageSaved);
@@ -60,13 +59,7 @@ exports.getMessageByDeviceId = async (req, res, next) => {
     const message = await Message.find({ client: user._id }).sort({
       createdAt: 1,
     });
-    let messageFormatDate = message.map((mess) => {
-      return {
-        ...mess.toObject(),
-        createdAt:timeSince(mess.createdAt)
-      };
-    });
-    return res.status(200).json(messageFormatDate);
+    return res.status(200).json(message);
   } catch (error) {
     next(error);
   }

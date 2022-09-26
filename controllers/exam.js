@@ -5,8 +5,10 @@ exports.createExamAPI = async (req, res, next) => {
   try {
     const token = req.token;
     const decodeToken = jwt.verify(token, config.SECRET);
-    if(!decodeToken.id || !decodeToken.role) return res.status(403).json({message: "Token missing or invalid"});
-    if(decodeToken.role !== "ADMIN") return res.status(403).json({message: "Role is not allowed"});
+    if (!decodeToken.id || !decodeToken.role)
+      return res.status(403).json({ message: "Token missing or invalid" });
+    if (decodeToken.role !== "ADMIN")
+      return res.status(403).json({ message: "Role is not allowed" });
     const { stateId, licenseId } = req.query;
     if (!stateId || !licenseId) {
       return res.status(500).json({
@@ -15,7 +17,7 @@ exports.createExamAPI = async (req, res, next) => {
     }
     const exam = req.body;
     const examSaved = await new Exam({
-      exam,
+      ...exam,
       state: stateId,
       license: licenseId,
     }).save();
@@ -37,8 +39,10 @@ exports.updateExamAPI = async (req, res, next) => {
   try {
     const token = req.token;
     const decodeToken = jwt.verify(token, config.SECRET);
-    if(!decodeToken.id || !decodeToken.role) return res.status(403).json({message: "Token missing or invalid"});
-    if(decodeToken.role !== "ADMIN") return res.status(403).json({message: "Role is not allowed"});
+    if (!decodeToken.id || !decodeToken.role)
+      return res.status(403).json({ message: "Token missing or invalid" });
+    if (decodeToken.role !== "ADMIN")
+      return res.status(403).json({ message: "Role is not allowed" });
     const examId = req.params.id;
     if (!examId) {
       return res.status(500).json({
@@ -64,8 +68,10 @@ exports.deleteExamByIdAPI = async (req, res, next) => {
   try {
     const token = req.token;
     const decodeToken = jwt.verify(token, config.SECRET);
-    if(!decodeToken.id || !decodeToken.role) return res.status(403).json({message: "Token missing or invalid"});
-    if(decodeToken.role !== "ADMIN") return res.status(403).json({message: "Role is not allowed"});
+    if (!decodeToken.id || !decodeToken.role)
+      return res.status(403).json({ message: "Token missing or invalid" });
+    if (decodeToken.role !== "ADMIN")
+      return res.status(403).json({ message: "Role is not allowed" });
     const examId = req.params.id;
     if (!examId) {
       return res.status(500).json({

@@ -4,13 +4,12 @@ const messageSchema = mongoose.Schema(
   {
     content: {
       type: String,
-      required: [true, "Content is required"],
       trim: true,
       text: true,
     },
     images: [
       {
-        url: String,
+        type: String,
       },
     ],
     isAdminSending: {
