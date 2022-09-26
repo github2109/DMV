@@ -32,7 +32,6 @@ const createModule = async (module) => {
   if (module.imageDescription && typeof module.imageDescription !== "string") {
     const config = {
       headers: {
-        Authorization: token,
         "content-type": "multipart/form-data",
       },
     };
@@ -68,11 +67,11 @@ const updateModule = async (oldModule, newModule) => {
     );
     let formData = new FormData();
     formData.append("file", newModule.imageDescription);
-    const urlRes = await axios.post(
-      "/api/uploads/uploadImages",
-      formData,
-      config
-    );
+    const urlRes = await axios.post("/api/uploads/uploadImages", formData, {
+      headers: {
+        "content-type": "multipart/form-data",
+      },
+    });
     newModule.imageDescription = urlRes.data[0].url;
   }
   const response = await axios.put(`${bareUrl}/${oldModule._id}`, newModule, {

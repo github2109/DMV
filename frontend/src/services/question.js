@@ -11,7 +11,6 @@ const createQuestion = async (question) => {
   if (question.image !== null && typeof question.image !== "string") {
     const config = {
       headers: {
-        Authorization: token,
         "content-type": "multipart/form-data",
       },
     };
@@ -50,11 +49,11 @@ const updateQuestion = async (oldQuestion, newQuestion) => {
     if (newQuestion.image !== null) {
       let formData = new FormData();
       formData.append("file", newQuestion.image);
-      const urlRes = await axios.post(
-        "/api/uploads/uploadImages",
-        formData,
-        config
-      );
+      const urlRes = await axios.post("/api/uploads/uploadImages", formData, {
+        headers: {
+          "content-type": "multipart/form-data",
+        },
+      });
       newQuestion.image = urlRes.data[0].url;
     }
   }

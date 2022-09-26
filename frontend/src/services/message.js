@@ -6,7 +6,6 @@ const sendMessageFromAdmin = async (message,deviceId) => {
   if (message.images && message.images.length > 0) {
     const config = {
       headers: {
-        Authorization: token,
         "content-type": "multipart/form-data",
       },
     };

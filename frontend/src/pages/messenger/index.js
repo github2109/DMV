@@ -189,7 +189,7 @@ const Messenger = (props) => {
                               {message.isAdminSending ? (
                                 <div>
                                   {message.images.length > 0 && (
-                                    <div>
+                                    <div className="message-image-container float-right">
                                       {message.images.map((image, i) => (
                                         <img
                                           key={i}
@@ -218,7 +218,7 @@ const Messenger = (props) => {
                                     )}
                                   </div>
                                   {message.images.length > 0 && (
-                                    <div>
+                                    <div className="message-image-container">
                                       {message.images.map((image, i) => (
                                         <img
                                           key={i}
