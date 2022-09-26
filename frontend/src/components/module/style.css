@@ -129,6 +129,10 @@
   transition: transform 0.25s cubic-bezier(0.7, 0.98, 0.86, 0.98),
     box-shadow 0.25s cubic-bezier(0.7, 0.98, 0.86, 0.98);
   background-color: #fff;
+  height: 80px;
+}
+.leaderboard__checkboxmodule input{
+  height: 20px;
 }
 label {    
   display: contents;

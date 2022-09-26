@@ -144,11 +144,11 @@ exports.removeModuleOfStateAPI = async (req, res, next) => {
     if (decodeToken.role !== "ADMIN")
       return res.status(403).json({ message: "Role is not allowed" });
     const { stateId, moduleId } = req.params;
-    const module = await Module.findOne({ _id: moduleId, states: stateId });
-    if (!module) {
-      return res.status(404).json({ message: "Can't find module" });
+    const module = await Module.findById(moduleId);
+    if (!module.states.includes(stateId)) {
+      return res.status(404).json({ message: "This state is not include this module" });
     }
-    module.states = module.states.filter((state) => state !== stateId);
+    module.states = module.states.filter((state) => String(state) !== stateId);
     await module.save();
     return res
       .status(200)

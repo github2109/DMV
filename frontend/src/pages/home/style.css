@@ -46,6 +46,11 @@
   justify-content: center;
 }
 
+.only-manage-module{
+  position: relative;
+  top: 92%;
+}
+
 .link-add-module-license-state {
   margin-right: 50px;
   font-size: 20px;

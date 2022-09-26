@@ -32,16 +32,17 @@
     --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
       Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   }
-  .leaderboard__name {
+  .leaderboard__selection {
     color: #979cb0;
     font-weight: 600;
-    font-size: 20px;
+    font-size: 22px;
     letter-spacing: 0.64px;
-    margin-left: 12px;
+    margin-left: 30px;
+    width: fit-content;
   }
   .leaderboard__normalselection{
     display: grid;
-  grid-template-columns: 0.5fr 3fr 2fr;
+  grid-template-columns: 0.5fr 3fr;
   align-items: center;
   padding: 10px 30px 10px 10px;
   overflow: hidden;

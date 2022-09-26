@@ -5,7 +5,6 @@ import { initializeLicense } from "../../reducers/licenseReducer";
 import { setStateId, setLicenseId } from "../../reducers/filterReducer";
 import {
   setModuleByStateIdAndLicenseId,
-  getModuleByLicenseId,
   deleteModuleFromState,
 } from "../../reducers/moduleReducer";
 import {
@@ -17,7 +16,6 @@ import {
 import { Link } from "react-router-dom";
 import Select from "../../components/select";
 import NormalModules from "../../components/modules/normal";
-import ModalListModule from "../../components/modal/ModalListModule/ModalListModule";
 import "./style.css";
 import { useEffect, useState } from "react";
 import { Button } from "reactstrap";
@@ -96,16 +94,15 @@ const Home = (props) => {
             toggleIsShowExam={toggleIsShowExam}
           />
         )}
-      </div>
-      <div className="footer-modules-container">
+        <div className="footer-modules-container only-manage-module">
         {!props.filter.stateId && !props.filter.licenseId && (
-          <div>
             <Link to={"/modules"} className="link-manage-module">
               <span>Manage module</span>
             </Link>
-          </div>
         )}
       </div>
+      </div>
+      
     </div>
   );
 };

@@ -29,7 +29,7 @@ const SelectionModal = ({
                 onClick={handleClickNewModule}
               >
                 <span className="position">1</span>
-                <span className="leaderboard__name">New module</span>
+                <span className="leaderboard__selection">New module</span>
               </article>
               <article
                 className="leaderboard__normalselection"
@@ -37,7 +37,7 @@ const SelectionModal = ({
                 onClick={handleClickAddModule}
               >
                 <span className="position">2</span>
-                <span className="leaderboard__name">Existing module</span>
+                <span className="leaderboard__selection">Existing module</span>
               </article>
             </main>
           </article>
