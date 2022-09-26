@@ -7,6 +7,8 @@ import questionReducer from "./reducers/questionReducer";
 import responseUIReducer from "./reducers/responseUIReducer";
 import userReducer from "./reducers/userReducer";
 import messageReducer from "./reducers/messageReducer";
+import examReducer from "./reducers/examReducer";
+
 const store = configureStore({
   reducer: {
     states: stateReducer,
@@ -17,6 +19,7 @@ const store = configureStore({
     responseUI: responseUIReducer,
     users: userReducer,
     messages: messageReducer,
+    exams: examReducer,
   },
 });
 
