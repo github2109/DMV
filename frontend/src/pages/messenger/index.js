@@ -30,10 +30,8 @@ const Messenger = (props) => {
     connectSocket();
     authAdmin();
     props.setListClientForMessenger();
+    messagesEndRef.current?.scrollToBottom()
   }, []);
-  useEffect(() =>{
-    messagesEndRef.current?.scrollToBottom();
-  },[userSelect]);
   useEffect(() => {
     socket.on("receive_message", (data) => {
       props.executedConvertationReceiveMessage(data, props.users, userSelect);
