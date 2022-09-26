@@ -98,6 +98,7 @@ const deleteModule = async (moduleId) => {
   return response.data;
 };
 const addModulesToState = async (modulesId, stateId) => {
+  console.log("modules id", modulesId);
   const responses = [];
   for (let i = 0; i < modulesId.length; i++) {
     const response = await addOneModuleToState(modulesId[i], stateId);

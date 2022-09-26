@@ -1,11 +1,19 @@
-
 import "../style.css";
-
-const CheckBoxModule = ({ module, position, handleClickModule }) => {
+import { useState } from "react";
+const CheckBoxModule = ({ module, handleOnChangeCheckBox }) => {
+  const [checked, setChecked] = useState(module.isChoose);
+  const handleClick = () => {
+    setChecked(!checked);
+  };
   return (
-    <article className="leaderboard__checkboxmodule">
-      <label onClick={() => handleClickModule(position)}>
-        <input type="checkbox" className="option-input-checkbox" />
+    <article className="leaderboard__checkboxmodule" onClick={handleClick}>
+      <label>
+        <input
+          defaultChecked={checked}
+          onChange={handleOnChangeCheckBox}
+          type="checkbox"
+          className="option-input-checkbox"
+        />
         <span className="leaderboard__name">{module.name}</span>
       </label>
     </article>

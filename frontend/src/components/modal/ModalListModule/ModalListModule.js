@@ -6,10 +6,16 @@ import {
   getModuleByLicenseId,
   addModulesToState,
 } from "../../../reducers/moduleReducer";
+import {
+  onLoading,
+  offLoading,
+  setErrorNotification,
+} from "../../../reducers/responseUIReducer";
 import CheckBoxModules from "../../modules/CheckBox";
 const ModalListModule = ({ modal, toggle, licenseId, ...props }) => {
   const [modules, setModules] = useState({});
   useEffect(() => {
+    props.onLoading();
     props.getModuleByLicenseId(licenseId).then((res) => {
       const arr = res.filter(
         ({ _id }) => !props.modules.some((x) => x._id === _id)
@@ -20,13 +26,13 @@ const ModalListModule = ({ modal, toggle, licenseId, ...props }) => {
           return module;
         })
       );
+      props.offLoading();
     });
   }, [modal]);
-  const handleClickModule = (position) => {
+  const handleOnChangeCheckBox = (e, position) => {
     let arr = modules;
-    arr[position].isChoose = !arr[position].isChoose;
-    setModules(arr);
-    console.log(modules);
+    arr[position].isChoose = e.target.checked;
+    setModules([...arr]);
   };
   const handleAddClick = () => {
     const listModules = modules.filter((module) => module.isChoose === true);
@@ -46,10 +52,12 @@ const ModalListModule = ({ modal, toggle, licenseId, ...props }) => {
                 <span> You can't add any modules</span>
               </div>
             ) : (
-              <CheckBoxModules
-                handleClickModule={handleClickModule}
-                modules={modules}
-              />
+              modules && (
+                <CheckBoxModules
+                  handleOnChangeCheckBox={handleOnChangeCheckBox}
+                  modules={modules}
+                />
+              )
             )}
           </div>
         </div>
@@ -72,6 +80,9 @@ const mapDispatchToProps = (dispatch) => {
     addModulesToState: (moduleId, stateId) => {
       dispatch(addModulesToState(moduleId, stateId));
     },
+    onLoading: () => dispatch(onLoading()),
+    offLoading: () => dispatch(offLoading()),
+    setErrorNotification: (mess) => dispatch(setErrorNotification(mess)),
   };
 };
 const mapStateToProps = (state) => {

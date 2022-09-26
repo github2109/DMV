@@ -3,16 +3,18 @@ import CheckBoxModule from "../../module/CheckBox";
 const CheckBoxModules = (props) => {
   return (
     <article className="leaderboard">
-      <main className="leaderboard__profiles">
+      <div className="leaderboard__profiles">
         {props.modules.map((module, position) => (
           <CheckBoxModule
-            handleClickModule={props.handleClickModule}
+            handleOnChangeCheckBox={(e) =>
+              props.handleOnChangeCheckBox(e, position)
+            }
             key={module._id}
             module={module}
             position={position}
           />
         ))}
-      </main>
+      </div>
     </article>
   );
 };
