@@ -6,10 +6,12 @@ import { useEffect, useState } from "react";
 import Navigation from "./components/navigation";
 import Home from "./pages/home";
 import ModuleByLicense from "./pages/moduleByLicense";
+import Messenger from "./pages/messenger";
 import Licenses from "./pages/licenses";
 import States from "./pages/states";
 import Loading from "./components/loading";
 import Notification from "./components/notification";
+import MessengerClient from "./pages/messengerClient";
 import "./style.css";
 
 const App = () => {
@@ -63,6 +65,12 @@ const App = () => {
         ></Route>
         <Route path="/" exact={true} element={<Home />} />
         <Route path="/states" exact={true} element={<States />}></Route>
+        <Route path="/messenger" exact={true} element={<Messenger />}></Route>
+        <Route
+          path="/messenger/client"
+          exact={true}
+          element={<MessengerClient />}
+        ></Route>
       </Routes>
     </div>
   );

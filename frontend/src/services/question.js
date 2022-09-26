@@ -7,7 +7,7 @@ const getQuestionByModuleId = async (moduleId) => {
   return response.data;
 };
 
-const createQuestion = async (question, moduleId) => {
+const createQuestion = async (question) => {
   if (question.image !== null && typeof question.image !== "string") {
     const config = {
       headers: {
@@ -24,15 +24,11 @@ const createQuestion = async (question, moduleId) => {
     );
     question.image = urlRes.data[0].url;
   }
-  const response = await axios.post(
-    bareUrl,
-    { question, moduleId },
-    {
-      headers: {
-        Authorization: token,
-      },
-    }
-  );
+  const response = await axios.post(bareUrl, question, {
+    headers: {
+      Authorization: token,
+    },
+  });
   return response.data;
 };
 

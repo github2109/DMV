@@ -1,7 +1,7 @@
 .modal-question-container {
   display: flex;
   flex-direction: column;
-  row-gap: 5px;
+  row-gap: 10px;
 }
 
 .leaderboard-question {
@@ -23,6 +23,7 @@
   margin-left: 20px;
   margin-top: 10px;
   font-size: 17px;
+  width: 90%;
 }
 .TrashButton-modal-question {
   float: right;
@@ -38,4 +39,8 @@
   justify-content: center;
   height: 28px;
   margin-top: 5px;
+}
+.filter-question-button{
+  display: flex;
+  margin-bottom: 10px;
 }

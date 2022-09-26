@@ -14,6 +14,10 @@ const userSchema = mongoose.Schema({
     type: String,
     required: [true, "Role is required"],
   },
+  recentMessage:{
+    type:mongoose.Schema.Types.ObjectId,
+    ref:"Message"
+  }
 });
 
 module.exports = mongoose.model("User", userSchema);

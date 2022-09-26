@@ -34,6 +34,8 @@
 .licenses-style {
   grid-column-start: 2;
   width: 100%;
+  display: flex;
+  justify-content: center;
 }
 
 .save-button {
@@ -46,4 +48,9 @@
   justify-content: center;
   align-items: flex-end;
   margin-bottom: 6px;
+}
+
+
+.manage-question-button{
+  width: fit-content;
 }

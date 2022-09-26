@@ -2,7 +2,7 @@ import "../style.css";
 import { connect } from "react-redux";
 import DrawModule from "../../module/draw";
 import { Droppable, DragDropContext, Draggable } from "react-beautiful-dnd";
-import { setModules} from "../../../reducers/moduleReducer";
+import { setModules } from "../../../reducers/moduleReducer";
 const DrawModules = (props) => {
   const reorder = (list, startIndex, endIndex) => {
     const result = Array.from(list);
@@ -40,7 +40,6 @@ const DrawModules = (props) => {
                       key={module._id}
                       draggableId={module._id}
                       index={position}
-                      
                     >
                       {(provided, snapshot) => (
                         <div
@@ -48,7 +47,20 @@ const DrawModules = (props) => {
                           {...provided.draggableProps}
                           {...provided.dragHandleProps}
                         >
-                          <DrawModule module={module} position={position} handleSelectModule = {(e) => props.handleSelectModule(e,module._id)} handleDeleteModule={(e) => props.handleDeleteModule(e,module._id)}/>
+                          <DrawModule
+                            isSelected={module._id === props.moduleIdSelected}
+                            module={module}
+                            position={position}
+                            handleSelectModule={(e) =>
+                              props.handleSelectModule(e, module._id)
+                            }
+                            handleDeleteModule={(e) =>
+                              props.handleDeleteModule(e, module._id)
+                            }
+                            handleEditModule={(e) =>
+                              props.handleEditModule(e, module._id)
+                            }
+                          />
                         </div>
                       )}
                     </Draggable>
@@ -73,7 +85,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    setModules:(modules) => dispatch(setModules(modules)),
+    setModules: (modules) => dispatch(setModules(modules)),
   };
 };
 
