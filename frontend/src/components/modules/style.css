@@ -18,3 +18,6 @@
   padding-bottom: 8px;
   overflow-y: auto;
 }
+.option-input-checkbox{
+  position: initial;
+}

@@ -32,6 +32,7 @@ const App = () => {
       const user = await userService.loginAdmin({ username, password });
       tokenService.setToken(user.token);
       setUser(user);
+      console.log(user);
       window.localStorage.setItem("loggedBlogappUser", JSON.stringify(user));
     } catch (error) {
       setMessageLogin(error.response.data.message);
@@ -48,7 +49,6 @@ const App = () => {
         messageLogin={messageLogin}
       />
     );
-
   return (
     <div className="parent-container">
       <Loading />

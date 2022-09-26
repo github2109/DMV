@@ -21,10 +21,7 @@ const moduleSlice = createSlice({
   },
 });
 
-export const setModuleByStateIdAndLicenseId = (
-  stateId,
-  licenseId
-) => {
+export const setModuleByStateIdAndLicenseId = (stateId, licenseId) => {
   return async (dispatch) => {
     const modules = await moduleService.getModuleByStateIdAndLicenseId(
       stateId,
@@ -38,6 +35,13 @@ export const setModuleByLicenseId = (licenseId) => {
   return async (dispatch) => {
     const modules = await moduleService.getModuleByLicenseId(licenseId);
     dispatch(moduleSlice.actions.setModules(modules));
+  };
+};
+
+export const getModuleByLicenseId = (licenseId) => {
+  return async (dispatch) => {
+    const modules = await moduleService.getModuleByLicenseId(licenseId);
+    return modules;
   };
 };
 
@@ -89,4 +93,26 @@ export const deleteModule = (moduleId) => {
   };
 };
 
+export const deleteModuleFromState = (moduleId, stateId) => {
+  return async (dispatch) => {
+    await moduleService.deleteModuleFromState(moduleId, stateId);
+    dispatch(moduleSlice.actions.deleteModule(moduleId));
+  };
+};
+
+export const addModulesToState = (moduleId, stateId) => {
+  return async (dispatch) => {
+    const modules = await moduleService.addModulesToState(moduleId, stateId);
+    modules.map((module) =>
+      dispatch(
+        moduleSlice.actions.createModule({
+          _id: module._id,
+          name: module.name,
+          position: module.position,
+          numberOfQuestion: module.questions.length,
+        })
+      )
+    );
+  };
+};
 export default moduleSlice.reducer;

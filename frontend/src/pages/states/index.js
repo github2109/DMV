@@ -37,10 +37,10 @@ const States = (props) => {
       props.onLoading();
       if (isCreate) {
         await props.createState(newState);
-        props.setSuccessNotification("State created successfully")
+        props.setSuccessNotification("State created successfully");
       } else {
         await props.updateState(oldState, newState);
-        props.setSuccessNotification("State updated successfully")
+        props.setSuccessNotification("State updated successfully");
       }
       props.offLoading();
       toggle();

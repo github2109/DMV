@@ -98,6 +98,39 @@ const deleteModule = async (moduleId) => {
   const response = await axios.delete(`${bareUrl}/${moduleId}`, config);
   return response.data;
 };
+const addModulesToState = async (modulesId, stateId) => {
+  const responses = [];
+  for (let i = 0; i < modulesId.length; i++) {
+    const response = await addOneModuleToState(modulesId[i], stateId);
+    responses.push(response.moduleSaved);
+  }
+  return responses;
+};
+const addOneModuleToState = async (moduleId, stateId) => {
+  const config = {
+    headers: {
+      Authorization: token,
+    },
+  };
+  const response = await axios.post(
+    `${bareUrl}/${moduleId}/states/${stateId}`,
+    null,
+    config
+  );
+  return response.data;
+};
+const deleteModuleFromState = async (moduleId, stateId) => {
+  const config = {
+    headers: {
+      Authorization: token,
+    },
+  };
+  const response = await axios.delete(
+    `${bareUrl}/${moduleId}/states/${stateId}`,
+    config
+  );
+  return response.data;
+};
 // eslint-disable-next-line import/no-anonymous-default-export
 export default {
   getModuleByStateIdAndLicenseId,
@@ -107,4 +140,7 @@ export default {
   updateModule,
   createModule,
   deleteModule,
+  addOneModuleToState,
+  addModulesToState,
+  deleteModuleFromState,
 };

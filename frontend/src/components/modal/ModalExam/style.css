@@ -1,0 +1,23 @@
+.exam-modal-container {
+    display: grid;
+    align-items: center;
+  }
+  .exam-form {
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px;
+  }
+  .input-text-exam {
+    height: 100%;
+    border: none;
+    background: #ededed;
+    border-radius: 0.25rem;
+    padding: 0.75rem 1rem;
+    margin-bottom: 10px;
+  }
+  
+  .content-description {
+    height: 120px;
+  }
+
+  

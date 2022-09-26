@@ -17,6 +17,17 @@
   width: 100%;
   justify-content: center;
 }
+.manage-exam{
+    width: 50px;
+    height: 50px;
+    font-size: 25px;
+    margin-left: 5px;
+    margin-top: 2px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
 
 .select-container {
   display: flex;
@@ -50,4 +61,19 @@
 .link-manage-module-center {
   font-size: 20px;
   text-decoration: none;
+}
+.input-add-module{
+  font-family: Poppins-Regular;
+    font-size: 20px;
+    line-height: 1.7;
+    color: #666666;
+    margin: 0px;
+    transition: all 0.4s;
+    -webkit-transition: all 0.4s;
+    -o-transition: all 0.4s;
+    -moz-transition: all 0.4s;
+    cursor: pointer;
+}
+.input-add-module:hover{
+  color: #57b846;
 }

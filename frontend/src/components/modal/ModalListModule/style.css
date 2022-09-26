@@ -1,0 +1,46 @@
+.list-module-container {
+  width: 65%;
+  height: 550px;
+  display: flex;
+  background: var(--bg);
+  font-family: var(--font);
+  border-radius: 5px;
+  background-color: #fff;
+  align-self: center;
+  padding: 5px 3px 6px 8px;
+  display: flex;
+  flex-direction: column;
+}
+
+.list-module-body {
+  height: 75%;
+  display: flex;
+  flex-direction: column;
+  row-gap: 5px;
+  overflow-y: auto;
+  padding-bottom: 10px;
+}
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+.create-license {
+  height: 10%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+}
