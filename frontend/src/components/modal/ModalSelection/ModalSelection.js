@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { connect } from "react-redux";
 import { ModalBody, ModalFooter, ModalHeader, Modal, Button } from "reactstrap";
 import "./style.css";

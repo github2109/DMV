@@ -50,7 +50,9 @@
   position: relative;
   top: 92%;
 }
-
+.only-manage-module a{
+  margin-left: 0 !important;
+}
 .link-add-module-license-state {
   margin-right: 50px;
   font-size: 20px;

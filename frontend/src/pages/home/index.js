@@ -112,6 +112,7 @@ const mapStateToProps = (state) => {
     states: state.states,
     licenses: state.licenses,
     filter: state.filter,
+    modules: state.modules
   };
 };
 

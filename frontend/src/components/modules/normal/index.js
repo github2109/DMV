@@ -6,7 +6,7 @@ import ModalListModule from "../../modal/ModalListModule/ModalListModule";
 import NormalExam from "../../exam";
 import { useState, useEffect} from "react";
 import ExamModal from "../../../components/modal/ModalExam/modalExam";
-import ModalModule from "../../modal/ModalModule";
+import ModalDetailModule from "../../modal/ModalDetailModule";
 import SelectionModal from "../../../components/modal/ModalSelection/ModalSelection";
 import {
   createModule,
@@ -131,7 +131,7 @@ const NormalModules = ({
           </article>
         ) : (
           <article className="leaderboard">
-            <ModalModule
+            <ModalDetailModule
               modal={modalAddModule}
               toggle={toggleAddModule}
               handleSaveModal={handleAddModule}

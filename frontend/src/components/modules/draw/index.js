@@ -1,8 +1,6 @@
 import "../style.css";
-import { connect } from "react-redux";
 import DrawModule from "../../module/draw";
 import { Droppable, DragDropContext, Draggable } from "react-beautiful-dnd";
-import { setModules } from "../../../reducers/moduleReducer";
 const DrawModules = (props) => {
   const reorder = (list, startIndex, endIndex) => {
     const result = Array.from(list);
@@ -37,8 +35,8 @@ const DrawModules = (props) => {
                 <main className="leaderboard__profiles">
                   {props.modules.map((module, position) => (
                     <Draggable
-                      key={module._id}
-                      draggableId={module._id}
+                      key={module._id || module.id}
+                      draggableId={module._id || String(module.id)}
                       index={position}
                     >
                       {(provided, snapshot) => (
@@ -48,18 +46,27 @@ const DrawModules = (props) => {
                           {...provided.dragHandleProps}
                         >
                           <DrawModule
-                            isSelected={module._id === props.moduleIdSelected}
+                            isSelected={
+                              props.moduleIdSelected &&
+                              module._id === props.moduleIdSelected
+                            }
                             module={module}
                             position={position}
-                            handleSelectModule={(e) =>
-                              props.handleSelectModule(e, module._id)
-                            }
-                            handleDeleteModule={(e) =>
-                              props.handleDeleteModule(e, module._id)
-                            }
-                            handleEditModule={(e) =>
-                              props.handleEditModule(e, module._id)
-                            }
+                            handleSelectModule={(e) => {
+                              if (module._id)
+                                props.handleSelectModule(e, module._id);
+                              else props.handleSelectModule(e, module.id);
+                            }}
+                            handleDeleteModule={(e) => {
+                              if (module._id)
+                                props.handleDeleteModule(e, module._id);
+                              else props.handleDeleteModule(e, module.id);
+                            }}
+                            handleEditModule={(e) => {
+                              if (module._id)
+                                props.handleEditModule(e, module._id);
+                              else props.handleEditModule(e, module.id);
+                            }}
                           />
                         </div>
                       )}
@@ -77,16 +84,4 @@ const DrawModules = (props) => {
   );
 };
 
-const mapStateToProps = (state) => {
-  return {
-    modules: state.modules,
-  };
-};
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    setModules: (modules) => dispatch(setModules(modules)),
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(DrawModules);
+export default DrawModules;

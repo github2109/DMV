@@ -19,7 +19,6 @@ const ModalModule = ({
 }) => {
   const [oldModule, setOldModule] = useState(null);
   const [tmpModule, setTmpModule] = useState(null);
-  const [imageUrl, setImageUrl] = useState(null);
   const [isCreated, setIsCreated] = useState(false);
   const [modalChildren, setModalChildren] = useState(false);
   const toggleChildren = () => setModalChildren(!modalChildren);
@@ -33,20 +32,24 @@ const ModalModule = ({
         imageDescription: null,
         isPremium: false,
       });
-      setImageUrl(null);
     } else {
-      try {
-        props.onLoading();
-        props.getDetailModuleByModuleId(moduleId).then((res) => {
-          setTmpModule(res);
-          setImageUrl(res.imageDescription);
-          setIsCreated(false);
-          setOldModule(res);
+      if (props.module) {
+        setTmpModule(props.module);
+        setIsCreated(false);
+        setOldModule(props.module);
+      } else {
+        try {
+          props.onLoading();
+          props.getDetailModuleByModuleId(moduleId).then((res) => {
+            setTmpModule(res);
+            setIsCreated(false);
+            setOldModule(res);
+            props.offLoading();
+          });
+        } catch (error) {
           props.offLoading();
-        });
-      } catch (error) {
-        props.offLoading();
-        props.setErrorNotification(error.response.data.message);
+          props.setErrorNotification(error.response.data.message);
+        }
       }
     }
   }, [modal]);
@@ -56,7 +59,6 @@ const ModalModule = ({
       ...tmpModule,
       imageDescription: file,
     });
-    setImageUrl(URL.createObjectURL(file));
   };
   const handleInputChange = (e) => {
     setTmpModule({
@@ -82,11 +84,22 @@ const ModalModule = ({
       toggle();
     }
   };
-  if(!tmpModule) return null;
+  if (!tmpModule) return null;
   return (
     <Modal isOpen={modal} toggle={toggle} size="lg">
       <ModalHeader toggle={toggle}>Detail module</ModalHeader>
       <ModalBody>
+        {props.toggleModalImportModule && isCreated && (
+          <div className="import-file-icon">
+            <i
+              className="fa-solid fa-file-import"
+              onClick={(e) => {
+                toggle();
+                props.toggleModalImportModule();
+              }}
+            ></i>
+          </div>
+        )}
         {modalChildren === true && (
           <ModalQuestion
             modal={modalChildren}
@@ -136,7 +149,15 @@ const ModalModule = ({
               <div className="image-preview-module">
                 <div id="imagePreview-module">
                   {tmpModule && tmpModule.imageDescription !== null ? (
-                    <img src={imageUrl} alt="" className="image-module"></img>
+                    <img
+                      src={
+                        typeof tmpModule.imageDescription === "object"
+                          ? URL.createObjectURL(tmpModule.imageDescription)
+                          : tmpModule.imageDescription
+                      }
+                      alt=""
+                      className="image-module"
+                    ></img>
                   ) : (
                     <span className="import-text-module">Import image</span>
                   )}

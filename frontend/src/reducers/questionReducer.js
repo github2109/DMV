@@ -34,9 +34,8 @@ export const updateQuestion = (oldQuestion, newQuestion) => {
   }
 }
 
-export const createQuestion = (newQuestion,moduleId) => {
+export const createQuestion = (newQuestion) => {
   return async (dispatch) => {
-    newQuestion.module = moduleId;
     const question = await questionService.createQuestion(newQuestion);
     dispatch(questionSlice.actions.createQuestion(question));
   }

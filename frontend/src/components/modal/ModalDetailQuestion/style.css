@@ -1,3 +1,13 @@
+
+.import-file-icon{
+  display: flex;
+  justify-content: center;
+  font-size: 40px;
+  cursor: pointer;
+}
+.import-file-icon i:hover{
+  color: #757575;
+}
 .form-question {
   display: flex;
   flex-direction: column;
@@ -63,7 +73,7 @@
   font-family: "FontAwesome";
   color: #757575;
   position: absolute;
-  top: 6px;
+  top: -3px;
   left: 0;
   right: 0;
   text-align: center;

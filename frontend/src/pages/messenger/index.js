@@ -30,7 +30,7 @@ const Messenger = (props) => {
     connectSocket();
     authAdmin();
     props.setListClientForMessenger();
-    messagesEndRef.current?.scrollToBottom()
+    messagesEndRef.current?.scrollToBottom();
   }, []);
   useEffect(() => {
     socket.on("receive_message", (data) => {
@@ -191,12 +191,14 @@ const Messenger = (props) => {
                                   {message.images.length > 0 && (
                                     <div className="message-image-container float-right">
                                       {message.images.map((image, i) => (
-                                        <img
-                                          key={i}
-                                          src={image}
-                                          alt="imgMess"
-                                          className="message-image float-right"
-                                        />
+                                        <a href={image} key={i}>
+                                          <img
+                                            href={image}
+                                            src={image}
+                                            alt="imgMess"
+                                            className="message-image float-right"
+                                          />
+                                        </a>
                                       ))}
                                     </div>
                                   )}
@@ -220,12 +222,13 @@ const Messenger = (props) => {
                                   {message.images.length > 0 && (
                                     <div className="message-image-container">
                                       {message.images.map((image, i) => (
-                                        <img
-                                          key={i}
-                                          src={image}
-                                          alt="imgMess"
-                                          className="message-image"
-                                        />
+                                        <a href={image} key={i}>
+                                          <img
+                                            src={image}
+                                            alt="imgMess"
+                                            className="message-image"
+                                          />
+                                        </a>
                                       ))}
                                     </div>
                                   )}

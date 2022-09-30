@@ -3,16 +3,15 @@ import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
 import { useState, useEffect } from "react";
 import PlusButton from "../../button/PlusButton";
 import "./style.css";
-const ModalQuestion = ({
+const ModalDetailQuestion = ({
   modal,
   toggle,
   question,
   handleSaveModal,
-  ...props
+  toggleModalImportQuestion
 }) => {
   const [oldQuestion, setOldQuestion] = useState(null);
   const [tmpQuestion, setTmpQuestion] = useState(null);
-  const [imageUrl, setImageUrl] = useState(null);
   const [isCreated, setIsCreated] = useState(false);
   useEffect(() => {
     if (question === null) {
@@ -27,7 +26,6 @@ const ModalQuestion = ({
     } else {
       setOldQuestion(question);
       setTmpQuestion(question);
-      setImageUrl(question.image);
     }
   }, [modal]);
   const onImageChange = (e) => {
@@ -36,7 +34,6 @@ const ModalQuestion = ({
       ...tmpQuestion,
       image: file,
     });
-    setImageUrl(URL.createObjectURL(file));
   };
   const handleClickAddAnswer = () => {
     setTmpQuestion({
@@ -96,13 +93,22 @@ const ModalQuestion = ({
       ...tmpQuestion,
       image: null,
     });
-    setImageUrl(null);
   };
   if (tmpQuestion === null) return null;
   return (
     <Modal isOpen={modal} toggle={toggle} size="lg">
       <ModalHeader toggle={toggle}>Detail Question</ModalHeader>
       <ModalBody>
+        {toggleModalImportQuestion && isCreated && <div className="import-file-icon">
+          <i
+            className="fa-solid fa-file-import"
+            onClick={(e) => {
+              toggle();
+              toggleModalImportQuestion();
+            
+            }}
+          ></i>
+        </div>}
         <div className="form-question">
           <label>Content question :</label>
           <textarea
@@ -126,8 +132,16 @@ const ModalQuestion = ({
             </div>
             <div className="image-preview-question">
               <div id="imagePreview-question">
-                {imageUrl !== null ? (
-                  <img src={imageUrl} alt="" className="image-question"></img>
+                {tmpQuestion.image !== null ? (
+                  <img
+                    src={
+                      typeof tmpQuestion.image === "object"
+                        ? URL.createObjectURL(tmpQuestion.image)
+                        : tmpQuestion.image
+                    }
+                    alt=""
+                    className="image-question"
+                  ></img>
                 ) : (
                   <span className="import-text-question">Import image</span>
                 )}
@@ -221,7 +235,10 @@ const ModalQuestion = ({
       <ModalFooter>
         <Button
           color="primary"
-          onClick={(e) => handleSaveModal(oldQuestion, tmpQuestion, isCreated)}
+          onClick={(e) => {
+            handleSaveModal(oldQuestion, tmpQuestion, isCreated);
+            toggle();
+          }}
         >
           Save
         </Button>{" "}
@@ -233,4 +250,4 @@ const ModalQuestion = ({
   );
 };
 
-export default ModalQuestion;
+export default ModalDetailQuestion;
