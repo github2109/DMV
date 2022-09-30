@@ -1,14 +1,18 @@
 .message-client-container{
     margin-left: auto;
     margin-right: auto;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    row-gap: 10px;
 }
 
 .message-client-container button{
     background-color: rgb(128, 157, 157);
-    margin-left: 10px;
-    width: 60px;
+    margin-right: 20px;
+    width: 80px;
     height: 30px;
-    border-radius: 10px;
+    border-radius: 5px;
 }
 .message-client-container input{
     height: 30px;

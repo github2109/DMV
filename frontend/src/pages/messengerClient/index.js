@@ -27,7 +27,7 @@ const MessengerClient = () => {
   const joinRoom = () => {
     joinRoomSocket(room);
   };
-  const readExcel =  (e) => {
+  const readExcel = (e) => {
     const fileReader = new FileReader();
     fileReader.readAsBinaryString(e.target.files[0]);
     fileReader.onload = async (e) => {
@@ -39,20 +39,11 @@ const MessengerClient = () => {
       const data = await XLSX.utils.sheet_to_json(ws);
       console.log(data);
     };
-
-    // readXlsxFile(e.target.files[0]).then((row) => {
-    //   console.log(row);
-    // })
   };
-  const readImages = (e) => {
-    for(let i =0;i<e.target.files.length;i++){
-      if(e.target.files[i].name.split(".")[0] === "0") console.log(e.target.files[i]);
-    }
-  }
+
   return (
     <div className="message-client-container">
       <input type="file" onChange={readExcel} />
-      <input directory="" webkitdirectory="true" type="file"  onChange={readImages}/>
 
       <div className="message-client-joint">
         <input
