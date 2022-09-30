@@ -36,7 +36,9 @@ exports.updateModuleAfterRemoveLicense = async (licenseId) => {
 };
 
 exports.getListModuleIdByStateIdAndLicenseId = async (stateId, licenseId) => {
-  return await Module.find({ license: licenseId, states: stateId }).select({_id:1});
+  return await Module.find({ license: licenseId, states: stateId }).select({
+    _id: 1,
+  });
 };
 
 exports.getModuleByStateIdAndLicenseIdAPI = async (req, res, next) => {
@@ -81,7 +83,7 @@ exports.createModuleAPI = async (req, res, next) => {
       return res.status(500).json({ message: "This name already exists" });
     }
     const moduleSaved = await new Module(module).save();
-    res.status(200).json(moduleSaved);
+    res.status(201).json(moduleSaved);
   } catch (error) {
     next(error);
   }
@@ -95,11 +97,8 @@ exports.deleteModuleAPI = async (req, res, next) => {
       return res.status(403).json({ message: "Token missing or invalid" });
     if (decodeToken.role !== "ADMIN")
       return res.status(403).json({ message: "Role is not allowed" });
-    const module = await Module.findById(req.params.moduleId);
-    module.questions.forEach(
-      async (question) => await Question.findByIdAndRemove(question)
-    );
     await Module.findByIdAndDelete(req.params.moduleId);
+    await Question.deleteMany({ module: req.params.moduleId });
     res.status(200).json({ message: "Module deleted" });
   } catch (error) {
     next(error);
@@ -129,7 +128,7 @@ exports.addModuleToStateAPI = async (req, res, next) => {
     }
     module.states.push(stateId);
     const moduleSaved = await module.save();
-    return res.status(200).json({ moduleSaved });
+    return res.status(200).json(moduleSaved);
   } catch (error) {
     next(error);
   }
@@ -146,7 +145,9 @@ exports.removeModuleOfStateAPI = async (req, res, next) => {
     const { stateId, moduleId } = req.params;
     const module = await Module.findById(moduleId);
     if (!module.states.includes(stateId)) {
-      return res.status(404).json({ message: "This state is not include this module" });
+      return res
+        .status(404)
+        .json({ message: "This state is not include this module" });
     }
     module.states = module.states.filter((state) => String(state) !== stateId);
     await module.save();
