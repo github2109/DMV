@@ -2,7 +2,7 @@ const Question = require("../models/question");
 const jwt = require("jsonwebtoken");
 const config = require("../utils/config");
 const {
-  getListModuleIdByStateIdAndLicenseId
+  getListModuleIdByStateIdAndLicenseId,
 } = require("../controllers/module");
 const { getExamByExamId } = require("../controllers/exam");
 
@@ -14,7 +14,10 @@ exports.getQuestionsForExamAPI = async (req, res, next) => {
       exam.state,
       exam.license
     );
-    const listQuestions = await Question.find({module:{$in:modules},isTestQuestion:true});
+    const listQuestions = await Question.find({
+      module: { $in: modules },
+      isTestQuestion: true,
+    });
     const questions = [];
     for (let i = 0; i < exam.numberOfQuestion; i++) {
       const index = Math.floor(Math.random() * listQuestions.length);
@@ -35,7 +38,7 @@ exports.getQuestionsForExamAPI = async (req, res, next) => {
 exports.getAllQuestionsForModuleAPI = async (req, res, next) => {
   try {
     const moduleId = req.params.moduleId;
-    const questions = await Question.find({module:moduleId});
+    const questions = await Question.find({ module: moduleId });
     return res.status(200).json(questions);
   } catch (error) {
     next(error);
@@ -65,7 +68,7 @@ exports.deleteQuestionByIdAPI = async (req, res, next) => {
       return res.status(403).json({ message: "Token missing or invalid" });
     if (decodeToken.role !== "ADMIN")
       return res.status(403).json({ message: "Role is not allowed" });
-    const {questionId} = req.params;
+    const { questionId } = req.params;
     const deletedQuestion = await Question.findByIdAndRemove({
       _id: questionId,
     });
@@ -94,7 +97,7 @@ exports.updateQuestionByIdAPI = async (req, res, next) => {
     if (!updatedQuestion) {
       return res.status(500).json({ message: "Something went wrong" });
     }
-    res.status(201).json(updatedQuestion);
+    res.status(200).json(updatedQuestion);
   } catch (error) {
     next(error);
   }

@@ -1,4 +1,6 @@
 const express = require("express");
+
+require("express-async-errors");
 const path = require("path");
 const cors = require("cors");
 const mongoose = require("mongoose");
@@ -33,8 +35,6 @@ app.use(
   })
 );
 
-
-
 app.use(express.static(path.join(__dirname, "./build")));
 app.use(express.json());
 app.use(middleware.requestLogger);
@@ -48,7 +48,7 @@ app.use("/api/modules", moduleRouter);
 app.use("/api/messages", messageRouter);
 app.use("/api/licenses", licenseRouter);
 app.use("/api/exams", examRouter);
-app.use("/api/uploads",uploadRouter);
+app.use("/api/uploads", uploadRouter);
 
 app.use(middleware.unknownEndpoint);
 app.use(middleware.errorHandler);

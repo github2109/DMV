@@ -83,7 +83,7 @@ exports.createModuleAPI = async (req, res, next) => {
       return res.status(500).json({ message: "This name already exists" });
     }
     const moduleSaved = await new Module(module).save();
-    res.status(200).json(moduleSaved);
+    res.status(201).json(moduleSaved);
   } catch (error) {
     next(error);
   }
@@ -128,7 +128,7 @@ exports.addModuleToStateAPI = async (req, res, next) => {
     }
     module.states.push(stateId);
     const moduleSaved = await module.save();
-    return res.status(200).json({ moduleSaved });
+    return res.status(200).json(moduleSaved);
   } catch (error) {
     next(error);
   }
