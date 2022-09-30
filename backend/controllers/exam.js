@@ -59,7 +59,7 @@ exports.updateExamAPI = async (req, res, next) => {
         message: "Something went wrong",
       });
     }
-    res.status(201).json(updatedQuestion);
+    res.status(200).json(updatedQuestion);
   } catch (error) {
     next(error);
   }
