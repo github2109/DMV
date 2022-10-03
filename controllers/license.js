@@ -1,13 +1,8 @@
 const License = require("../models/license");
 const { updateModuleAfterRemoveLicense } = require("../controllers/module");
-const jwt = require("jsonwebtoken");
-const config = require("../utils/config");
+
 exports.createLicense = async (req, res, next) => {
   try {
-    const token = req.token;
-    const decodeToken = jwt.verify(token, config.SECRET);
-    if(!decodeToken.id || !decodeToken.role) return res.status(403).json({message: "Token missing or invalid"});
-    if(decodeToken.role !== "ADMIN") return res.status(403).json({message: "Role is not allowed"});
     const { name, image, description } = req.body;
     const checkLicense = await License.findOne({ name });
     if (checkLicense) {
@@ -39,10 +34,6 @@ exports.getListLicenses = async (req, res, next) => {
 
 exports.deleteLicenseById = async (req, res, next) => {
   try {
-    const token = req.token;
-    const decodeToken = jwt.verify(token, config.SECRET);
-    if(!decodeToken.id || !decodeToken.role) return res.status(403).json({message: "Token missing or invalid"});
-    if(decodeToken.role !== "ADMIN") return res.status(403).json({message: "Role is not allowed"});
     const licenseId = req.params.id;
     const deletedLicense = await License.findByIdAndRemove({ _id: licenseId });
     if (!deletedLicense) {
@@ -59,10 +50,6 @@ exports.deleteLicenseById = async (req, res, next) => {
 
 exports.updateLicenseData = async (req, res, next) => {
   try {
-    const token = req.token;
-    const decodeToken = jwt.verify(token, config.SECRET);
-    if(!decodeToken.id || !decodeToken.role) return res.status(403).json({message: "Token missing or invalid"});
-    if(decodeToken.role !== "ADMIN") return res.status(403).json({message: "Role is not allowed"});
     const data = req.body;
     const dataId = req.params.id;
     const updatedLisence = await License.findByIdAndUpdate(

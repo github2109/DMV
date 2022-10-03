@@ -5,10 +5,11 @@ const {
   deleteLicenseById,
   updateLicenseData,
 } = require("../controllers/license");
+const middlwares = require("../utils/middleware");
 
-licenseRouter.post("/", createLicense);
+licenseRouter.post("/",middlwares.authAdmin, createLicense);
 licenseRouter.get("/", getListLicenses);
-licenseRouter.delete("/:id", deleteLicenseById);
-licenseRouter.put("/:id", updateLicenseData);
+licenseRouter.delete("/:id",middlwares.authAdmin, deleteLicenseById);
+licenseRouter.put("/:id",middlwares.authAdmin, updateLicenseData);
 
 module.exports = licenseRouter;

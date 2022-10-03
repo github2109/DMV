@@ -1,8 +1,6 @@
 const User = require("../models/user");
 const bcrypt = require("bcrypt");
 const { generateToken } = require("../helpers/tokens");
-const jwt = require("jsonwebtoken");
-const config = require("../utils/config");
 exports.registerForAdmin = async (req, res, next) => {
   try {
     const { username, password } = req.body;
@@ -77,12 +75,6 @@ exports.registerForClient = async (req, res, next) => {
 
 exports.getListClientForMessenger = async (req, res, next) => {
   try {
-    const token = req.token;
-    const decodeToken = jwt.verify(token, config.SECRET);
-    if (!decodeToken.id || !decodeToken.role)
-      return res.status(403).json({ message: "Token missing or invalid" });
-    if (decodeToken.role !== "ADMIN")
-      return res.status(403).json({ message: "Role is not allowed" });
     const queryUser = User.aggregate([
       {
         $lookup: {
@@ -114,12 +106,6 @@ exports.getListClientForMessenger = async (req, res, next) => {
 
 exports.getClientByDeviceId = async (req, res, next) => {
   try {
-    const token = req.token;
-    const decodeToken = jwt.verify(token, config.SECRET);
-    if (!decodeToken.id || !decodeToken.role)
-      return res.status(403).json({ message: "Token missing or invalid" });
-    if (decodeToken.role !== "ADMIN")
-      return res.status(403).json({ message: "Role is not allowed" });
     const { deviceId } = req.params;
     const client = await User.findOne({ deviceId: deviceId }).populate(
       "recentMessage"

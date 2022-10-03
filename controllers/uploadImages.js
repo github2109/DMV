@@ -1,19 +1,29 @@
 const cloudinary = require("cloudinary");
 const fs = require("fs");
-const jwt = require("jsonwebtoken");
 const config = require("../utils/config");
 cloudinary.config({
   cloud_name: config.CLOUD_NAME,
   api_key: config.CLOUD_API_KEY,
   api_secret: config.CLOUD_API_SECRET,
 });
+
+exports.uploadImagesForMessage = async (filesIn) => {
+  let files = Object.values(filesIn).flat();
+  let images = [];
+    for (const file of files) {
+      const url = await uploadToCloudinary(file,"DMV/Message");
+      images.push(url.url);
+      removeTmp(file.tempFilePath);
+    }
+    return images;
+}
+
 exports.uploadImages = async (req, res) => {
   try {
-    const { path } = req.body;
     let files = Object.values(req.files).flat();
     let images = [];
     for (const file of files) {
-      const url = await uploadToCloudinary(file, path);
+      const url = await uploadToCloudinary(file,"DMV");
       images.push(url);
       removeTmp(file.tempFilePath);
     }
@@ -23,12 +33,12 @@ exports.uploadImages = async (req, res) => {
   }
 };
 
-const uploadToCloudinary = async (file, path) => {
+const uploadToCloudinary = async (file,folderURL) => {
   return new Promise((resolve) => {
     cloudinary.v2.uploader.upload(
       file.tempFilePath,
       {
-        folder: "DMV",
+        folder: folderURL,
       },
       (err, res) => {
         if (err) {
@@ -51,12 +61,6 @@ const removeTmp = (path) => {
 
 exports.removeImageFromCloudinary = async (req, res, next) => {
   try {
-    const token = req.token;
-    const decodeToken = jwt.verify(token, config.SECRET);
-    if (!decodeToken.id || !decodeToken.role)
-      return res.status(403).json({ message: "Token missing or invalid" });
-    if (decodeToken.role !== "ADMIN")
-      return res.status(403).json({ message: "Role is not allowed" });
     const { path } = req.body;
     const getPublicId = (path) => {
       const arrayPath = path.split("/");

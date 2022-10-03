@@ -7,10 +7,12 @@ const {
   deleteQuestionByIdAPI,
   updateQuestionByIdAPI,
 } = require("../controllers/question");
-questionRouter.post("/", createQuestionAPI);
+const middlwares = require("../utils/middleware");
+
+questionRouter.post("/",middlwares.authAdmin, createQuestionAPI);
 questionRouter.get("/exams/:examId", getQuestionsForExamAPI);
-questionRouter.delete("/:questionId", deleteQuestionByIdAPI);
+questionRouter.delete("/:questionId",middlwares.authAdmin, deleteQuestionByIdAPI);
 questionRouter.get("/modules/:moduleId", getAllQuestionsForModuleAPI);
-questionRouter.put("/:id", updateQuestionByIdAPI);
+questionRouter.put("/:id",middlwares.authAdmin, updateQuestionByIdAPI);
 
 module.exports = questionRouter;
