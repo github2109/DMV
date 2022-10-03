@@ -13,7 +13,6 @@
   background: #ededed;
   border-radius: 0.25rem;
   padding: 0.75rem 1rem;
-  margin-bottom: 10px;
 }
 .image-upload-module {
   position: relative;
@@ -95,6 +94,15 @@
 
 .radio-module{
   margin-left: 20px;
+}
+
+.wrap-input{
+  display: flex;
+  flex-direction: column;
+  border-radius: 3px;
+}
+.border-red{
+  border: red solid 1px !important;
 }
 
 

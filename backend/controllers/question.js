@@ -1,6 +1,4 @@
 const Question = require("../models/question");
-const jwt = require("jsonwebtoken");
-const config = require("../utils/config");
 const {
   getListModuleIdByStateIdAndLicenseId,
 } = require("../controllers/module");
@@ -19,7 +17,12 @@ exports.getQuestionsForExamAPI = async (req, res, next) => {
       isTestQuestion: true,
     });
     const questions = [];
-    for (let i = 0; i < exam.numberOfQuestion; i++) {
+    const length = listQuestions.length;
+    for (
+      let i = 0;
+      i < (exam.numberOfQuestion < length ? exam.numberOfQuestion : length);
+      i++
+    ) {
       const index = Math.floor(Math.random() * listQuestions.length);
       questions.push(listQuestions[index]);
       listQuestions.splice(index, 1);
@@ -34,7 +37,6 @@ exports.getQuestionsForExamAPI = async (req, res, next) => {
     next(error);
   }
 };
-
 exports.getAllQuestionsForModuleAPI = async (req, res, next) => {
   try {
     const moduleId = req.params.moduleId;
@@ -47,12 +49,6 @@ exports.getAllQuestionsForModuleAPI = async (req, res, next) => {
 
 exports.createQuestionAPI = async (req, res, next) => {
   try {
-    const token = req.token;
-    const decodeToken = jwt.verify(token, config.SECRET);
-    if (!decodeToken.id || !decodeToken.role)
-      return res.status(403).json({ message: "Token missing or invalid" });
-    if (decodeToken.role !== "ADMIN")
-      return res.status(403).json({ message: "Role is not allowed" });
     const question = req.body;
     const savedQuestion = await new Question(question).save();
     res.status(201).json(savedQuestion);
@@ -62,12 +58,6 @@ exports.createQuestionAPI = async (req, res, next) => {
 };
 exports.deleteQuestionByIdAPI = async (req, res, next) => {
   try {
-    const token = req.token;
-    const decodeToken = jwt.verify(token, config.SECRET);
-    if (!decodeToken.id || !decodeToken.role)
-      return res.status(403).json({ message: "Token missing or invalid" });
-    if (decodeToken.role !== "ADMIN")
-      return res.status(403).json({ message: "Role is not allowed" });
     const { questionId } = req.params;
     const deletedQuestion = await Question.findByIdAndRemove({
       _id: questionId,
@@ -82,12 +72,6 @@ exports.deleteQuestionByIdAPI = async (req, res, next) => {
 };
 exports.updateQuestionByIdAPI = async (req, res, next) => {
   try {
-    const token = req.token;
-    const decodeToken = jwt.verify(token, config.SECRET);
-    if (!decodeToken.id || !decodeToken.role)
-      return res.status(403).json({ message: "Token missing or invalid" });
-    if (decodeToken.role !== "ADMIN")
-      return res.status(403).json({ message: "Role is not allowed" });
     const questionId = req.params.id;
     const updatedQuestion = await Question.findByIdAndUpdate(
       { _id: questionId },

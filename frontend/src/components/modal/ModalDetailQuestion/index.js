@@ -3,12 +3,15 @@ import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
 import { useState, useEffect } from "react";
 import PlusButton from "../../button/PlusButton";
 import "./style.css";
+import { connect } from "react-redux";
+import { setErrorNotification } from "../../../reducers/responseUIReducer";
 const ModalDetailQuestion = ({
   modal,
   toggle,
   question,
   handleSaveModal,
-  toggleModalImportQuestion
+  toggleModalImportQuestion,
+  ...props
 }) => {
   const [oldQuestion, setOldQuestion] = useState(null);
   const [tmpQuestion, setTmpQuestion] = useState(null);
@@ -95,30 +98,66 @@ const ModalDetailQuestion = ({
     });
   };
   if (tmpQuestion === null) return null;
+  const handleBlur = (event) => {
+    if (event.target.value === "") {
+      event.target.parentElement.classList.add("alert-validate");
+      event.target.parentElement.classList.add("border-red");
+    }
+  };
+  const handleFocus = (event) => {
+    event.target.parentElement.classList.remove("alert-validate");
+    event.target.parentElement.classList.remove("border-red");
+  };
+  const handleBeforeSaveModal = (oldQuestion, tmpQuestion, isCreated) => {
+    if (tmpQuestion.answers.length === 0) {
+      props.setErrorNotification("Please add answers !!");
+      return;
+    }
+    if (
+      tmpQuestion.questionContent === "" ||
+      (tmpQuestion.handBook === "" && !tmpQuestion.isTestQuestion)
+    ) {
+      props.setErrorNotification("Please filling enough information !!");
+      return;
+    }
+    handleSaveModal(oldQuestion, tmpQuestion, isCreated);
+    toggle();
+  };
   return (
     <Modal isOpen={modal} toggle={toggle} size="lg">
       <ModalHeader toggle={toggle}>Detail Question</ModalHeader>
       <ModalBody>
-        {toggleModalImportQuestion && isCreated && <div className="import-file-icon">
-          <i
-            className="fa-solid fa-file-import"
-            onClick={(e) => {
-              toggle();
-              toggleModalImportQuestion();
-            
-            }}
-          ></i>
-        </div>}
+        {toggleModalImportQuestion && isCreated && (
+          <div className="import-container">
+            <div className="import-file-icon">
+              <i
+                className="fa-solid fa-upload"
+                onClick={(e) => {
+                  toggle();
+                  toggleModalImportQuestion();
+                }}
+              ></i>
+            </div>
+            <span>Import data</span>
+          </div>
+        )}
         <div className="form-question">
           <label>Content question :</label>
-          <textarea
-            name="questionContent"
-            className="input-text-question"
-            type="text"
-            placeholder="Content question"
-            value={tmpQuestion.questionContent}
-            onChange={handleInputChange}
-          />
+          <div
+            className="wrap-input validate-input"
+            data-validate="Question content is required"
+          >
+            <textarea
+              name="questionContent"
+              className="input-text-question"
+              type="text"
+              placeholder="Content question"
+              value={tmpQuestion.questionContent}
+              onBlur={handleBlur}
+              onFocus={handleFocus}
+              onChange={handleInputChange}
+            />
+          </div>
           <label>Image :</label>
           <div className="image-upload-question">
             <div className="image-edit-question">
@@ -220,14 +259,21 @@ const ModalDetailQuestion = ({
           {tmpQuestion.isTestQuestion === false && (
             <div className="handBook-container">
               <label>Handbook :</label>
-              <textarea
-                name="handBook"
-                className="input-text-question"
-                type="text"
-                placeholder="Handbook"
-                value={tmpQuestion.handBook}
-                onChange={handleInputChange}
-              />
+              <div
+                className="wrap-input validate-input"
+                data-validate="Handbook is required"
+              >
+                <textarea
+                  name="handBook"
+                  className="input-text-question"
+                  type="text"
+                  placeholder="Handbook"
+                  value={tmpQuestion.handBook}
+                  onBlur={handleBlur}
+                  onFocus={handleFocus}
+                  onChange={handleInputChange}
+                />
+              </div>
             </div>
           )}
         </div>
@@ -236,8 +282,7 @@ const ModalDetailQuestion = ({
         <Button
           color="primary"
           onClick={(e) => {
-            handleSaveModal(oldQuestion, tmpQuestion, isCreated);
-            toggle();
+            handleBeforeSaveModal(oldQuestion, tmpQuestion, isCreated);
           }}
         >
           Save
@@ -250,4 +295,10 @@ const ModalDetailQuestion = ({
   );
 };
 
-export default ModalDetailQuestion;
+const mapDispatchToProps = (dispatch) => {
+  return {
+    setErrorNotification: (mess) => dispatch(setErrorNotification(mess)),
+  };
+};
+
+export default connect(null, mapDispatchToProps)(ModalDetailQuestion);

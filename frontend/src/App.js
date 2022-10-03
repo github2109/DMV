@@ -43,7 +43,12 @@ const App = () => {
   const handleLogout = () => {
     window.localStorage.removeItem("loggedBlogappUser");
     setUser(null);
+    tokenService.setToken(null);
+
   };
+  const handleTokenExpired = () => {
+    handleLogout();
+  }
   if (!user)
     return (
       <Login
@@ -54,7 +59,7 @@ const App = () => {
   return (
     <div className="parent-container">
       <Loading />
-      <Notification />
+      <Notification handleTokenExpired={handleTokenExpired}/>
       <Navigation handleLogout={handleLogout} user={user} />
       <Routes>
         <Route path="/licenses" exact={true} element={<Licenses />}></Route>

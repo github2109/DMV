@@ -10,16 +10,16 @@ const {
   getModuleByLicenseIdAPI,
   updatePositionModuleAPI
 } = require("../controllers/module");
-
+const middlwares = require("../utils/middleware");
 
 moduleRouter.get("/:moduleId", getDetailModuleByModuleIdAPI);
 moduleRouter.get("/licenses/:licenseId", getModuleByLicenseIdAPI);
 moduleRouter.get("/:stateId?/:licenseId?", getModuleByStateIdAndLicenseIdAPI);
-moduleRouter.post("/", createModuleAPI);
-moduleRouter.post("/:moduleId/states/:stateId", addModuleToStateAPI);
-moduleRouter.delete("/:moduleId", deleteModuleAPI);
-moduleRouter.delete("/:moduleId/states/:stateId", removeModuleOfStateAPI);
-moduleRouter.put("/:moduleId", updateModuleAPI);
-moduleRouter.put("/",updatePositionModuleAPI);
+moduleRouter.post("/",middlwares.authAdmin, createModuleAPI);
+moduleRouter.post("/:moduleId/states/:stateId",middlwares.authAdmin, addModuleToStateAPI);
+moduleRouter.delete("/:moduleId",middlwares.authAdmin, deleteModuleAPI);
+moduleRouter.delete("/:moduleId/states/:stateId",middlwares.authAdmin, removeModuleOfStateAPI);
+moduleRouter.put("/:moduleId",middlwares.authAdmin, updateModuleAPI);
+moduleRouter.put("/",middlwares.authAdmin,updatePositionModuleAPI);
 
 module.exports = moduleRouter;

@@ -112,7 +112,8 @@ const ImportQuestion = ({ moduleId, setData, ...props }) => {
   };
   return (
     <div>
-      <input type="file" onChange={readExcel} />
+      File Excel : <input type="file" onChange={readExcel} />
+      <div></div>Folder Images :{" "}
       <input
         directory=""
         webkitdirectory="true"

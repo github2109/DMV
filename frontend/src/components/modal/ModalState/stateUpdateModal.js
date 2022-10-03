@@ -2,17 +2,33 @@ import React from "react";
 import { connect } from "react-redux";
 import { ModalBody, ModalFooter, ModalHeader, Modal, Button } from "reactstrap";
 import { useState } from "react";
+import { setErrorNotification } from "../../../reducers/responseUIReducer";
 import "./style.css";
 const StateUpdateModal = ({
   isOpen,
   toggleFromParent,
   updateState,
   currentState,
+  ...props
 }) => {
   const [name, setName] = useState(currentState.name);
   const handleUpdateUser = (event, id, name) => {
+    if (name === "") {
+      props.setErrorNotification("Please enter a state name !!");
+      return;
+    }
     updateState(event, id, name);
     toggleFromParent();
+  };
+  const handleBlur = (event) => {
+    if (event.target.value === "") {
+      event.target.parentElement.classList.add("alert-validate");
+      event.target.parentElement.classList.add("border-red");
+    }
+  };
+  const handleFocus = (event) => {
+    event.target.parentElement.classList.remove("alert-validate");
+    event.target.parentElement.classList.remove("border-red");
   };
   return (
     <Modal isOpen={isOpen}>
@@ -21,13 +37,20 @@ const StateUpdateModal = ({
       </ModalHeader>
       <ModalBody>
         <div className="modal-state-body">
-          <div className="input-container">
+          <div className="input-state-container">
             <label>Name</label>
-            <input
-              type="text"
-              onChange={(event) => setName(event.target.value)}
-              value={name}
-            />
+            <div
+              className="wrap-input validate-input"
+              data-validate="State name is required"
+            >
+              <input
+                type="text"
+                onChange={(event) => setName(event.target.value)}
+                value={name}
+                onBlur={handleBlur}
+                onFocus={handleFocus}
+              />
+            </div>
           </div>
         </div>
       </ModalBody>
@@ -57,7 +80,8 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = (dispatch) => {
-  return {};
+  return {
+    setErrorNotification: (mess) => dispatch(setErrorNotification(mess)),
+  };
 };
-
 export default connect(mapStateToProps, mapDispatchToProps)(StateUpdateModal);

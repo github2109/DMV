@@ -1,7 +1,7 @@
 const User = require("../models/user");
 const Message = require("../models/message");
-const jwt = require("jsonwebtoken");
-const config = require("../utils/config");
+const { uploadImagesForMessage } = require("./uploadImages");
+
 exports.sendMessageFromClient = async (req, res, next) => {
   try {
     const deviceId = req.params.deviceId;
@@ -10,9 +10,10 @@ exports.sendMessageFromClient = async (req, res, next) => {
     if (!user) {
       return res.status(400).json({ message: "User Not Found" });
     }
+    let images = (req.files && Object.values(req.files).flat().length > 0) ? await uploadImagesForMessage(req.files) : [];
     const messageSaved = await new Message({
       content: message.content,
-      images: message.images,
+      images: images,
       isAdminSending: false,
       client: user._id,
     }).save();
@@ -25,21 +26,16 @@ exports.sendMessageFromClient = async (req, res, next) => {
 };
 exports.sendMessageFromAdmin = async (req, res, next) => {
   try {
-    const token = req.token;
-    const decodeToken = jwt.verify(token, config.SECRET);
-    if (!decodeToken.id || !decodeToken.role)
-      return res.status(403).json({ message: "Token missing or invalid" });
-    if (decodeToken.role !== "ADMIN")
-      return res.status(403).json({ message: "Role is not allowed" });
     const deviceId = req.params.deviceId;
     const message = req.body;
     const user = await User.findOne({ deviceId: deviceId });
     if (!user) {
       return res.status(400).json({ message: "User Not Found" });
     }
+    let images = (req.files && Object.values(req.files).flat().length > 0) ? await uploadImagesForMessage(req.files) : [];
     const messageSaved = await new Message({
       content: message.content,
-      images: message.images,
+      images: images,
       isAdminSending: true,
       client: user._id,
     }).save();

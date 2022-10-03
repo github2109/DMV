@@ -2,48 +2,23 @@ import axios from "axios";
 import { token } from "./token";
 const bareUrl = "/api/messages";
 
-const sendMessageFromAdmin = async (message,deviceId) => {
-  if (message.images && message.images.length > 0) {
-    const config = {
-      headers: {
-        "content-type": "multipart/form-data",
-      },
-    };
-    let formData = new FormData();
-    message.images.forEach(image=>formData.append("file", image));
-    const urlRes = await axios.post(
-      "/api/uploads/uploadImages",
-      formData,
-      config
-    );
-    message.images = [];
-    urlRes.data.forEach((img) => message.images.push(img.url));
-  }
+const sendMessageFromAdmin = async (message, deviceId) => {
   const response = await axios.post(`${bareUrl}/admin/${deviceId}`, message, {
     headers: {
       Authorization: token,
+      "content-type": "multipart/form-data",
     },
   });
   return response.data;
 };
 
-const sendMessageFromClient = async (message,deviceId) => {
-  if (message.images && message.images.length > 0) {
-    const config = {
-      headers: {
-        "content-type": "multipart/form-data",
-      },
-    };
-    let formData = new FormData();
-    formData.append("file", module.imageDescription);
-    const urlRes = await axios.post(
-      "/api/uploads/uploadImages",
-      formData,
-      config
-    );
-    urlRes.data((img) => module.images.push(img.url));
-  }
-  const response = await axios.post(`${bareUrl}/client/${deviceId}`, message);
+const sendMessageFromClient = async (message, deviceId) => {
+  const response = await axios.post(`${bareUrl}/client/${deviceId}`, message, {
+    headers: {
+      Authorization: token,
+      "content-type": "multipart/form-data",
+    },
+  });
   return response.data;
 };
 

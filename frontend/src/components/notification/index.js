@@ -1,7 +1,14 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import "./style.css";
 import { connect } from "react-redux";
+import { useEffect } from "react";
 
 const Notification = (props) => {
+  useEffect(()=>{
+    if(props.responseUI.notification === "Token expired"){
+      props.handleTokenExpired();
+    }
+  },[props.responseUI.notification])
   if (!props.responseUI.notification) return null;
   if (!props.responseUI.isErrorNotification)
     return (

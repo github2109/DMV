@@ -73,6 +73,18 @@ const ModalModule = ({
     });
   };
   const handleBeforeSaveModal = async (oldModule, tmpModule, isCreated) => {
+    if (tmpModule.imageDescription === null) {
+      props.setErrorNotification("Please import image description  !!");
+      return;
+    }
+    if (
+      tmpModule.name === "" ||
+      tmpModule.titleDescription === "" ||
+      tmpModule.contentDescription === ""
+    ) {
+      props.setErrorNotification("Please filling enough data !!");
+      return;
+    }
     const module = await handleSaveModal(oldModule, tmpModule, isCreated);
     if (!module) return;
     if (isCreated) {
@@ -84,20 +96,33 @@ const ModalModule = ({
       toggle();
     }
   };
+  const handleBlur = (event) => {
+    if (event.target.value === "") {
+      event.target.parentElement.classList.add("alert-validate");
+      event.target.parentElement.classList.add("border-red");
+    }
+  };
+  const handleFocus = (event) => {
+    event.target.parentElement.classList.remove("alert-validate");
+    event.target.parentElement.classList.remove("border-red");
+  };
   if (!tmpModule) return null;
   return (
     <Modal isOpen={modal} toggle={toggle} size="lg">
       <ModalHeader toggle={toggle}>Detail module</ModalHeader>
       <ModalBody>
         {props.toggleModalImportModule && isCreated && (
-          <div className="import-file-icon">
-            <i
-              className="fa-solid fa-file-import"
-              onClick={(e) => {
-                toggle();
-                props.toggleModalImportModule();
-              }}
-            ></i>
+          <div className="import-container">
+            <div className="import-file-icon">
+              <i
+                className="fa-solid fa-upload"
+                onClick={(e) => {
+                  toggle();
+                  props.toggleModalImportModule();
+                }}
+              ></i>
+            </div>
+            <span>Import data</span>
           </div>
         )}
         {modalChildren === true && (
@@ -110,32 +135,53 @@ const ModalModule = ({
         <div className="module-modal-container">
           <div className="module-form">
             <label>Module name :</label>
-            <input
-              name="name"
-              className="input-text-module"
-              type="text"
-              placeholder="module name"
-              value={tmpModule && tmpModule.name}
-              onChange={handleInputChange}
-            />
+            <div
+              className="wrap-input validate-input"
+              data-validate="Module name is required"
+            >
+              <input
+                name="name"
+                className="input-text-module"
+                type="text"
+                placeholder="module name"
+                value={tmpModule && tmpModule.name}
+                onBlur={handleBlur}
+                onFocus={handleFocus}
+                onChange={handleInputChange}
+              />
+            </div>
             <label>Title description :</label>
-            <input
-              name="titleDescription"
-              className="input-text-module"
-              type="text"
-              placeholder="Title description"
-              value={tmpModule && tmpModule.titleDescription}
-              onChange={handleInputChange}
-            />
+            <div
+              className="wrap-input validate-input"
+              data-validate="Title description is required"
+            >
+              <input
+                name="titleDescription"
+                className="input-text-module"
+                type="text"
+                placeholder="Title description"
+                onBlur={handleBlur}
+                onFocus={handleFocus}
+                value={tmpModule && tmpModule.titleDescription}
+                onChange={handleInputChange}
+              />
+            </div>
             <label>Content description :</label>
-            <textarea
-              name="contentDescription"
-              className="input-text-module content-description"
-              type="text"
-              placeholder="Content description"
-              value={tmpModule && tmpModule.contentDescription}
-              onChange={handleInputChange}
-            />
+            <div
+              className="wrap-input validate-input"
+              data-validate="Content description is required"
+            >
+              <textarea
+                name="contentDescription"
+                className="input-text-module content-description"
+                type="text"
+                placeholder="Content description"
+                value={tmpModule && tmpModule.contentDescription}
+                onChange={handleInputChange}
+                onBlur={handleBlur}
+                onFocus={handleFocus}
+              />
+            </div>
             <label>Image description :</label>
             <div className="image-upload-module">
               <div className="image-edit-module">

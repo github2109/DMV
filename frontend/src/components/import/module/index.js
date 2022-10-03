@@ -133,8 +133,8 @@ const ImportModule = ({ licenseId, setData, ...props }) => {
           module={module}
         />
       )}
-      <input type="file" onChange={readExcel} />
-      <input
+      File Excel : <input type="file" onChange={readExcel} />
+      <div></div>Folder Images : <input
         directory=""
         webkitdirectory="true"
         type="file"

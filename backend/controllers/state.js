@@ -1,6 +1,4 @@
-const config = require("../utils/config");
 const State = require("../models/state");
-const jwt = require("jsonwebtoken");
 const { updateModuleAfterRemoveState } = require("../controllers/module");
 
 exports.getAllStates = async (req, res, next) => {
@@ -14,12 +12,6 @@ exports.getAllStates = async (req, res, next) => {
 
 exports.createState = async (req, res, next) => {
   try {
-    const token = req.token;
-    const decodeToken = jwt.verify(token, config.SECRET);
-    if (!decodeToken.id || !decodeToken.role)
-      return res.status(403).json({ message: "Token missing or invalid" });
-    if (decodeToken.role !== "ADMIN")
-      return res.status(403).json({ message: "Role is not allowed" });
     const { name } = req.body;
     const check = await State.findOne({ name: name });
     if (check) {
@@ -39,12 +31,6 @@ exports.createState = async (req, res, next) => {
 
 exports.deleteStateById = async (req, res, next) => {
   try {
-    const token = req.token;
-    const decodeToken = jwt.verify(token, config.SECRET);
-    if (!decodeToken.id || !decodeToken.role)
-      return res.status(403).json({ message: "Token missing or invalid" });
-    if (decodeToken.role !== "ADMIN")
-      return res.status(403).json({ message: "Role is not allowed" });
     const stateId = req.params.id;
     const deletedState = await State.findByIdAndRemove({ _id: stateId });
     if (!deletedState) {
@@ -61,12 +47,6 @@ exports.deleteStateById = async (req, res, next) => {
 
 exports.updateStateData = async (req, res, next) => {
   try {
-    const token = req.token;
-    const decodeToken = jwt.verify(token, config.SECRET);
-    if (!decodeToken.id || !decodeToken.role)
-      return res.status(403).json({ message: "Token missing or invalid" });
-    if (decodeToken.role !== "ADMIN")
-      return res.status(403).json({ message: "Role is not allowed" });
     const data = req.body;
     const dataId = req.params.id;
     const updatedState = await State.findByIdAndUpdate(

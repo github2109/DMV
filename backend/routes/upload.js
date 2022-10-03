@@ -3,5 +3,5 @@ const { uploadImages,removeImageFromCloudinary } = require("../controllers/uploa
 const middlwares = require("../utils/middleware");
 
 router.post("/uploadImages", middlwares.upLoadMiddleware, uploadImages);
-router.post("/removeImages",removeImageFromCloudinary),
+router.post("/removeImages",middlwares.authAdmin,removeImageFromCloudinary),
 module.exports = router;

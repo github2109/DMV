@@ -1,5 +1,7 @@
 const logger = require("./logger");
 const fs = require("fs");
+const config = require("../utils/config");
+const jwt = require("jsonwebtoken");
 const getTokenFrom = (request) => {
   const authorization = request.get("authorization");
   if (authorization !== undefined) {
@@ -16,28 +18,42 @@ const requestLogger = (request, response, next) => {
   logger.info("---");
   next();
 };
+const checkFiles = (files, res) => {
+  files.forEach((file) => {
+    if (
+      file.mimetype !== "image/jpeg" &&
+      file.mimetype !== "image/png" &&
+      file.mimetype !== "image/gif" &&
+      file.mimetype !== "image/webp" &&
+      file.mimetype !== "image/svg+xml"
+    ) {
+      removeTmp(file.tempFilePath);
+      res.status(400).json({ message: "Unsupported format." });
+      return false;
+    }
+    if (file.size > 1024 * 1024 * 5) {
+      removeTmp(file.tempFilePath);
+      res.status(400).json({ message: "File size is too large." });
+      return false;
+    }
+  });
+  return true;
+};
+const messageMiddleware = (req, res, next) => {
+  try {
+    if(req.files && Object.values(req.files).flat().length !== 0 && !checkFiles(Object.values(req.files).flat(),res)) return;
+    next();
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+}
 const upLoadMiddleware = (req, res, next) => {
   try {
     if (!req.files || Object.values(req.files).flat().length === 0) {
       return res.status(400).json({ message: "No files selected." });
     }
     let files = Object.values(req.files).flat();
-    files.forEach((file) => {
-      if (
-        file.mimetype !== "image/jpeg" &&
-        file.mimetype !== "image/png" &&
-        file.mimetype !== "image/gif" &&
-        file.mimetype !== "image/webp" &&
-        file.mimetype !== "image/svg+xml"
-      ) {
-        removeTmp(file.tempFilePath);
-        return res.status(400).json({ message: "Unsupported format." });
-      }
-      if (file.size > 1024 * 1024 * 5) {
-        removeTmp(file.tempFilePath);
-        return res.status(400).json({ message: "File size is too large." });
-      }
-    });
+    if(!checkFiles(files,res)) return;
     next();
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -58,6 +74,16 @@ const tokenExtractor = (request, response, next) => {
   next();
 };
 
+const authAdmin = (request, response, next) => {
+  const token = request.token;
+  const decodeToken = jwt.verify(token, config.SECRET);
+  if (!decodeToken.id || !decodeToken.role)
+    return res.status(403).json({ message: "Token missing or invalid" });
+  if (decodeToken.role !== "ADMIN")
+    return res.status(403).json({ message: "Role is not allowed" });
+  next();
+};
+
 const errorHandler = (error, request, response, next) => {
   logger.error(error.message);
   if (error.name === "CastError") {
@@ -66,11 +92,11 @@ const errorHandler = (error, request, response, next) => {
     return response.status(400).json({ message: error.message });
   } else if (error.name === "JsonWebTokenError") {
     return response.status(401).json({
-      message: "invalid token",
+      message: "Invalid token",
     });
   } else if (error.name === "TokenExpiredError") {
     return response.status(401).json({
-      message: "token expired",
+      message: "Token expired",
     });
   }
 
@@ -83,4 +109,6 @@ module.exports = {
   errorHandler,
   tokenExtractor,
   upLoadMiddleware,
+  authAdmin,
+  messageMiddleware
 };
