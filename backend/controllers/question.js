@@ -19,7 +19,12 @@ exports.getQuestionsForExamAPI = async (req, res, next) => {
       isTestQuestion: true,
     });
     const questions = [];
-    for (let i = 0; i < exam.numberOfQuestion; i++) {
+    const length = listQuestions.length;
+    for (
+      let i = 0;
+      i < (exam.numberOfQuestion < length ? exam.numberOfQuestion : length);
+      i++
+    ) {
       const index = Math.floor(Math.random() * listQuestions.length);
       questions.push(listQuestions[index]);
       listQuestions.splice(index, 1);
