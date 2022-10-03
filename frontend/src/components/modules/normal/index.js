@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import "../style.css";
 import { connect } from "react-redux";
 import NormalModule from "../../module/normal";
@@ -35,7 +36,7 @@ const NormalModules = ({
 }) => {
   useEffect(() => {
     props.initializeExam(stateId, licenseId);
-  }, []);
+  }, [stateId, licenseId]);
   const [currentExam, setCurrentExam] = useState(null);
   const [modalExam, setModalExam] = useState(false);
   const [modalAddModule, setModalAddModule] = useState(false);

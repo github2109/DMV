@@ -14,7 +14,7 @@ let clientDeviceId = [];
 let idSocketAdmin;
 io.on("connection", (socket) => {
   console.log("User :", socket.id);
-  socket.on("join_room", (data) => {
+  socket.on("join_room", (data) => {  
     socket.join(data);
     if(!clientDeviceId.includes(data)) clientDeviceId.push(data);
     handleClientJoinRoom(data);
@@ -37,3 +37,4 @@ const handleClientJoinRoom = (deviceId) => {
 server.listen(config.PORT, () => {
   logger.info(`Server running on port ${config.PORT}`);
 });
+
