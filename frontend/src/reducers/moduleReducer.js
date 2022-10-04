@@ -101,7 +101,6 @@ export const deleteModuleFromState = (moduleId, stateId) => {
 };
 
 export const addModulesToState = (modulesId, stateId) => {
-  console.log("moduless id reducer", modulesId);
   return async (dispatch) => {
     const modules = await moduleService.addModulesToState(modulesId, stateId);
     modules.map((module) =>

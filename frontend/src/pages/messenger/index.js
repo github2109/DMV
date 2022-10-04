@@ -101,15 +101,18 @@ const Messenger = (props) => {
                     onClick={(e) => handleSelectUser(user)}
                   >
                     <img src={avadefault} alt="avatar" />
-                    {(userSelect && user._id === userSelect._id) ||
-                    user.recentMessage.isAdminSending ? (
+                    {user.recentMessage.isAdminSending ? (
                       <div className="about">
                         <div className="name">{user.deviceId}</div>
                         <div className="recent-message">
                           <span>
                             {user.recentMessage.images.length === 0
-                              ? user.recentMessage.content
-                              : "You send a image"}
+                              ? "You: " + user.recentMessage.content
+                              : user.recentMessage.images.length === 1
+                              ? "You sent a photo"
+                              : "You sent " +
+                                user.recentMessage.images.length +
+                                " photos"}
                           </span>
                           <span> ·</span>
                           <span>
@@ -121,14 +124,29 @@ const Messenger = (props) => {
                       </div>
                     ) : (
                       <div className="about">
-                        <div className="name-client-sending">
+                        <div
+                          className={
+                            !userSelect || userSelect._id !== user._id
+                              ? "name-client-sending"
+                              : "name"
+                          }
+                        >
                           {user.deviceId}
                         </div>
                         <div className="recent-message">
-                          <span className="unseen-message">
+                          <span
+                            className={
+                              (!userSelect || userSelect._id !== user._id) &&
+                              "unseen-message"
+                            }
+                          >
                             {user.recentMessage.images.length === 0
                               ? user.recentMessage.content
-                              : "You send a image"}
+                              : user.recentMessage.images.length === 1
+                              ? "Client sent a photo"
+                              : "Client sent " +
+                                user.recentMessage.images.length +
+                                " photos"}
                           </span>
                           <span> ·</span>
                           <span>

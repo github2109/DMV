@@ -3,10 +3,10 @@ import { socket, connectSocket, joinRoomSocket } from "../../services/socket";
 import "./style.css";
 import messageService from "../../services/message";
 import { useEffect } from "react";
-import * as XLSX from "xlsx";
 const MessengerClient = () => {
   const [mess, setMess] = useState("");
   const [room, setRoom] = useState("");
+  const [messageImages, setMessageImages] = useState([]);
   useEffect(() => {
     connectSocket();
     socket.on("receive_message", (data) => {
@@ -14,36 +14,35 @@ const MessengerClient = () => {
     });
   }, []);
   const sendMess = async () => {
-    const messData = {
-      content: mess,
-      images: [],
-    };
-    const messSaved = await messageService.sendMessageFromClient(
-      messData,
-      room
-    );
-    socket.emit("send_message", { message: messSaved, deviceId: room });
+    if (mess === "" && messageImages.length === 0) return;
+    if (mess !== "") {
+      const messSaved = await messageService.sendMessageFromClient(
+        { content: mess, images: [] },
+        room
+      );
+      socket.emit("send_message", { message: messSaved, deviceId: room });
+    }
+    if (messageImages.length > 0) {
+      const messSaved = await messageService.sendMessageFromClient(
+        { content: "", images: messageImages },
+        room
+      );
+      socket.emit("send_message", { message: messSaved, deviceId: room });
+    }
+    setMessageImages([]);
+    setMess("");
   };
   const joinRoom = () => {
     joinRoomSocket(room);
   };
-  const readExcel = (e) => {
-    const fileReader = new FileReader();
-    fileReader.readAsBinaryString(e.target.files[0]);
-    fileReader.onload = async (e) => {
-      const bufferArray = e.target.result;
-      const wb = XLSX.read(bufferArray, { type: "binary" });
-      const wsname = wb.SheetNames[0];
-      const ws = wb.Sheets[wsname];
-      console.log(ws);
-      const data = await XLSX.utils.sheet_to_json(ws);
-      console.log(data);
-    };
+  const handleSelectImage = (e) => {
+    const images = [...e.target.files];
+    setMessageImages([...messageImages, ...images]);
   };
 
   return (
     <div className="message-client-container">
-      <input type="file" onChange={readExcel} />
+      <input type="file" multiple="multiple" onChange={handleSelectImage} />
 
       <div className="message-client-joint">
         <input

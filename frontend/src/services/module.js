@@ -100,8 +100,8 @@ const deleteModule = async (moduleId) => {
 const addModulesToState = async (modulesId, stateId) => {
   const responses = [];
   for (let i = 0; i < modulesId.length; i++) {
-    const response = await addOneModuleToState(modulesId[i], stateId);
-    responses.push(response.moduleSaved);
+    const moduleSaved = await addOneModuleToState(modulesId[i], stateId);
+    responses.push(moduleSaved);
   }
   return responses;
 };

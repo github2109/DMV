@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { ModalBody, ModalFooter, ModalHeader, Modal, Button } from "reactstrap";
@@ -10,24 +11,30 @@ import {
   onLoading,
   offLoading,
   setErrorNotification,
+  setSuccessNotification,
 } from "../../../reducers/responseUIReducer";
 import CheckBoxModules from "../../modules/CheckBox";
 const ModalListModule = ({ modal, toggle, licenseId, ...props }) => {
   const [modules, setModules] = useState({});
   useEffect(() => {
     props.onLoading();
-    props.getModuleByLicenseId(licenseId).then((res) => {
-      const arr = res.filter(
-        ({ _id }) => !props.modules.some((x) => x._id === _id)
-      );
-      setModules(
-        arr.map((module) => {
-          module.isChoose = false;
-          return module;
-        })
-      );
+    try {
+      props.getModuleByLicenseId(licenseId).then((res) => {
+        const arr = res.filter(
+          ({ _id }) => !props.modules.some((x) => x._id === _id)
+        );
+        setModules(
+          arr.map((module) => {
+            module.isChoose = false;
+            return module;
+          })
+        );
+        props.offLoading();
+      });
+    } catch (error) {
       props.offLoading();
-    });
+      props.setErrorNotification(error.response.data.message);
+    }
   }, [modal]);
   const handleOnChangeCheckBox = (e, position) => {
     let arr = modules;
@@ -37,8 +44,18 @@ const ModalListModule = ({ modal, toggle, licenseId, ...props }) => {
   const handleAddClick = () => {
     const listModules = modules.filter((module) => module.isChoose === true);
     const modulesId = listModules.map((module) => module._id);
-    props.addModulesToState(modulesId, props.stateId);
-    toggle();
+    try {
+      props.onLoading();
+      props.addModulesToState(modulesId, props.stateId).then((res) => {
+        props.setSuccessNotification("Modules added to state successfully");
+        props.offLoading();
+        toggle();
+      });
+    } catch (error) {
+      props.offLoading();
+      props.setErrorNotification(error);
+      toggle();
+    }
   };
   return (
     <Modal isOpen={modal} toggle={toggle} size="lg">
@@ -77,12 +94,12 @@ const mapDispatchToProps = (dispatch) => {
   return {
     getModuleByLicenseId: (licenseId) =>
       dispatch(getModuleByLicenseId(licenseId)),
-    addModulesToState: (moduleId, stateId) => {
-      dispatch(addModulesToState(moduleId, stateId));
-    },
+    addModulesToState: (moduleId, stateId) =>
+      dispatch(addModulesToState(moduleId, stateId)),
     onLoading: () => dispatch(onLoading()),
     offLoading: () => dispatch(offLoading()),
     setErrorNotification: (mess) => dispatch(setErrorNotification(mess)),
+    setSuccessNotification: (mess) => dispatch(setSuccessNotification(mess)),
   };
 };
 const mapStateToProps = (state) => {

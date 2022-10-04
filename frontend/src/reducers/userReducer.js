@@ -35,7 +35,6 @@ export const executeListMessUserAfterReceiveMess = (data, users) => {
           recentMessage: data.message,
     
         };
-        console.log(user);
         dispatch(userSlice.actions.updateUsers(user));
         return;
       }
