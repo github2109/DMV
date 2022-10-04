@@ -3,15 +3,17 @@ import "./style.css";
 import { useState } from "react";
 import * as XLSX from "xlsx";
 import Questions from "../../questions";
-import { connect } from "react-redux";
+import { useDispatch } from "react-redux";
 import {
   setSuccessNotification,
   setErrorNotification,
 } from "../../../reducers/responseUIReducer";
 import { useEffect } from "react";
-const ImportQuestion = ({ moduleId, setData, ...props }) => {
+const ImportQuestion = ({ moduleId, setData }) => {
   const [questions, setQuestions] = useState([]);
   const [executedQuestions, setExecutedQuestions] = useState([]);
+  const dispatch = useDispatch();
+
   useEffect(() => {
     setData(executedQuestions);
   }, [executedQuestions]);
@@ -95,7 +97,7 @@ const ImportQuestion = ({ moduleId, setData, ...props }) => {
         );
       }
     } catch (error) {
-      props.setErrorNotification(error);
+      dispatch(setErrorNotification(error));
     }
   };
   const handleRemoveQuestion = async (e, question) => {
@@ -105,9 +107,9 @@ const ImportQuestion = ({ moduleId, setData, ...props }) => {
       setExecutedQuestions(
         executedQuestions.filter((qs) => qs.id !== question.id)
       );
-      props.setSuccessNotification("Question deleted successfully");
+      dispatch(setSuccessNotification("Question deleted successfully"));
     } catch (error) {
-      props.setErrorNotification(error);
+      dispatch(setErrorNotification(error));
     }
   };
   return (
@@ -131,11 +133,4 @@ const ImportQuestion = ({ moduleId, setData, ...props }) => {
   );
 };
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    setSuccessNotification: (mess) => dispatch(setSuccessNotification(mess)),
-    setErrorNotification: (mess) => dispatch(setErrorNotification(mess)),
-  };
-};
-
-export default connect(null, mapDispatchToProps)(ImportQuestion);
+export default ImportQuestion;

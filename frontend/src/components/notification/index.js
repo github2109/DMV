@@ -1,23 +1,25 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import "./style.css";
-import { connect } from "react-redux";
+import { useSelector } from "react-redux";
 import { useEffect } from "react";
 
-const Notification = (props) => {
-  useEffect(()=>{
-    if(props.responseUI.notification === "Token expired"){
-      props.handleTokenExpired();
+const Notification = ({ handleTokenExpired }) => {
+  const notification = useSelector((state) => state.responseUI.notification);
+  const isErrorNotification = useSelector((state) => state.responseUI.isErrorNotification);
+  useEffect(() => {
+    if (notification === "Token expired") {
+      handleTokenExpired();
     }
-  },[props.responseUI.notification])
-  if (!props.responseUI.notification) return null;
-  if (!props.responseUI.isErrorNotification)
+  }, [notification]);
+  if (!notification) return null;
+  if (!isErrorNotification)
     return (
       <div className="Message Message--green">
         <div className="Message-icon">
           <i className="fa fa-check"></i>
         </div>
         <div className="Message-body">
-          <p>{props.responseUI.notification}</p>
+          <p>{notification}</p>
         </div>
       </div>
     );
@@ -28,14 +30,9 @@ const Notification = (props) => {
           <i className="fa fa-times"></i>
         </div>
         <div className="Message-body">
-          <p>{props.responseUI.notification}</p>
+          <p>{notification}</p>
         </div>
       </div>
     );
 };
-const mapStateToProps = (state) => {
-  return {
-    responseUI: state.responseUI,
-  };
-};
-export default connect(mapStateToProps)(Notification);
+export default Notification;

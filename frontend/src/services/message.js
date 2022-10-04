@@ -15,7 +15,6 @@ const sendMessageFromAdmin = async (message, deviceId) => {
 const sendMessageFromClient = async (message, deviceId) => {
   const response = await axios.post(`${bareUrl}/client/${deviceId}`, message, {
     headers: {
-      Authorization: token,
       "content-type": "multipart/form-data",
     },
   });

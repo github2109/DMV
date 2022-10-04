@@ -1,11 +1,11 @@
 import "../style.css";
 
-import { connect } from "react-redux";
+import { useSelector } from "react-redux";
 import NormalState from "../../state/normal";
-const NormalStates = (props) => {
-  const listStates = props.states;
-  const handleUpdateState = props.handleUpdateState;
-  const handleDeleteState = props.handleDeleteState;
+
+const NormalStates = ({ handleUpdateState, handleDeleteState }) => {
+  const listStates = useSelector((state) => state.states);
+
   return (
     <div className="states-container">
       <article className="leaderboard">
@@ -25,9 +25,4 @@ const NormalStates = (props) => {
   );
 };
 
-const mapStateToProps = (state) => {
-  return {
-    states: state.states,
-  };
-};
-export default connect(mapStateToProps)(NormalStates);
+export default NormalStates;

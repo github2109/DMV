@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
 import { useState, useEffect } from "react";
-import { connect } from "react-redux";
+import { useDispatch } from "react-redux";
 import "./style.css";
 import { getDetailModuleByModuleId } from "../../../reducers/moduleReducer";
 import ModalQuestion from "../ModalQuestion";
@@ -21,6 +21,8 @@ const ModalModule = ({
   const [tmpModule, setTmpModule] = useState(null);
   const [isCreated, setIsCreated] = useState(false);
   const [modalChildren, setModalChildren] = useState(false);
+  const dispatch = useDispatch();
+
   const toggleChildren = () => setModalChildren(!modalChildren);
   useEffect(() => {
     if (moduleId === null) {
@@ -39,16 +41,16 @@ const ModalModule = ({
         setOldModule(props.module);
       } else {
         try {
-          props.onLoading();
-          props.getDetailModuleByModuleId(moduleId).then((res) => {
+          dispatch(onLoading());
+          dispatch(getDetailModuleByModuleId(moduleId)).then((res) => {
             setTmpModule(res);
             setIsCreated(false);
             setOldModule(res);
-            props.offLoading();
+            dispatch(offLoading());
           });
         } catch (error) {
-          props.offLoading();
-          props.setErrorNotification(error.response.data.message);
+          dispatch(offLoading());
+          dispatch(setErrorNotification(error.response.data.message));
         }
       }
     }
@@ -74,7 +76,7 @@ const ModalModule = ({
   };
   const handleBeforeSaveModal = async (oldModule, tmpModule, isCreated) => {
     if (tmpModule.imageDescription === null) {
-      props.setErrorNotification("Please import image description  !!");
+      dispatch(setErrorNotification("Please import image description  !!"));
       return;
     }
     if (
@@ -82,7 +84,7 @@ const ModalModule = ({
       tmpModule.titleDescription === "" ||
       tmpModule.contentDescription === ""
     ) {
-      props.setErrorNotification("Please filling enough data !!");
+      dispatch(setErrorNotification("Please filling enough data !!"));
       return;
     }
     const module = await handleSaveModal(oldModule, tmpModule, isCreated);
@@ -250,20 +252,4 @@ const ModalModule = ({
   );
 };
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    getDetailModuleByModuleId: (moduleId) =>
-      dispatch(getDetailModuleByModuleId(moduleId)),
-    onLoading: () => dispatch(onLoading()),
-    offLoading: () => dispatch(offLoading()),
-    setErrorNotification: (mess) => dispatch(setErrorNotification(mess)),
-  };
-};
-
-const mapStateToProps = (state) => {
-  return {
-    modules: state.modules,
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(ModalModule);
+export default ModalModule;

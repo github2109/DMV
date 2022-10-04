@@ -3,7 +3,7 @@ import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
 import { useState, useEffect } from "react";
 import PlusButton from "../../button/PlusButton";
 import "./style.css";
-import { connect } from "react-redux";
+import { useDispatch } from "react-redux";
 import { setErrorNotification } from "../../../reducers/responseUIReducer";
 const ModalDetailQuestion = ({
   modal,
@@ -11,11 +11,12 @@ const ModalDetailQuestion = ({
   question,
   handleSaveModal,
   toggleModalImportQuestion,
-  ...props
 }) => {
   const [oldQuestion, setOldQuestion] = useState(null);
   const [tmpQuestion, setTmpQuestion] = useState(null);
   const [isCreated, setIsCreated] = useState(false);
+  const dispatch = useDispatch();
+  
   useEffect(() => {
     if (question === null) {
       setIsCreated(true);
@@ -110,14 +111,14 @@ const ModalDetailQuestion = ({
   };
   const handleBeforeSaveModal = (oldQuestion, tmpQuestion, isCreated) => {
     if (tmpQuestion.answers.length === 0) {
-      props.setErrorNotification("Please add answers !!");
+      dispatch(setErrorNotification("Please add answers !!"));
       return;
     }
     if (
       tmpQuestion.questionContent === "" ||
       (tmpQuestion.handBook === "" && !tmpQuestion.isTestQuestion)
     ) {
-      props.setErrorNotification("Please filling enough information !!");
+      dispatch(setErrorNotification("Please filling enough information !!"));
       return;
     }
     handleSaveModal(oldQuestion, tmpQuestion, isCreated);
@@ -295,10 +296,5 @@ const ModalDetailQuestion = ({
   );
 };
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    setErrorNotification: (mess) => dispatch(setErrorNotification(mess)),
-  };
-};
 
-export default connect(null, mapDispatchToProps)(ModalDetailQuestion);
+export default ModalDetailQuestion;

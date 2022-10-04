@@ -10,7 +10,7 @@ import {
 } from "../../reducers/responseUIReducer";
 import { createQuestion } from "../../reducers/questionReducer";
 import ModalImport from "../modal/ModalImport";
-import { connect } from "react-redux";
+import { useDispatch } from "react-redux";
 import "./style.css";
 import { useEffect } from "react";
 
@@ -21,12 +21,13 @@ const Questions = ({
   handleSaveModalDetailQuestion,
   handleRemoveQuestion,
   isTestQuestion,
-  ...props
 }) => {
   const [question, setQuestion] = useState(null);
   const [questionsView, setQuestionsView] = useState(questions);
   const [modalDetailQuestion, setModalDetailQuestion] = useState(false);
   const [modalImportQuestion, setModalImportQuestion] = useState(false);
+  const dispatch = useDispatch();
+
   useEffect(() => {
     if (isTestQuestion === undefined) setQuestionsView(questions);
     else
@@ -52,18 +53,19 @@ const Questions = ({
   };
   const handleSaveModalImport = (data) => {
     try {
-      props.onLoading();
+      dispatch(onLoading());
       let promises = [];
       data.forEach((question) => {
-        promises.push(props.createQuestion(question));
+        promises.push(dispatch(createQuestion(question)));
       });
       Promise.all([...promises]).then(() => {
         toggleModalImportQuestion();
-        props.offLoading();
+        dispatch(offLoading());
+        dispatch(setSuccessNotification("Import successfully"))
       });
     } catch (error) {
-      props.offLoading();
-      props.setErrorNotification(error.response.data.message);
+      dispatch(offLoading());
+      dispatch(setErrorNotification(error.response.data.message));
     }
   };
   return (
@@ -117,14 +119,4 @@ const Questions = ({
   );
 };
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    createQuestion: (question) => dispatch(createQuestion(question)),
-    onLoading: () => dispatch(onLoading()),
-    offLoading: () => dispatch(offLoading()),
-    setSuccessNotification: (mess) => dispatch(setSuccessNotification(mess)),
-    setErrorNotification: (mess) => dispatch(setErrorNotification(mess)),
-  };
-};
-
-export default connect(null, mapDispatchToProps)(Questions);
+export default Questions;

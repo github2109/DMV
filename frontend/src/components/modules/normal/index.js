@@ -1,17 +1,16 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import "../style.css";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import NormalModule from "../../module/normal";
 import { Link } from "react-router-dom";
 import ModalListModule from "../../modal/ModalListModule/ModalListModule";
 import NormalExam from "../../exam";
-import { useState, useEffect} from "react";
+import { useState, useEffect } from "react";
 import ExamModal from "../../../components/modal/ModalExam/modalExam";
 import ModalDetailModule from "../../modal/ModalDetailModule";
 import SelectionModal from "../../../components/modal/ModalSelection/ModalSelection";
 import {
-  createModule,
-  addModulesToState,
+  createModule
 } from "../../../reducers/moduleReducer";
 import {
   initializeExam,
@@ -32,15 +31,22 @@ const NormalModules = ({
   modal,
   licenseId,
   stateId,
-  ...props
+  handleDeleteModule
 }) => {
+
   useEffect(() => {
-    props.initializeExam(stateId, licenseId);
+    dispatch(initializeExam(stateId, licenseId));
   }, [stateId, licenseId]);
+
   const [currentExam, setCurrentExam] = useState(null);
   const [modalExam, setModalExam] = useState(false);
   const [modalAddModule, setModalAddModule] = useState(false);
   const [selectionModal, setSelectionModal] = useState(false);
+
+  const dispatch = useDispatch();
+  const modules = useSelector(state => state.modules);
+  const exams = useSelector(state => state.exams);
+
   const toggleSelectionModal = () => setSelectionModal(!selectionModal);
   const toggleAddModule = () => setModalAddModule(!modalAddModule);
   const toggleExam = () => setModalExam(!modalExam);
@@ -54,48 +60,48 @@ const NormalModules = ({
   };
   const handleSaveExamModal = async (oldExam, newExam, isCreate) => {
     try {
-      props.onLoading();
+      dispatch(onLoading());
       if (isCreate) {
-        await props.createExam(newExam, stateId, licenseId);
-        props.setSuccessNotification("Exam created successfully");
+        await dispatch(createExam(newExam, stateId, licenseId));
+        dispatch(setSuccessNotification("Exam created successfully"));
       } else {
-        await props.updateExam(oldExam, newExam);
-        props.setSuccessNotification("Exam updated successfully");
+        await dispatch(updateExam(oldExam, newExam));
+        dispatch(setSuccessNotification("Exam updated successfully"));
       }
-      props.offLoading();
+      dispatch(offLoading());
       toggleExam();
     } catch (error) {
-      props.offLoading();
-      props.setErrorNotification(error.response.data.message);
+      dispatch(offLoading());
+      dispatch(setErrorNotification(error.response.data.message));
     }
   };
   const handleAddModule = async (oldModule, newModule, isCreate) => {
     try {
-      props.onLoading();
+      dispatch(onLoading());
       newModule.license = licenseId;
       newModule.states = stateId;
-      newModule.position = props.modules.length + 1;
-      const newModuleSaved = await props.createModule(newModule);
-      props.setSuccessNotification("Module created successfully");
-      props.offLoading();
+      newModule.position = modules.length + 1;
+      const newModuleSaved = await dispatch(createModule(newModule));
+      dispatch(setSuccessNotification("Module created successfully"));
+      dispatch(offLoading());
       toggleAddModule();
       return newModuleSaved;
     } catch (error) {
-      props.offLoading();
-      props.setErrorNotification(error.response.data.message);
+      dispatch(offLoading());
+      dispatch(setErrorNotification(error.response.data.message));
     }
   };
   const handleDeleteExam = (e, exam) => {
     e.stopPropagation();
     try {
-      props.onLoading();
-      props.deleteExam(exam).then((res) => {
-        props.offLoading();
-        props.setSuccessNotification("Exam removed successfully");
+      dispatch(onLoading());
+      dispatch(deleteExam(exam)).then((res) => {
+        dispatch(offLoading());
+        dispatch(setSuccessNotification("Exam removed successfully"));
       });
     } catch (error) {
-      props.offLoading();
-      props.setErrorNotification(error.response.data.message);
+      dispatch(offLoading());
+      dispatch(setErrorNotification(error.response.data.message));
     }
   };
   return (
@@ -119,7 +125,7 @@ const NormalModules = ({
             />
 
             <main className="leaderboard__profiles">
-              {props.exams.map((exam, position) => (
+              {exams.map((exam, position) => (
                 <NormalExam
                   key={exam._id}
                   exam={exam}
@@ -139,9 +145,9 @@ const NormalModules = ({
               moduleId={null}
             />
             <main className="leaderboard__profiles">
-              {props.modules.map((module, position) => (
+              {modules.map((module, position) => (
                 <NormalModule
-                  handleDeleteModule={props.handleDeleteModule}
+                  handleDeleteModule={handleDeleteModule}
                   key={module._id}
                   module={module}
                   position={position}
@@ -157,7 +163,6 @@ const NormalModules = ({
             <ModalListModule
               modal={modal}
               toggle={toggle}
-              getModuleByLicenseId={props.getModuleByLicenseId}
               licenseId={licenseId}
               stateId={stateId}
             />
@@ -183,28 +188,4 @@ const NormalModules = ({
   );
 };
 
-const mapStateToProps = (state) => {
-  return {
-    modules: state.modules,
-    exams: state.exams,
-  };
-};
-const mapDispatchToProps = (dispatch) => {
-  return {
-    initializeExam: (stateId, licenseId) =>
-      dispatch(initializeExam(stateId, licenseId)),
-    createExam: (exam, stateId, licenseId) =>
-      dispatch(createExam(exam, stateId, licenseId)),
-    updateExam: (oldExam, newExam) => dispatch(updateExam(oldExam, newExam)),
-    deleteExam: (exam) => dispatch(deleteExam(exam)),
-    onLoading: () => dispatch(onLoading()),
-    offLoading: () => dispatch(offLoading()),
-    setSuccessNotification: (mess) => dispatch(setSuccessNotification(mess)),
-    setErrorNotification: (mess) => dispatch(setErrorNotification(mess)),
-    createModule: (newModule) => dispatch(createModule(newModule)),
-    addModulesToState: (moduleId, stateId) =>
-      dispatch(addModulesToState(moduleId, stateId)),
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(NormalModules);
+export default NormalModules;

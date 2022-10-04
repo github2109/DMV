@@ -1,5 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect } from "react";
-import { connect } from "react-redux";
+import { useDispatch } from "react-redux";
 import { ModalBody, ModalFooter, ModalHeader, Modal, Button } from "reactstrap";
 import { useState } from "react";
 import {
@@ -16,13 +17,14 @@ const ExamModal = ({
   handleSaveModal,
   stateId,
   licenseId,
-  ...props
 }) => {
   const [tempExam, setTempExam] = useState(null);
-  const [isCreted, setIsCreted] = useState(false);
+  const [isCreated, setIsCreated] = useState(false);
+  const dispatch = useDispatch();
+
   useEffect(() => {
     if (currentExam === null) {
-      setIsCreted(true);
+      setIsCreated(true);
       setTempExam({
         name: "",
         timeOfExam: "",
@@ -30,17 +32,17 @@ const ExamModal = ({
       });
     } else {
       try {
-        props.onLoading();
-        props
-          .getDetailExamByExamId(currentExam._id, stateId, licenseId)
-          .then((res) => {
-            setTempExam(res);
-            setIsCreted(false);
-            props.offLoading();
-          });
+        dispatch(onLoading());
+        dispatch(
+          getDetailExamByExamId(currentExam._id, stateId, licenseId)
+        ).then((res) => {
+          setTempExam(res);
+          setIsCreated(false);
+          dispatch(offLoading());
+        });
       } catch (error) {
-        props.offLoading();
-        props.setErrorNotification(error.response.data.message);
+        dispatch(offLoading());
+        dispatch(setErrorNotification(error.response.data.message));
       }
     }
   }, [modal]);
@@ -50,6 +52,27 @@ const ExamModal = ({
       [e.target.name]: e.target.value,
     });
   };
+  const handleBlur = (event) => {
+    if (event.target.value === "") {
+      event.target.parentElement.classList.add("alert-validate");
+      event.target.parentElement.classList.add("border-red");
+    }
+  };
+  const handleFocus = (event) => {
+    event.target.parentElement.classList.remove("alert-validate");
+    event.target.parentElement.classList.remove("border-red");
+  };
+  const handleBeforeSaveModal = (currentExam, tempExam, isCreated) => {
+    if (
+      tempExam.name.trim() === "" ||
+      tempExam.timeOfExam.trim() === "" ||
+      tempExam.timeOfSave.trim() === ""
+    ) {
+      dispatch(setErrorNotification("Please fill enough information !!"));
+      return;
+    }
+    handleSaveModal(currentExam, tempExam, isCreated);
+  };
   return (
     <Modal isOpen={modal} toggle={toggle}>
       <ModalHeader toggle={() => toggle()}>Exam</ModalHeader>
@@ -57,32 +80,53 @@ const ExamModal = ({
         <div className="exam-modal-container">
           <div className="exam-form">
             <label>Exam's name :</label>
-            <input
-              name="name"
-              className="input-text-exam"
-              type="text"
-              placeholder="Exam's name"
-              value={tempExam && tempExam.name}
-              onChange={handleInputChange}
-            />
+            <div
+              className="wrap-input validate-input"
+              data-validate="Exam name is required"
+            >
+              <input
+                name="name"
+                className="input-text-exam"
+                type="text"
+                placeholder="Exam's name"
+                value={tempExam && tempExam.name}
+                onChange={handleInputChange}
+                onBlur={handleBlur}
+                onFocus={handleFocus}
+              />
+            </div>
             <label>Number of question :</label>
-            <input
-              name="numberOfQuestion"
-              className="input-text-exam"
-              type="text"
-              placeholder="Number of question"
-              value={tempExam && tempExam.numberOfQuestion}
-              onChange={handleInputChange}
-            />
-            <label>Time of exam :</label>
-            <input
-              name="timeOfExam"
-              className="input-text-exam"
-              type="text"
-              placeholder="Time of exam"
-              value={tempExam && tempExam.timeOfExam}
-              onChange={handleInputChange}
-            />
+            <div
+              className="wrap-input validate-input"
+              data-validate="Exam name is required"
+            >
+              <input
+                name="numberOfQuestion"
+                className="input-text-exam"
+                type="text"
+                placeholder="Number of question"
+                value={tempExam && tempExam.numberOfQuestion}
+                onChange={handleInputChange}
+                onBlur={handleBlur}
+                onFocus={handleFocus}
+              />
+            </div>
+            <label>Time of exam(minute) :</label>
+            <div
+              className="wrap-input validate-input"
+              data-validate="Exam name is required"
+            >
+              <input
+                name="timeOfExam"
+                className="input-text-exam"
+                type="text"
+                placeholder="Time of exam"
+                value={tempExam && tempExam.timeOfExam}
+                onChange={handleInputChange}
+                onBlur={handleBlur}
+                onFocus={handleFocus}
+              />
+            </div>
           </div>
         </div>
       </ModalBody>
@@ -90,7 +134,7 @@ const ExamModal = ({
         <Button
           color="primary"
           className="px-3"
-          onClick={(event) => handleSaveModal(currentExam, tempExam, isCreted)}
+          onClick={(event) => handleBeforeSaveModal(currentExam, tempExam, isCreated)}
         >
           {" "}
           Save
@@ -103,20 +147,5 @@ const ExamModal = ({
     </Modal>
   );
 };
-const mapStateToProps = (state) => {
-  return {
-    exams: state.exams,
-  };
-};
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    getDetailExamByExamId: (examId, stateId, licenseId) =>
-      dispatch(getDetailExamByExamId(examId, stateId, licenseId)),
-    onLoading: () => dispatch(onLoading()),
-    offLoading: () => dispatch(offLoading()),
-    setErrorNotification: (mess) => dispatch(setErrorNotification(mess)),
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(ExamModal);
+export default ExamModal;

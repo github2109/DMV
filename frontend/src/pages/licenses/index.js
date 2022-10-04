@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from "react";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import License from "../../components/license";
 import {
   initializeLicense,
@@ -17,10 +17,14 @@ import {
 import PlusButton from "../../components/button/PlusButton";
 import ModalLicense from "../../components/modal/ModalLicense";
 import "./style.css";
-const Licenses = (props) => {
+const Licenses = () => {
+  const dispatch = useDispatch();
+  const licenses = useSelector((state) => state.licenses);
+
   useEffect(() => {
-    props.initializeLicense();
+    dispatch(initializeLicense());
   }, []);
+
   const [modal, setModal] = useState(false);
   const [license, setLicense] = useState(null);
   const toggle = () => setModal(!modal);
@@ -35,32 +39,32 @@ const Licenses = (props) => {
   const handleSaveModel = async (oldLicense, newLicense, isCreate) => {
     try {
       if (isCreate) {
-        props.onLoading();
-        await props.createLicense(newLicense);
-        props.offLoading();
-        props.setSuccessNotification("License created successfully");
+        dispatch(onLoading());
+        await dispatch(createLicense(newLicense));
+        dispatch(offLoading());
+        dispatch(setSuccessNotification("License created successfully"));
       } else {
-        props.onLoading();
-        await props.updateLicense(oldLicense, newLicense);
-        props.offLoading();
-        props.setSuccessNotification("License updated successfully");
+        dispatch(onLoading());
+        await dispatch(updateLicense(oldLicense, newLicense));
+        dispatch(offLoading());
+        dispatch(setSuccessNotification("License updated successfully"));
       }
       toggle();
     } catch (error) {
-      props.setErrorNotification(error.response.data.message);
-      props.offLoading();
+      dispatch(setErrorNotification(error.response.data.message));
+      dispatch(offLoading());
     }
   };
   const handleDeleteLicense = (e, license) => {
     e.stopPropagation();
     try {
-      props.onLoading();
-      props.deleteLicense(license).then((res) => {
-        props.offLoading();
-        props.setSuccessNotification("License removed successfully");
+      dispatch(onLoading());
+      dispatch(deleteLicense(license)).then((res) => {
+        dispatch(offLoading());
+        dispatch(setSuccessNotification("License removed successfully"));
       });
     } catch (error) {
-      props.setErrorNotification(error.response.data.message);
+      dispatch(setErrorNotification(error.response.data.message));
     }
   };
   return (
@@ -74,7 +78,7 @@ const Licenses = (props) => {
       <div className="licenses-container">
         <div className="licenses-header">License</div>
         <div className="licenses-body">
-          {props.licenses.map((license) => (
+          {licenses.map((license) => (
             <License
               key={license._id}
               license={license}
@@ -91,24 +95,5 @@ const Licenses = (props) => {
   );
 };
 
-const mapStateToProps = (state) => {
-  return {
-    licenses: state.licenses,
-  };
-};
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    initializeLicense: () => dispatch(initializeLicense()),
-    createLicense: (license) => dispatch(createLicense(license)),
-    updateLicense: (oldLicense, newLicense) =>
-      dispatch(updateLicense(oldLicense, newLicense)),
-    deleteLicense: (license) => dispatch(deleteLicense(license)),
-    onLoading: () => dispatch(onLoading()),
-    offLoading: () => dispatch(offLoading()),
-    setSuccessNotification: (mess) => dispatch(setSuccessNotification(mess)),
-    setErrorNotification: (mess) => dispatch(setErrorNotification(mess)),
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Licenses);
+export default Licenses;

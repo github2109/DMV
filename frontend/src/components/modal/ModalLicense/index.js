@@ -2,18 +2,19 @@
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
 import { useEffect, useState } from "react";
 import "./style.css";
-import { connect } from "react-redux";
+import { useDispatch } from "react-redux";
 import { setErrorNotification } from "../../../reducers/responseUIReducer";
 const ModalLicense = ({
   modal,
   toggle,
   license,
   handleSaveModel,
-  ...props
 }) => {
   const [tmpLicense, setTmpLicense] = useState(null);
   const [imageUrl, setImageUrl] = useState(null);
   const [isCreated, setIsCreated] = useState(false);
+  const dispatch = useDispatch();
+
   useEffect(() => {
     if (license === null) {
       setIsCreated(true);
@@ -54,11 +55,11 @@ const ModalLicense = ({
   };
   const handleBeforeSaveModal = (license, tmpLicense, isCreated) => {
     if(tmpLicense.image === null){
-      props.setErrorNotification("Please import license image !!");
+      dispatch(setErrorNotification("Please import license image !!"));
       return;
     }
     if (tmpLicense.name === "" || tmpLicense.description === "") {
-      props.setErrorNotification("Please filling enough information !!");
+      dispatch(setErrorNotification("Please filling enough information !!"));
       return;
     }
   };
@@ -131,10 +132,5 @@ const ModalLicense = ({
   );
 };
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    setErrorNotification: (mess) => dispatch(setErrorNotification(mess)),
-  };
-};
 
-export default connect(null, mapDispatchToProps)(ModalLicense);
+export default ModalLicense;

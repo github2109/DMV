@@ -2,7 +2,7 @@
 import "./style.css";
 import avadefault from "../../images/avadefault.jpg";
 import { useEffect, useState, useRef } from "react";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   connectSocket,
   joinRoomSocket,
@@ -24,41 +24,47 @@ const Messenger = (props) => {
   const [userSelect, setUserSelect] = useState(null);
   const [messageContent, setMessageContent] = useState("");
   const [messageImages, setMessageImages] = useState([]);
+
+  const dispatch = useDispatch();
+  const users = useSelector((state) => state.users);
+  const messages = useSelector((state) => state.messages);
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
     connectSocket();
     authAdmin();
-    props.setListClientForMessenger();
+    dispatch(setListClientForMessenger());
     messagesEndRef.current?.scrollToBottom();
   }, []);
   useEffect(() => {
     socket.on("receive_message", (data) => {
-      props.executedConvertationReceiveMessage(data, props.users, userSelect);
+      dispatch(executedConvertationReceiveMessage(data, users, userSelect));
     });
     return () => {
       socket.off("receive_message");
     };
-  }, [props.users, userSelect]);
+  }, [users, userSelect]);
   const sendMessage = () => {
     if (messageContent === "" && messageImages.length === 0) return;
     if (messageContent !== "")
-      props.sendMessageFromAdmin(
-        { content: messageContent, images: [] },
-        userSelect.deviceId,
-        props.users
+      dispatch(
+        sendMessageFromAdmin(
+          { content: messageContent, images: [] },
+          userSelect.deviceId,
+          users
+        )
       );
     if (messageImages.length > 0)
-      props.sendMessageFromAdmin(
+      dispatch(sendMessageFromAdmin(
         { content: null, images: messageImages },
         userSelect.deviceId,
-        props.users
-      );
+        users
+      ));
     setMessageContent("");
     setMessageImages([]);
   };
   const handleSelectUser = (user) => {
-    props.setMessagesByDeviceId(user.deviceId);
+    dispatch(setMessagesByDeviceId(user.deviceId));
     setUserSelect(user);
     setMessageContent("");
     setMessageImages([]);
@@ -90,7 +96,7 @@ const Messenger = (props) => {
                 />
               </div>
               <ul className="list-unstyled chat-list mt-2 mb-0">
-                {props.users.map((user) => (
+                {users.map((user) => (
                   <li
                     key={user._id}
                     className={
@@ -162,7 +168,7 @@ const Messenger = (props) => {
               </ul>
             </div>
             <div className="chat">
-              {userSelect && props.messages.length > 0 && (
+              {userSelect && messages.length > 0 && (
                 <div className="chat-history-container">
                   <div className="chat-header clearfix">
                     <div className="row">
@@ -178,7 +184,7 @@ const Messenger = (props) => {
                   <div className="chat-history">
                     <ul className="m-b-0">
                       <ScrollableFeed ref={messagesEndRef}>
-                        {props.messages.map((message, index, messages) => {
+                        {messages.map((message, index, messages) => {
                           let timeMessBefore, timeMessCurrent, timeMessAfter;
                           if (index > 0)
                             timeMessBefore =
@@ -335,24 +341,4 @@ const Messenger = (props) => {
     </div>
   );
 };
-
-const mapStateToProps = (state) => {
-  return {
-    users: state.users,
-    messages: state.messages,
-  };
-};
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    setListClientForMessenger: () => dispatch(setListClientForMessenger()),
-    setMessagesByDeviceId: (deviceId) =>
-      dispatch(setMessagesByDeviceId(deviceId)),
-    sendMessageFromAdmin: (message, deviceId, users) =>
-      dispatch(sendMessageFromAdmin(message, deviceId, users)),
-    executedConvertationReceiveMessage: (data, users, userSelect) =>
-      dispatch(executedConvertationReceiveMessage(data, users, userSelect)),
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Messenger);
+export default Messenger;

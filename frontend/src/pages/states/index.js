@@ -1,5 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect } from "react";
-import { connect } from "react-redux";
+import { useDispatch } from "react-redux";
 import {
   initializeState,
   createState,
@@ -17,10 +18,13 @@ import { useState } from "react";
 import "./style.css";
 import StateModal from "../../components/modal/ModalState/stateModal";
 import PlusButton from "../../components/button/PlusButton";
-const States = (props) => {
+const States = () => {
+  const dispatch = useDispatch();
+
   useEffect(() => {
-    props.initializeState();
+    dispatch(initializeState());
   }, []);
+
   const [currentState, setCurrentState] = useState(null);
   const [modal, setModal] = useState(false);
   const toggle = () => setModal(!modal);
@@ -34,32 +38,32 @@ const States = (props) => {
   };
   const handleSaveModal = async (oldState, newState, isCreate) => {
     try {
-      props.onLoading();
+      dispatch(onLoading());
       if (isCreate) {
-        await props.createState(newState);
-        props.setSuccessNotification("State created successfully");
+        await dispatch(createState(newState));
+        dispatch(setSuccessNotification("State created successfully"));
       } else {
-        await props.updateState(oldState, newState);
-        props.setSuccessNotification("State updated successfully");
+        await dispatch(updateState(oldState, newState));
+        dispatch(setSuccessNotification("State updated successfully"));
       }
-      props.offLoading();
+      dispatch(offLoading());
       toggle();
     } catch (error) {
-      props.offLoading();
-      props.setErrorNotification(error.response.data.message);
+      dispatch(offLoading());
+      dispatch(setErrorNotification(error.response.data.message));
     }
   };
   const handleDeleteState = (e, state) => {
     e.stopPropagation();
     try {
-      props.onLoading();
-      props.deleteState(state).then((res) => {
-        props.offLoading();
-        props.setSuccessNotification("State removed successfully");
+      dispatch(onLoading());
+      dispatch(deleteState(state)).then((res) => {
+        dispatch(offLoading());
+        dispatch(setSuccessNotification("State removed successfully"));
       });
     } catch (error) {
-      props.offLoading();
-      props.setErrorNotification(error.response.data.message);
+      dispatch(offLoading());
+      dispatch(setErrorNotification(error.response.data.message));
     }
   };
 
@@ -86,22 +90,5 @@ const States = (props) => {
     </div>
   );
 };
-const mapStateToProps = (state) => {
-  return {
-    states: state.states,
-  };
-};
-const mapDispatchToProps = (dispatch) => {
-  return {
-    initializeState: () => dispatch(initializeState()),
-    createState: (state) => dispatch(createState(state)),
-    updateState: (oldState, newState) =>
-      dispatch(updateState(oldState, newState)),
-    deleteState: (state) => dispatch(deleteState(state)),
-    onLoading: () => dispatch(onLoading()),
-    offLoading: () => dispatch(offLoading()),
-    setSuccessNotification: (mess) => dispatch(setSuccessNotification(mess)),
-    setErrorNotification: (mess) => dispatch(setErrorNotification(mess)),
-  };
-};
-export default connect(mapStateToProps, mapDispatchToProps)(States);
+
+export default States;

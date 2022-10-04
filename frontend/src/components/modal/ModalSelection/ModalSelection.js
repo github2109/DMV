@@ -1,5 +1,4 @@
 import React from "react";
-import { connect } from "react-redux";
 import { ModalBody, ModalFooter, ModalHeader, Modal, Button } from "reactstrap";
 import "./style.css";
 const SelectionModal = ({
@@ -52,12 +51,4 @@ const SelectionModal = ({
     </Modal>
   );
 };
-const mapStateToProps = (state) => {
-  return {};
-};
-
-const mapDispatchToProps = (dispatch) => {
-  return {};
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(SelectionModal);
+export default SelectionModal;

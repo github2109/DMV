@@ -1,5 +1,5 @@
 import React from "react";
-import { connect } from "react-redux";
+import { useDispatch } from "react-redux";
 import { ModalBody, ModalFooter, ModalHeader, Modal, Button } from "reactstrap";
 import { useState } from "react";
 import { setErrorNotification } from "../../../reducers/responseUIReducer";
@@ -9,12 +9,13 @@ const StateUpdateModal = ({
   toggleFromParent,
   updateState,
   currentState,
-  ...props
 }) => {
   const [name, setName] = useState(currentState.name);
+  const dispatch = useDispatch();
+
   const handleUpdateUser = (event, id, name) => {
     if (name === "") {
-      props.setErrorNotification("Please enter a state name !!");
+      dispatch(setErrorNotification("Please enter a state name !!"));
       return;
     }
     updateState(event, id, name);
@@ -75,13 +76,4 @@ const StateUpdateModal = ({
     </Modal>
   );
 };
-const mapStateToProps = (state) => {
-  return {};
-};
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    setErrorNotification: (mess) => dispatch(setErrorNotification(mess)),
-  };
-};
-export default connect(mapStateToProps, mapDispatchToProps)(StateUpdateModal);
+export default StateUpdateModal;

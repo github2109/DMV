@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setModuleByLicenseId } from "../../reducers/moduleReducer";
 import { useEffect, useState } from "react";
 import DrawModules from "../../components/modules/draw";
@@ -24,15 +24,21 @@ import PlusButton from "../../components/button/PlusButton";
 import ModalDetailModule from "../../components/modal/ModalDetailModule";
 import ModalQuestion from "../../components/modal/ModalQuestion";
 import ModalImport from "../../components/modal/ModalImport";
-const Modules = (props) => {
+const Modules = () => {
   const [licenseId, setLicenseId] = useState(null);
+  const dispatch = useDispatch();
+  const modules = useSelector((state) => state.modules);
+  const licenses = useSelector((state) => state.licenses);
+
   useEffect(() => {
-    props.initializeLicense();
+    dispatch(initializeLicense());
   }, []);
   useEffect(() => {
     if (licenseId) {
-      props.onLoading();
-      props.setModuleByLicenseId(licenseId).then((res) => props.offLoading());
+      dispatch(onLoading());
+      dispatch(setModuleByLicenseId(licenseId)).then((res) =>
+        dispatch(offLoading())
+      );
     }
   }, [licenseId]);
   const [modalDetailModule, setModalDetailModule] = useState(false);
@@ -48,16 +54,18 @@ const Modules = (props) => {
   };
   const handleSavePositionClick = () => {
     try {
-      props.onLoading();
-      props.savePositionModule(props.modules).then((res) => {
-        props.offLoading();
-        props.setSuccessNotification(
-          "Position of licenses was updated successfully"
+      dispatch(onLoading());
+      dispatch(savePositionModule(modules)).then((res) => {
+        dispatch(offLoading());
+        dispatch(
+          setSuccessNotification(
+            "Position of licenses was updated successfully"
+          )
         );
       });
     } catch (error) {
-      props.offLoading();
-      props.setErrorNotification(error.response.data.message);
+      dispatch(offLoading());
+      dispatch(setErrorNotification(error.response.data.message));
     }
   };
   const handleClickCreateModule = () => {
@@ -66,22 +74,22 @@ const Modules = (props) => {
   };
   const handleSaveModal = async (oldModule, newModule, isCreate) => {
     try {
-      props.onLoading();
+      dispatch(onLoading());
       if (isCreate) {
         newModule.license = licenseId;
-        newModule.position = props.modules.length + 1;
-        const newModuleSaved = await props.createModule(newModule);
-        props.setSuccessNotification("Module created successfully");
+        newModule.position = modules.length + 1;
+        const newModuleSaved = await dispatch(createModule(newModule));
+        dispatch(setSuccessNotification("Module created successfully"));
         return newModuleSaved;
       } else {
-        await props.updateModule(oldModule, newModule);
-        props.setSuccessNotification("Module updated successfully");
+        await dispatch(updateModule(oldModule, newModule));
+        dispatch(setSuccessNotification("Module updated successfully"));
       }
-      props.offLoading();
+      dispatch(offLoading());
       toggleDetailModule();
     } catch (error) {
-      props.offLoading();
-      props.setErrorNotification(error.response.data.message);
+      dispatch(offLoading());
+      dispatch(setErrorNotification(error.response.data.message));
     }
   };
   const handleSelectModule = (e, moduleId) => {
@@ -96,30 +104,30 @@ const Modules = (props) => {
   const handleDeleteModule = (e, moduleId) => {
     e.stopPropagation();
     try {
-      props.onLoading();
-      props.deleteModule(moduleId).then((res) => {
-        props.offLoading();
-        props.setSuccessNotification("Module removed successfully");
+      dispatch(onLoading());
+      dispatch(deleteModule(moduleId)).then((res) => {
+        dispatch(offLoading());
+        dispatch(setSuccessNotification("Module removed successfully"));
       });
     } catch (error) {
-      props.offLoading();
-      props.setErrorNotification(error.response.data.message);
+      dispatch(offLoading());
+      dispatch(setErrorNotification(error.response.data.message));
     }
   };
   const handleSaveModalImport = (data) => {
     try {
-      props.onLoading();
+      dispatch(onLoading());
       let promises = [];
       data.forEach((module) => {
-        promises.push(props.createModule(module));
+        promises.push(dispatch(createModule(module)));
       });
       Promise.all([...promises]).then(() => {
         toggleModalImportModule();
-        props.offLoading();
+        dispatch(offLoading());
       });
     } catch (error) {
-      props.offLoading();
-      props.setErrorNotification(error.response.data.message);
+      dispatch(offLoading());
+      dispatch(setErrorNotification(error.response.data.message));
     }
   };
   return (
@@ -162,7 +170,7 @@ const Modules = (props) => {
           />
         )}
         <Select
-          listData={props.licenses}
+          listData={licenses}
           className="licenses-style"
           nameSelect="license"
           item={licenseId}
@@ -177,8 +185,8 @@ const Modules = (props) => {
       <div className="modules-container">
         {licenseId && (
           <DrawModules
-            modules={props.modules}
-            setModules={props.setModules}
+            modules={modules}
+            setModules={(modules) => dispatch(setModules(modules))}
             moduleIdSelected={moduleId}
             handleEditModule={handleEditModule}
             handleSelectModule={handleSelectModule}
@@ -195,32 +203,4 @@ const Modules = (props) => {
   );
 };
 
-const mapStateToProps = (state) => {
-  return {
-    licenses: state.licenses,
-    modules: state.modules,
-  };
-};
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    setModules: (modules) => dispatch(setModules(modules)),
-    setModuleByLicenseId: (licenseId) =>
-      dispatch(setModuleByLicenseId(licenseId)),
-
-    initializeLicense: () => {
-      dispatch(initializeLicense());
-    },
-    savePositionModule: (modules) => dispatch(savePositionModule(modules)),
-    updateModule: (oldModule, newModule) =>
-      dispatch(updateModule(oldModule, newModule)),
-    createModule: (newModule) => dispatch(createModule(newModule)),
-    deleteModule: (moduleId) => dispatch(deleteModule(moduleId)),
-    onLoading: () => dispatch(onLoading()),
-    offLoading: () => dispatch(offLoading()),
-    setSuccessNotification: (mess) => dispatch(setSuccessNotification(mess)),
-    setErrorNotification: (mess) => dispatch(setErrorNotification(mess)),
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Modules);
+export default Modules;

@@ -1,9 +1,9 @@
 import "./style.css";
-
-import { connect } from "react-redux";
+import { useSelector } from "react-redux";
 import NormalExam from "../../components/exam";
-const NormalExams = (props) => {
-  const listExams = props.states;
+
+const NormalExams = () => {
+  const listExams = useSelector(state => state.exams);
   return (
     <div className="exams-container">
       <article className="leaderboard">
@@ -17,9 +17,4 @@ const NormalExams = (props) => {
   );
 };
 
-const mapStateToProps = (state) => {
-  return {
-    exams: state.exams,
-  };
-};
-export default connect(mapStateToProps)(NormalExams);
+export default NormalExams;

@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { initializeState } from "../../reducers/stateReducer";
 import { initializeLicense } from "../../reducers/licenseReducer";
 import { setStateId, setLicenseId } from "../../reducers/filterReducer";
@@ -20,22 +20,26 @@ import "./style.css";
 import { useEffect, useState } from "react";
 import { Button } from "reactstrap";
 
-const Home = (props) => {
+const Home = () => {
+  const dispatch = useDispatch();
+  const states = useSelector((state) => state.states);
+  const licenses = useSelector((state) => state.licenses);
+  const filter = useSelector((state) => state.filter);
+
   useEffect(() => {
-    props.initializeState();
-    props.initializeLicense();
+    dispatch(initializeState());
+    dispatch(initializeLicense());
   }, []);
+
   useEffect(() => {
-    if (props.filter.stateId && props.filter.licenseId) {
-      props.onLoading();
-      props
-        .setModuleByStateIdAndLicenseId(
-          props.filter.stateId,
-          props.filter.licenseId
-        )
-        .then((res) => props.offLoading());
+    if (filter.stateId && filter.licenseId) {
+      dispatch(onLoading());
+      dispatch(
+        setModuleByStateIdAndLicenseId(filter.stateId, filter.licenseId)
+      ).then((res) => dispatch(offLoading()));
     }
-  }, [props.filter]);
+  }, [filter]);
+
   const [isShowExam, setIsShowExam] = useState(false);
   const [modal, setModal] = useState(false);
   const toggle = () => setModal(!modal);
@@ -43,29 +47,29 @@ const Home = (props) => {
   const handleDeleteModule = (e, module) => {
     e.stopPropagation();
     try {
-      props.onLoading();
-      props
-        .deleteModuleFromState(module._id, props.filter.stateId)
-        .then((res) => {
-          props.offLoading();
-          props.setSuccessNotification("Module removed successfully");
-        });
+      dispatch(onLoading());
+      dispatch(deleteModuleFromState(module._id, filter.stateId)).then(
+        (res) => {
+          dispatch(offLoading());
+          dispatch(setSuccessNotification("Module removed successfully"));
+        }
+      );
     } catch (error) {
-      props.offLoading();
-      props.setErrorNotification(error.response.data.message);
+      dispatch(offLoading());
+      dispatch(setErrorNotification(error.response.data.message));
     }
   };
   return (
     <div className="container">
       <div className="select-container">
         <Select
-          listData={props.states}
+          listData={states}
           className="select-state"
           nameSelect="state"
-          item={props.filter.stateId}
-          setItem={props.setStateId}
+          item={filter.stateId}
+          setItem={(stateId) => dispatch(setStateId(stateId))}
         />
-        {props.filter.stateId && props.filter.licenseId && (
+        {filter.stateId && filter.licenseId && (
           <Button className=" manage-exam" onClick={toggleIsShowExam}>
             {!isShowExam ? (
               <i className="fas fa-store-slash"></i>
@@ -75,19 +79,19 @@ const Home = (props) => {
           </Button>
         )}
         <Select
-          listData={props.licenses}
+          listData={licenses}
           className="select-license"
           nameSelect="license"
-          item={props.filter.licenseId}
-          setItem={props.setLicenseId}
+          item={filter.licenseId}
+          setItem={(licenseId) => dispatch(setLicenseId(licenseId))}
         />
       </div>
       <div className="modules-container">
-        {props.filter.stateId && props.filter.licenseId && (
+        {filter.stateId && filter.licenseId && (
           <NormalModules
             handleDeleteModule={handleDeleteModule}
-            stateId={props.filter.stateId}
-            licenseId={props.filter.licenseId}
+            stateId={filter.stateId}
+            licenseId={filter.licenseId}
             toggle={toggle}
             modal={modal}
             isShowExam={isShowExam}
@@ -95,46 +99,15 @@ const Home = (props) => {
           />
         )}
         <div className="footer-modules-container only-manage-module">
-        {!props.filter.stateId && !props.filter.licenseId && (
+          {!filter.stateId && !filter.licenseId && (
             <Link to={"/modules"} className="link-manage-module">
               <span>Manage module</span>
             </Link>
-        )}
+          )}
+        </div>
       </div>
-      </div>
-      
     </div>
   );
 };
 
-const mapStateToProps = (state) => {
-  return {
-    states: state.states,
-    licenses: state.licenses,
-    filter: state.filter,
-    modules: state.modules
-  };
-};
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    initializeState: () => {
-      dispatch(initializeState());
-    },
-    initializeLicense: () => {
-      dispatch(initializeLicense());
-    },
-    setStateId: (stateId) => dispatch(setStateId(stateId)),
-    setLicenseId: (licenseId) => dispatch(setLicenseId(licenseId)),
-
-    setModuleByStateIdAndLicenseId: (stateId, licenseId) =>
-      dispatch(setModuleByStateIdAndLicenseId(stateId, licenseId)),
-    onLoading: () => dispatch(onLoading()),
-    offLoading: () => dispatch(offLoading()),
-    deleteModuleFromState: (moduleId, stateId) =>
-      dispatch(deleteModuleFromState(moduleId, stateId)),
-    setSuccessNotification: (mess) => dispatch(setSuccessNotification(mess)),
-    setErrorNotification: (mess) => dispatch(setErrorNotification(mess)),
-  };
-};
-export default connect(mapStateToProps, mapDispatchToProps)(Home);
+export default Home;

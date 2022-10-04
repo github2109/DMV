@@ -3,18 +3,21 @@ import "./style.css";
 import { useState } from "react";
 import * as XLSX from "xlsx";
 import DrawModules from "../../modules/draw";
-import { connect } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import {
   setSuccessNotification,
   setErrorNotification,
 } from "../../../reducers/responseUIReducer";
 import ModalDetailModule from "./../../modal/ModalDetailModule";
 import { useEffect } from "react";
-const ImportModule = ({ licenseId, setData, ...props }) => {
+const ImportModule = ({ licenseId, setData }) => {
   const [modules, setModules] = useState([]);
   const [module, setModule] = useState(null);
   const [modalDetailModule, setModalDetailModule] = useState(false);
   const [executedModules, setExecutedModules] = useState([]);
+  const modulesInStore = useSelector((state) => state.modules);
+  const dispatch = useDispatch();
+
   useEffect(() => {
     setData(executedModules);
   }, [executedModules]);
@@ -42,7 +45,7 @@ const ImportModule = ({ licenseId, setData, ...props }) => {
           contentDescription: obj.contentDescription,
           imageDescription: obj.imageDescription,
           isPremium: obj.isPremium,
-          position: tmpModules.length + 1 + props.modules.length,
+          position: tmpModules.length + 1 + modulesInStore.length,
         };
         tmpModules.push(tmpModule);
       });
@@ -97,7 +100,7 @@ const ImportModule = ({ licenseId, setData, ...props }) => {
       }
       toggleModalDetailModule();
     } catch (error) {
-      props.setErrorNotification(error);
+      dispatch(setErrorNotification(error));
     }
   };
   const handleDeleteModule = async (e, moduleId) => {
@@ -105,9 +108,9 @@ const ImportModule = ({ licenseId, setData, ...props }) => {
     try {
       setModules(modules.filter((ques) => ques.id !== moduleId));
       setExecutedModules(executedModules.filter((qs) => qs.id !== moduleId));
-      props.setSuccessNotification("Question deleted successfully");
+      dispatch(setSuccessNotification("Question deleted successfully"));
     } catch (error) {
-      props.setErrorNotification(error);
+      dispatch(setErrorNotification(error));
     }
   };
   const handleSelectModule = (e, moduleId) => {
@@ -134,7 +137,8 @@ const ImportModule = ({ licenseId, setData, ...props }) => {
         />
       )}
       File Excel : <input type="file" onChange={readExcel} />
-      <div></div>Folder Images : <input
+      <div></div>Folder Images :{" "}
+      <input
         directory=""
         webkitdirectory="true"
         type="file"
@@ -150,16 +154,5 @@ const ImportModule = ({ licenseId, setData, ...props }) => {
     </div>
   );
 };
-const mapStateToProps = (state) => {
-  return {
-    modules: state.modules,
-  };
-};
-const mapDispatchToProps = (dispatch) => {
-  return {
-    setSuccessNotification: (mess) => dispatch(setSuccessNotification(mess)),
-    setErrorNotification: (mess) => dispatch(setErrorNotification(mess)),
-  };
-};
 
-export default connect(mapStateToProps, mapDispatchToProps)(ImportModule);
+export default ImportModule;

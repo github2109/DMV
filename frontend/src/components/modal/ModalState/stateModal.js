@@ -1,13 +1,15 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect } from "react";
-import { connect } from "react-redux";
+import { useDispatch } from "react-redux";
 import { ModalBody, ModalFooter, ModalHeader, Modal, Button } from "reactstrap";
 import { useState } from "react";
 import { setErrorNotification } from "../../../reducers/responseUIReducer";
 import "./style.css";
-const StateModal = ({ modal, toggle, curentState, handleSaveModal ,...props}) => {
+const StateModal = ({ modal, toggle, curentState, handleSaveModal }) => {
   const [name, setName] = useState("");
   const [isCreted, setIsCreted] = useState(false);
+  const dispatch = useDispatch();
+
   useEffect(() => {
     if (curentState === null) {
       setIsCreted(true);
@@ -59,12 +61,12 @@ const StateModal = ({ modal, toggle, curentState, handleSaveModal ,...props}) =>
           color="primary"
           className="px-3"
           onClick={(event) => {
-            if(name === ""){
-              props.setErrorNotification("Please enter a state name !!");
+            if (name === "") {
+              dispatch(setErrorNotification("Please enter a state name !!"));
               return;
             }
-            handleSaveModal(curentState, name, isCreted)}
-          }
+            handleSaveModal(curentState, name, isCreted);
+          }}
         >
           {" "}
           Save
@@ -77,14 +79,5 @@ const StateModal = ({ modal, toggle, curentState, handleSaveModal ,...props}) =>
     </Modal>
   );
 };
-const mapStateToProps = (state) => {
-  return {};
-};
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    setErrorNotification: (mess) => dispatch(setErrorNotification(mess)),
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(StateModal);
+export default StateModal;
