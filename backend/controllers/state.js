@@ -1,5 +1,6 @@
 const State = require("../models/state");
 const { updateModuleAfterRemoveState } = require("../controllers/module");
+const { validateState } = require("../Validators/validators");
 
 exports.getAllStates = async (req, res, next) => {
   try {
@@ -12,15 +13,15 @@ exports.getAllStates = async (req, res, next) => {
 
 exports.createState = async (req, res, next) => {
   try {
-    const { name } = req.body;
-    const check = await State.findOne({ name: name });
+    const result = await validateState(req.body);
+    const check = await State.findOne({ name: result.name });
     if (check) {
       return res.status(500).json({
         message: "This name is already in use. Please use a different name",
       });
     }
     const state = await new State({
-      name,
+      name: result.name,
     });
     const stateSaved = await state.save();
     res.status(201).json(stateSaved);
@@ -47,11 +48,11 @@ exports.deleteStateById = async (req, res, next) => {
 
 exports.updateStateData = async (req, res, next) => {
   try {
-    const data = req.body;
+    const result = await validateState(req.body);
     const dataId = req.params.id;
     const updatedState = await State.findByIdAndUpdate(
       { _id: dataId },
-      { name: data.name },
+      { name: result.name },
       { new: true }
     );
     if (!updatedState) {

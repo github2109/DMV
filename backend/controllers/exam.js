@@ -1,4 +1,5 @@
 const Exam = require("../models/exam");
+const { validateExam } = require("../Validators/validators");
 
 exports.createExamAPI = async (req, res, next) => {
   try {
@@ -8,9 +9,9 @@ exports.createExamAPI = async (req, res, next) => {
         message: "Invalid state ID or license ID",
       });
     }
-    const exam = req.body;
+    const result = await validateExam(req.body);
     const examSaved = await new Exam({
-      ...exam,
+      ...result,
       state: stateId,
       license: licenseId,
     }).save();
@@ -36,17 +37,16 @@ exports.updateExamAPI = async (req, res, next) => {
         message: "Invalid exam ID",
       });
     }
-    const updatedQuestion = await Exam.findByIdAndUpdate(
-      { _id: examId },
-      req.body,
-      { new: true }
-    );
-    if (!updatedQuestion) {
+    const result = await validateExam(req.body);
+    const updateExam = await Exam.findByIdAndUpdate({ _id: examId }, result, {
+      new: true,
+    });
+    if (!updateExam) {
       res.status(500).json({
         message: "Something went wrong",
       });
     }
-    res.status(200).json(updatedQuestion);
+    res.status(200).json(updateExam);
   } catch (error) {
     next(error);
   }

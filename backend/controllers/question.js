@@ -3,6 +3,7 @@ const {
   getListModuleIdByStateIdAndLicenseId,
 } = require("../controllers/module");
 const { getExamByExamId } = require("../controllers/exam");
+const { validateQuestion } = require("../Validators/validators");
 
 exports.getQuestionsForExamAPI = async (req, res, next) => {
   try {
@@ -49,8 +50,8 @@ exports.getAllQuestionsForModuleAPI = async (req, res, next) => {
 
 exports.createQuestionAPI = async (req, res, next) => {
   try {
-    const question = req.body;
-    const savedQuestion = await new Question(question).save();
+    const result = await validateQuestion(req.body);
+    const savedQuestion = await new Question(result).save();
     res.status(201).json(savedQuestion);
   } catch (error) {
     next(error);
@@ -72,10 +73,11 @@ exports.deleteQuestionByIdAPI = async (req, res, next) => {
 };
 exports.updateQuestionByIdAPI = async (req, res, next) => {
   try {
+    const result = await validateQuestion(req.body);
     const questionId = req.params.id;
     const updatedQuestion = await Question.findByIdAndUpdate(
       { _id: questionId },
-      req.body,
+      result,
       { new: true }
     );
     if (!updatedQuestion) {

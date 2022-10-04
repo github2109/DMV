@@ -1,6 +1,7 @@
 const Module = require("../models/module");
 const Question = require("../models/question");
 const State = require("../models/state");
+const { validateModule } = require("../Validators/validators");
 exports.updateModuleAfterRemoveState = async (stateId) => {
   try {
     const modules = await Module.updateMany(
@@ -68,12 +69,12 @@ exports.getModuleByLicenseIdAPI = async (req, res, next) => {
 
 exports.createModuleAPI = async (req, res, next) => {
   try {
-    const module = req.body;
-    const check = await Module.findOne({ name: module.name });
+    const result = await validateModule(req.body);
+    const check = await Module.findOne({ name: result.name });
     if (check) {
       return res.status(500).json({ message: "This name already exists" });
     }
-    const moduleSaved = await new Module(module).save();
+    const moduleSaved = await new Module(result).save();
     res.status(201).json(moduleSaved);
   } catch (error) {
     next(error);
@@ -151,8 +152,9 @@ exports.getDetailModuleByModuleIdAPI = async (req, res, next) => {
 
 exports.updateModuleAPI = async (req, res, next) => {
   try {
+    const result = await validateModule(req.body);
     const { moduleId } = req.params;
-    const moduleUpdated = await Module.findByIdAndUpdate(moduleId, req.body, {
+    const moduleUpdated = await Module.findByIdAndUpdate(moduleId, result, {
       new: true,
     });
     res.status(200).json(moduleUpdated);
