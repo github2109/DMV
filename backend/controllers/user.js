@@ -1,19 +1,20 @@
 const User = require("../models/user");
 const bcrypt = require("bcrypt");
 const { generateToken } = require("../helpers/tokens");
+const { validateUser } = require("../Validators/validators");
 exports.registerForAdmin = async (req, res, next) => {
   try {
-    const { username, password } = req.body;
-    const check = await User.findOne({ username });
+    const result = await validateUser(req.body);
+    const check = await User.findOne({ username: result.username });
     if (check) {
       return res.status(500).json({
         message:
           "This username is already existed, try with a different username.",
       });
     }
-    const cryptedPassword = await bcrypt.hash(password, 12);
+    const cryptedPassword = await bcrypt.hash(result.password, 12);
     const user = await new User({
-      username,
+      username: result.username,
       password: cryptedPassword,
       role: "ADMIN",
       deviceId: null,
@@ -57,8 +58,8 @@ exports.loginForAdmin = async (req, res, next) => {
 
 exports.registerForClient = async (req, res, next) => {
   try {
-    const { deviceId } = req.body;
-    const user = await User.findOne({ deviceId });
+    const result = await validateUser(req.body);
+    const user = await User.findOne({ devideId: result.deviceId });
     if (user)
       return res.status(500).json({ message: "User already registered." });
     const newUser = await new User({
@@ -91,11 +92,11 @@ exports.getListClientForMessenger = async (req, res, next) => {
         $sort: { "recentMessage.createdAt": -1 },
       },
       {
-        $project:{
-          "deviceId":1,
-          "recentMessage":1,
-        }
-      }
+        $project: {
+          deviceId: 1,
+          recentMessage: 1,
+        },
+      },
     ]);
     const users = await queryUser.exec();
     return res.status(200).json(users);

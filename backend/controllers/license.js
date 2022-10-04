@@ -1,10 +1,11 @@
 const License = require("../models/license");
 const { updateModuleAfterRemoveLicense } = require("../controllers/module");
+const { validateLicense } = require("../Validators/validators");
 
 exports.createLicense = async (req, res, next) => {
   try {
-    const { name, image, description } = req.body;
-    const checkLicense = await License.findOne({ name });
+    const result = await validateLicense(req.body);
+    const checkLicense = await License.findOne({ name: result.name });
     if (checkLicense) {
       return res.status(500).json({
         message:
@@ -12,9 +13,9 @@ exports.createLicense = async (req, res, next) => {
       });
     }
     const license = await new License({
-      name,
-      image,
-      description,
+      name: result.name,
+      image: result.image,
+      description: result.description,
     });
     const licenseSaved = await license.save();
     res.status(201).json(licenseSaved);
@@ -50,14 +51,14 @@ exports.deleteLicenseById = async (req, res, next) => {
 
 exports.updateLicenseData = async (req, res, next) => {
   try {
-    const data = req.body;
+    const result = await validateLicense(req.body);
     const dataId = req.params.id;
     const updatedLisence = await License.findByIdAndUpdate(
       { _id: dataId },
       {
-        name: data.name,
-        image: data.image,
-        description: data.description,
+        name: result.name,
+        image: result.image,
+        description: result.description,
       },
       { new: true }
     );
