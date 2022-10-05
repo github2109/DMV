@@ -55,11 +55,13 @@ const Messenger = (props) => {
         )
       );
     if (messageImages.length > 0)
-      dispatch(sendMessageFromAdmin(
-        { content: null, images: messageImages },
-        userSelect.deviceId,
-        users
-      ));
+      dispatch(
+        sendMessageFromAdmin(
+          { content: null, images: messageImages },
+          userSelect.deviceId,
+          users
+        )
+      );
     setMessageContent("");
     setMessageImages([]);
   };
@@ -142,8 +144,9 @@ const Messenger = (props) => {
                         <div className="recent-message">
                           <span
                             className={
-                              (!userSelect || userSelect._id !== user._id) &&
-                              "unseen-message"
+                              !userSelect || userSelect._id !== user._id
+                                ? "unseen-message"
+                                : ""
                             }
                           >
                             {user.recentMessage.images.length === 0
@@ -243,24 +246,24 @@ const Messenger = (props) => {
                                       <img src={avadefault} alt="avatar" />
                                     )}
                                   </div>
-                                  {message.images.length > 0 && (
-                                    <div className="message-image-container">
-                                      {message.images.map((image, i) => (
-                                        <a href={image} key={i}>
-                                          <img
-                                            src={image}
-                                            alt="imgMess"
-                                            className="message-image"
-                                          />
-                                        </a>
-                                      ))}
-                                    </div>
-                                  )}
-                                  {message.content && (
-                                    <div className="message other-message">
-                                      {message.content}
-                                    </div>
-                                  )}
+                                    {message.images.length > 0 && (
+                                      <div className="message-image-container">
+                                        {message.images.map((image, i) => (
+                                          <a href={image} key={i}>
+                                            <img
+                                              src={image}
+                                              alt="imgMess"
+                                              className="message-image"
+                                            />
+                                          </a>
+                                        ))}
+                                      </div>
+                                    )}
+                                    {message.content && (
+                                      <div className="message other-message">
+                                        {message.content}
+                                      </div>
+                                    )}
                                 </div>
                               )}
                             </li>
