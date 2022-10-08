@@ -21,14 +21,18 @@ const sendMessageFromClient = async (message, deviceId) => {
   return response.data;
 };
 
-const getMessageByDeviceId = async (deviceId) => {
+const getMessageByDeviceId = async (deviceId, page) => {
   const response = await axios.get(`${bareUrl}/${deviceId}`);
   return response.data;
 };
-
+const fechMoreMessages = async (deviceId, page) => {
+  const response = await axios.get(`${bareUrl}/${deviceId}?page=${page}`);
+  return response.data;
+};
 // eslint-disable-next-line import/no-anonymous-default-export
 export default {
   sendMessageFromAdmin,
   sendMessageFromClient,
   getMessageByDeviceId,
+  fechMoreMessages,
 };

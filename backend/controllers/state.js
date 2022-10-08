@@ -4,7 +4,9 @@ const { validateState } = require("../Validators/validators");
 
 exports.getAllStates = async (req, res, next) => {
   try {
-    state = await State.find({});
+    const {page} = req.query;
+    const pageQuery = page ? page : 1;
+    state = await State.find({}).skip((pageQuery-1)*10).limit(10);
     res.status(200).json(state);
   } catch (error) {
     next(error);

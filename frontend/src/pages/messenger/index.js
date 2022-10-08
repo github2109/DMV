@@ -14,6 +14,7 @@ import {
   setMessagesByDeviceId,
   sendMessageFromAdmin,
   executedConvertationReceiveMessage,
+  fechMoreMessages,
 } from "../../reducers/messageReducer";
 import ScrollableFeed from "react-scrollable-feed";
 import {
@@ -24,7 +25,7 @@ const Messenger = (props) => {
   const [userSelect, setUserSelect] = useState(null);
   const [messageContent, setMessageContent] = useState("");
   const [messageImages, setMessageImages] = useState([]);
-
+  const [page, setPage] = useState(1);
   const dispatch = useDispatch();
   const users = useSelector((state) => state.users);
   const messages = useSelector((state) => state.messages);
@@ -34,8 +35,10 @@ const Messenger = (props) => {
     connectSocket();
     authAdmin();
     dispatch(setListClientForMessenger());
-    messagesEndRef.current?.scrollToBottom();
   }, []);
+  useEffect(() => {
+    if (page === 1) messagesEndRef.current?.scrollToBottom();
+  }, [messages]);
   useEffect(() => {
     socket.on("receive_message", (data) => {
       dispatch(executedConvertationReceiveMessage(data, users, userSelect));
@@ -66,11 +69,13 @@ const Messenger = (props) => {
     setMessageImages([]);
   };
   const handleSelectUser = (user) => {
-    dispatch(setMessagesByDeviceId(user.deviceId));
-    setUserSelect(user);
-    setMessageContent("");
-    setMessageImages([]);
-    joinRoomSocket(user.deviceId);
+    dispatch(setMessagesByDeviceId(user.deviceId)).then(() => {
+      setUserSelect(user);
+      setMessageContent("");
+      setMessageImages([]);
+      joinRoomSocket(user.deviceId);
+      setPage(1);
+    });
   };
   const handleSelectImage = (e) => {
     const images = [...e.target.files];
@@ -78,6 +83,13 @@ const Messenger = (props) => {
   };
   const handleRemoveImageMessage = (e, i) => {
     setMessageImages(messageImages.filter((image, index) => index !== i));
+  };
+  const handleImageLoaded = () => {
+    if (page === 1) messagesEndRef.current?.scrollToBottom();
+  };
+  const fetchMoreData = () => {
+    dispatch(fechMoreMessages(userSelect.deviceId, page + 1));
+    setPage(page + 1);
   };
   return (
     <div className="messenger-container">
@@ -111,7 +123,11 @@ const Messenger = (props) => {
                     <img src={avadefault} alt="avatar" />
                     {user.recentMessage.isAdminSending ? (
                       <div className="about">
-                        <div className="name">{user.deviceId}</div>
+                        <div className="name">
+                          {user.deviceId.length > 20
+                            ? user.deviceId.slice(0, 20) + "..."
+                            : user.deviceId}
+                        </div>
                         <div className="recent-message">
                           <span>
                             {user.recentMessage.images.length === 0
@@ -139,7 +155,9 @@ const Messenger = (props) => {
                               : "name"
                           }
                         >
-                          {user.deviceId}
+                          {user.deviceId.length > 20
+                            ? user.deviceId.slice(0, 20) + "..."
+                            : user.deviceId}
                         </div>
                         <div className="recent-message">
                           <span
@@ -175,7 +193,7 @@ const Messenger = (props) => {
                 <div className="chat-history-container">
                   <div className="chat-header clearfix">
                     <div className="row">
-                      <div className="col-lg-6">
+                      <div className="col-lg-6 width-fit">
                         <img src={avadefault} alt="avatar" />
                         <div className="chat-about">
                           <h6 className="m-b-0">{userSelect.deviceId}</h6>
@@ -187,6 +205,12 @@ const Messenger = (props) => {
                   <div className="chat-history">
                     <ul className="m-b-0">
                       <ScrollableFeed ref={messagesEndRef}>
+                        <div className="fetch-data">
+                          <i
+                            onClick={fetchMoreData}
+                            className="fa-solid fa-circle-plus"
+                          ></i>
+                        </div>
                         {messages.map((message, index, messages) => {
                           let timeMessBefore, timeMessCurrent, timeMessAfter;
                           if (index > 0)
@@ -215,25 +239,27 @@ const Messenger = (props) => {
                               )}
                               {message.isAdminSending ? (
                                 <div>
-                                  {message.images.length > 0 && (
-                                    <div className="message-image-container float-right">
-                                      {message.images.map((image, i) => (
-                                        <a href={image} key={i}>
-                                          <img
-                                            href={image}
-                                            src={image}
-                                            alt="imgMess"
-                                            className="message-image float-right"
-                                          />
-                                        </a>
-                                      ))}
-                                    </div>
-                                  )}
-                                  {message.content && (
-                                    <div className="message my-message float-right">
-                                      {message.content}
-                                    </div>
-                                  )}
+                                  <div className="message-content-container padding-right">
+                                    {message.images.length > 0 && (
+                                      <div className="message-image-container float-right">
+                                        {message.images.map((image, i) => (
+                                          <a href={image} key={i}>
+                                            <img
+                                              href={image}
+                                              src={image}
+                                              alt="imgMess"
+                                              className="message-image float-right"
+                                            />
+                                          </a>
+                                        ))}
+                                      </div>
+                                    )}
+                                    {message.content && (
+                                      <div className="message my-message float-right">
+                                        {message.content}
+                                      </div>
+                                    )}
+                                  </div>
                                 </div>
                               ) : (
                                 <div className="other-message-container">
@@ -246,6 +272,7 @@ const Messenger = (props) => {
                                       <img src={avadefault} alt="avatar" />
                                     )}
                                   </div>
+                                  <div className="message-content-container">
                                     {message.images.length > 0 && (
                                       <div className="message-image-container">
                                         {message.images.map((image, i) => (
@@ -254,6 +281,7 @@ const Messenger = (props) => {
                                               src={image}
                                               alt="imgMess"
                                               className="message-image"
+                                              onLoad={handleImageLoaded}
                                             />
                                           </a>
                                         ))}
@@ -264,6 +292,7 @@ const Messenger = (props) => {
                                         {message.content}
                                       </div>
                                     )}
+                                  </div>
                                 </div>
                               )}
                             </li>

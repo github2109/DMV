@@ -40,8 +40,10 @@ exports.getQuestionsForExamAPI = async (req, res, next) => {
 };
 exports.getAllQuestionsForModuleAPI = async (req, res, next) => {
   try {
+    const {page} = req.query;
+    const pageQuery = page ? page : 1;
     const moduleId = req.params.moduleId;
-    const questions = await Question.find({ module: moduleId });
+    const questions = await Question.find({ module: moduleId }).skip((pageQuery-1)*10).limit(10);
     return res.status(200).json(questions);
   } catch (error) {
     next(error);

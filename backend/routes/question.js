@@ -12,7 +12,7 @@ const middlwares = require("../utils/middleware");
 questionRouter.post("/",middlwares.authAdmin, createQuestionAPI);
 questionRouter.get("/exams/:examId", getQuestionsForExamAPI);
 questionRouter.delete("/:questionId",middlwares.authAdmin, deleteQuestionByIdAPI);
-questionRouter.get("/modules/:moduleId", getAllQuestionsForModuleAPI);
+questionRouter.get("/modules/:moduleId/:page?", getAllQuestionsForModuleAPI);
 questionRouter.put("/:id",middlwares.authAdmin, updateQuestionByIdAPI);
 
 module.exports = questionRouter;

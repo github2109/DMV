@@ -12,6 +12,9 @@ const messageSlice = createSlice({
     appendMessage: (state, action) => {
       return state.concat(action.payload);
     },
+    fechMoreMessages:(state, action) => {
+      return action.payload.concat(state).filter((value,index,messages) =>  messages.findIndex(mess => mess._id === value._id) === index);
+    }
   },
 });
 
@@ -21,6 +24,13 @@ export const setMessagesByDeviceId = (deviceId) => {
     dispatch(messageSlice.actions.setMessages(messages));
   };
 };
+
+export const fechMoreMessages = (deviceId,page) => {
+  return async (dispatch) => {
+    const messages = await messageService.fechMoreMessages(deviceId,page);
+    dispatch(messageSlice.actions.fechMoreMessages(messages));
+  }
+}
 
 export const sendMessageFromAdmin = (message, deviceId, users) => {
   return async (dispatch) => {
