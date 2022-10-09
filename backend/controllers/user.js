@@ -12,10 +12,10 @@ exports.registerForAdmin = async (req, res, next) => {
           "This username is already existed, try with a different username.",
       });
     }
-    const cryptedPassword = await bcrypt.hash(result.password, 12);
+    //const cryptedPassword = await bcrypt.hash(result.password, 12);
     const user = await new User({
       username: result.username,
-      password: cryptedPassword,
+      password: result.password,
       role: "ADMIN",
       deviceId: null,
     });

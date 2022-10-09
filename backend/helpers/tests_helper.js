@@ -58,10 +58,9 @@ const modulesInStateAndLicenseDb = async (stateId, licenseId) => {
   return modules.map((module) => module.toJSON());
 };
 const getTokenForTest = async () => {
-  const passwordHash = await bcrypt.hash("secret", 12);
   const user = new User({
     username: "root",
-    passwordHash,
+    password: "secret",
     role: "ADMIN",
   });
   await user.save();
