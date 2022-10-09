@@ -104,7 +104,7 @@
 }
 
 .people-list .chat-list li.active {
-  background: #efefef;
+  background: #ECF3FF;
 }
 
 .people-list .chat-list li .name {
@@ -240,11 +240,11 @@
   margin-left: -10px;
 }
 .clearfix {
-  width: 97%;
+  width: 100%;
 }
 .chat .chat-history .my-message {
   background: #e8f1f3;
-  text-align: right;
+  text-align: left;
   margin-left: auto;
 }
 
@@ -433,18 +433,41 @@
 .message-image{
   width: fit-content;
   max-height: 200px;
-  max-width:400px;
+  max-width:50%;
   border-radius: 10px;
 }
 
 .message-image-container{
   display: flex;
   flex-direction: column;
+  width: 100%;
 }
 
-.messages-content-container{
+.message-content-container{
   display: flex;
   flex-direction: column;
+  width: 100%;
+}
+
+.padding-right{
+  padding-right: 20px;
+}
+
+.width-fit{
+  width: fit-content;
+}
+
+.fetch-data{
+  font-size: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  height: 40px;
+}
+
+.fetch-data i {
+  cursor: pointer;
+  margin-left: 12px;
 }
 ::-webkit-scrollbar {
   height: 8px;

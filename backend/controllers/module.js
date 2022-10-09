@@ -18,12 +18,16 @@ exports.getModuleByStateIdAndLicenseIdAPI = async (req, res, next) => {
 exports.getModuleByLicenseIdAPI = async (req, res, next) => {
   try {
     const { licenseId } = req.params;
+    const { page } = req.query;
+    const pageQuery = page ? page : 1;
     const modules = await Module.find({ license: licenseId })
       .select({
         name: 1,
         position: 1,
       })
-      .sort({ position: 1 });
+      .sort({ position: 1 })
+      .skip((pageQuery - 1) * 10)
+      .limit(10);
     res.status(200).json(modules);
   } catch (error) {
     next(error);

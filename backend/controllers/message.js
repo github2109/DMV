@@ -56,11 +56,13 @@ exports.sendMessageFromAdmin = async (req, res, next) => {
 exports.getMessageByDeviceId = async (req, res, next) => {
   try {
     const deviceId = req.params.deviceId;
+    const {page} = req.query;
+    let pageQuery = page ? page : 1;
     const user = await User.findOne({ deviceId: deviceId });
     if (!user) return res.status(400).json({ message: "User Not Found" });
-    const message = await Message.find({ client: user._id }).sort({
-      createdAt: 1,
-    });
+    const message = (await Message.find({ client: user._id }).sort({
+      createdAt: -1,
+    }).skip((pageQuery-1)*5).limit(5)).reverse();
     return res.status(200).json(message);
   } catch (error) {
     next(error);

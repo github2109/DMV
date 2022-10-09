@@ -26,7 +26,11 @@ exports.createLicenseAPI = async (req, res, next) => {
 
 exports.getListLicensesAPI = async (req, res, next) => {
   try {
-    const licenses = await License.find({});
+    const { page } = req.query;
+    const pageQuery = page ? page : 1;
+    const licenses = await License.find({})
+      .skip((pageQuery - 1) * 10)
+      .limit(10);
     res.status(200).json(licenses);
   } catch (error) {
     next(error);
