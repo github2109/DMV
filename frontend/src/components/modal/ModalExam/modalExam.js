@@ -66,7 +66,7 @@ const ExamModal = ({
     if (
       tempExam.name.trim() === "" ||
       tempExam.timeOfExam.trim() === "" ||
-      tempExam.timeOfSave.trim() === ""
+      tempExam.numberOfQuestion.trim() === ""
     ) {
       dispatch(setErrorNotification("Please fill enough information !!"));
       return;
@@ -134,7 +134,9 @@ const ExamModal = ({
         <Button
           color="primary"
           className="px-3"
-          onClick={(event) => handleBeforeSaveModal(currentExam, tempExam, isCreated)}
+          onClick={(event) =>
+            handleBeforeSaveModal(currentExam, tempExam, isCreated)
+          }
         >
           {" "}
           Save

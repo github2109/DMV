@@ -1,7 +1,7 @@
 const User = require("../models/user");
 const bcrypt = require("bcrypt");
 const { generateToken } = require("../helpers/tokens");
-const { validateUser } = require("../Validators/validators");
+const { validateUser } = require("./validators");
 exports.registerForAdmin = async (req, res, next) => {
   try {
     const result = await validateUser(req.body);

@@ -1,5 +1,5 @@
 const Exam = require("../models/exam");
-const { validateExam } = require("../Validators/validators");
+const { validateExam } = require("./validators");
 
 exports.createExamAPI = async (req, res, next) => {
   try {
@@ -71,18 +71,6 @@ exports.deleteExamByIdAPI = async (req, res, next) => {
   }
 };
 
-exports.getExamByExamId = async (examId) => {
-  try {
-    if (!examId) {
-      return res.status(500).json({
-        message: "Invalid exam ID",
-      });
-    }
-    return await Exam.findById(examId);
-  } catch (error) {
-    next(error);
-  }
-};
 exports.getExamByExamIdAPI = async (req, res, next) => {
   try {
     const { examId } = req.params;

@@ -1,9 +1,7 @@
 const Question = require("../models/question");
-const {
-  getListModuleIdByStateIdAndLicenseId,
-} = require("../controllers/module");
-const { getExamByExamId } = require("../controllers/exam");
-const { validateQuestion } = require("../Validators/validators");
+const { getListModuleIdByStateIdAndLicenseId } = require("../services/module");
+const { getExamByExamId } = require("../services/exam");
+const { validateQuestion } = require("./validators");
 
 exports.getQuestionsForExamAPI = async (req, res, next) => {
   try {
@@ -42,6 +40,11 @@ exports.getAllQuestionsForModuleAPI = async (req, res, next) => {
   try {
     const moduleId = req.params.moduleId;
     const questions = await Question.find({ module: moduleId });
+    if (!questions) {
+      return res.status(500).json({
+        message: "No questions found",
+      });
+    }
     return res.status(200).json(questions);
   } catch (error) {
     next(error);

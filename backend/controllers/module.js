@@ -1,44 +1,7 @@
 const Module = require("../models/module");
 const Question = require("../models/question");
 const State = require("../models/state");
-const { validateModule } = require("../Validators/validators");
-exports.updateModuleAfterRemoveState = async (stateId) => {
-  try {
-    const modules = await Module.updateMany(
-      { states: stateId },
-      {
-        $pull: {
-          states: stateId,
-        },
-      }
-    );
-    return modules;
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-exports.updateModuleAfterRemoveLicense = async (licenseId) => {
-  try {
-    const modules = await Module.updateMany(
-      { license: licenseId },
-      {
-        $set: {
-          license: null,
-        },
-      }
-    );
-    return modules;
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-exports.getListModuleIdByStateIdAndLicenseId = async (stateId, licenseId) => {
-  return await Module.find({ license: licenseId, states: stateId }).select({
-    _id: 1,
-  });
-};
+const { validateModule } = require("./validators");
 
 exports.getModuleByStateIdAndLicenseIdAPI = async (req, res, next) => {
   try {
@@ -46,7 +9,7 @@ exports.getModuleByStateIdAndLicenseIdAPI = async (req, res, next) => {
     const modules = await Module.find({ license: licenseId, states: stateId })
       .select({ name: 1, position: 1 })
       .sort({ position: 1 });
-    res.json(modules);
+    res.status(200).json(modules);
   } catch (error) {
     next(error);
   }

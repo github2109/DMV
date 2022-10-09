@@ -14,15 +14,16 @@ const stateSchema = Joi.object({
 const licenseSchema = Joi.object({
   name: Joi.string().min(3).max(30).required(),
   image: Joi.string().required(),
+  description: Joi.string().required(),
 });
 const moduleSchema = Joi.object({
   name: Joi.string().min(6).max(30).required(),
   titleDescription: Joi.string().min(6).max(100).required(),
-  contentDescription: Joi.string().min(50).required(),
+  contentDescription: Joi.string().min(10).required(),
   imageDescription: Joi.string().required(),
   isPremium: Joi.boolean().required(),
   position: Joi.number(),
-  license: Joi.string().required(),
+  license: Joi.string(),
   _id: Joi.string(),
 });
 const questionSchema = Joi.object({

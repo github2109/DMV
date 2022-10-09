@@ -1,12 +1,10 @@
 const mongoose = require("mongoose");
 const supertest = require("supertest");
-const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const config = require("../utils/config");
-const helper = require("./tests_helper");
+const helper = require("../helpers/tests_helper");
 const app = require("../app");
 const api = supertest(app);
-const Module = require("../models/module");
 const User = require("../models/user");
 describe("get list modules", () => {
   let license = null;
@@ -36,7 +34,7 @@ describe("get list modules", () => {
     modulesAtStart = await helper.modulesInDb();
     module = modulesAtStart[0];
     const response = await api.get(`/api/modules/${module._id}`);
-    expect(response.data).toContain(module.name);
+    expect(response.body.name).toContain(module.name);
   });
 });
 describe("addition of a new module", () => {
@@ -49,28 +47,15 @@ describe("addition of a new module", () => {
     license = licensesInDb[0];
     const statesInDb = await helper.statesInDb();
     state = statesInDb[0];
-    const passwordHash = await bcrypt.hash("secret", 12);
-    const user = new User({
-      username: "root",
-      passwordHash,
-      role: "ADMIN",
-    });
-    await user.save();
-
-    const userForToken = {
-      username: user.username,
-      id: user.id,
-      role: user.role,
-    };
-    token = jwt.sign(userForToken, config.SECRET);
+    token = await helper.getTokenForTest();
   });
 
-  test("a valid modules can be added if user is authorized", async () => {
+  test("a valid module can be added if user is authorized", async () => {
     const newModule = {
       name: "Defensive Driving 191",
-      titleDescription: "null",
-      contentDescription: "null",
-      imageDescription: "null",
+      titleDescription: "titleDescription",
+      contentDescription: "content description",
+      imageDescription: "image description",
       isPremium: false,
       position: 2,
     };
@@ -123,7 +108,7 @@ describe("addition of a new module", () => {
       .post("/api/modules")
       .set("Authorization", `Bearer ${token}`)
       .send(newModule)
-      .expect(500)
+      .expect(400)
       .expect("Content-Type", /application\/json/);
     const modulesAtEnd = await helper.modulesInDb();
 
@@ -132,8 +117,6 @@ describe("addition of a new module", () => {
   });
 });
 describe("deletion of a module", () => {
-  let state = null;
-  let module = null;
   let token = null;
   jest.setTimeout(30000);
   beforeEach(async () => {
@@ -147,20 +130,7 @@ describe("deletion of a module", () => {
       await User.deleteMany({ username: "root" });
     }
 
-    const passwordHash = await bcrypt.hash("secret", 12);
-    const user = new User({
-      username: "root",
-      passwordHash,
-      role: "ADMIN",
-    });
-    await user.save();
-
-    const userForToken = {
-      username: user.username,
-      id: user.id,
-      role: user.role,
-    };
-    token = jwt.sign(userForToken, config.SECRET);
+    token = await helper.getTokenForTest();
   });
 
   test("succeeds with status 200 if id is valid and user is authorized", async () => {
@@ -191,7 +161,7 @@ describe("deletion of a module", () => {
 });
 describe("update a module", () => {
   let token = null;
-  jest.setTimeout(30000);
+  jest.setTimeout(10000);
   beforeEach(async () => {
     const usersAtStart = await helper.usersInDb();
     const usernames = usersAtStart.map((user) => user.username);
@@ -199,20 +169,7 @@ describe("update a module", () => {
       await User.deleteMany({ username: "root" });
     }
 
-    const passwordHash = await bcrypt.hash("secret", 12);
-    const user = new User({
-      username: "root",
-      passwordHash,
-      role: "ADMIN",
-    });
-    await user.save();
-
-    const userForToken = {
-      username: user.username,
-      id: user.id,
-      role: user.role,
-    };
-    token = jwt.sign(userForToken, config.SECRET);
+    token = await helper.getTokenForTest();
   });
 
   test("succeeds with status 200 if id is valid and user is authorized", async () => {
@@ -222,11 +179,20 @@ describe("update a module", () => {
     await api
       .put(`/api/modules/${moduleToUpdate._id}`)
       .set("Authorization", `Bearer ${token}`)
-      .send({ name: " jest update module" })
+      .send({
+        name: "jest update module",
+        titleDescription: "titleDescription",
+        contentDescription: "content description",
+        imageDescription: "image description",
+        isPremium: false,
+        position: 2,
+      })
       .expect(200);
 
     const modulesAtEnd = await helper.modulesInDb();
     const updatedModule = modulesAtEnd[modulesAtEnd.length - 1];
     expect(updatedModule.name).toContain("jest update module");
+    expect(updatedModule.titleDescription).toContain("titleDescription");
+    expect(updatedModule.contentDescription).toContain("content description");
   });
 });

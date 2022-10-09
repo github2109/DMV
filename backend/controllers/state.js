@@ -1,8 +1,8 @@
 const State = require("../models/state");
-const { updateModuleAfterRemoveState } = require("../controllers/module");
-const { validateState } = require("../Validators/validators");
+const { updateModuleAfterRemoveState } = require("../services/module");
+const { validateState } = require("./validators");
 
-exports.getAllStates = async (req, res, next) => {
+exports.getAllStatesAPI = async (req, res, next) => {
   try {
     state = await State.find({});
     res.status(200).json(state);
@@ -11,7 +11,7 @@ exports.getAllStates = async (req, res, next) => {
   }
 };
 
-exports.createState = async (req, res, next) => {
+exports.createStateAPI = async (req, res, next) => {
   try {
     const result = await validateState(req.body);
     const check = await State.findOne({ name: result.name });
@@ -30,7 +30,7 @@ exports.createState = async (req, res, next) => {
   }
 };
 
-exports.deleteStateById = async (req, res, next) => {
+exports.deleteStateByIdAPI = async (req, res, next) => {
   try {
     const stateId = req.params.id;
     const deletedState = await State.findByIdAndRemove({ _id: stateId });
@@ -46,7 +46,7 @@ exports.deleteStateById = async (req, res, next) => {
   }
 };
 
-exports.updateStateData = async (req, res, next) => {
+exports.updateStateDataAPI = async (req, res, next) => {
   try {
     const result = await validateState(req.body);
     const dataId = req.params.id;

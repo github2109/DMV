@@ -1,9 +1,6 @@
 const mongoose = require("mongoose");
 const supertest = require("supertest");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-const config = require("../utils/config");
-const helper = require("./tests_helper");
+const helper = require("../helpers/tests_helper");
 const app = require("../app");
 const api = supertest(app);
 const Exam = require("../models/exam");
@@ -56,23 +53,7 @@ describe("addition of a new exam", () => {
     state = statesInDb[0];
     const listExamsAtStart = await helper.examsInDb();
     const names = listExamsAtStart.map((exam) => exam.name);
-    if (names.includes("test exam")) {
-      await Exam.deleteOne({ name: "test exam" });
-    }
-    const passwordHash = await bcrypt.hash("secret", 12);
-    const user = new User({
-      username: "root",
-      passwordHash,
-      role: "ADMIN",
-    });
-    await user.save();
-
-    const userForToken = {
-      username: user.username,
-      id: user.id,
-      role: user.role,
-    };
-    token = jwt.sign(userForToken, config.SECRET);
+    token = await helper.getTokenForTest();
   });
 
   test("a valid state can be added if user is authorized", async () => {
@@ -127,20 +108,7 @@ describe("deletion of a exam", () => {
       await User.deleteMany({ username: "root" });
     }
 
-    const passwordHash = await bcrypt.hash("secret", 12);
-    const user = new User({
-      username: "root",
-      passwordHash,
-      role: "ADMIN",
-    });
-    await user.save();
-
-    const userForToken = {
-      username: user.username,
-      id: user.id,
-      role: user.role,
-    };
-    token = jwt.sign(userForToken, config.SECRET);
+    token = await helper.getTokenForTest();
 
     const exam = {
       name: "delete exam",
@@ -189,20 +157,7 @@ describe("update a exam", () => {
       await User.deleteMany({ username: "root" });
     }
 
-    const passwordHash = await bcrypt.hash("secret", 12);
-    const user = new User({
-      username: "root",
-      passwordHash,
-      role: "ADMIN",
-    });
-    await user.save();
-
-    const userForToken = {
-      username: user.username,
-      id: user.id,
-      role: user.role,
-    };
-    token = jwt.sign(userForToken, config.SECRET);
+    token = await helper.getTokenForTest();
   });
 
   test("succeeds with status 200 if id is valid and user is authorized", async () => {
@@ -212,11 +167,16 @@ describe("update a exam", () => {
     await api
       .put(`/api/exams/${examToUpdate._id}`)
       .set("Authorization", `Bearer ${token}`)
-      .send({ name: "jest update exam" })
+      .send({ name: "jest test exam", timeOfExam: 10, numberOfQuestion: 11 })
       .expect(200);
 
     const examsAtEnd = await helper.examsInDb();
     const updatedexam = examsAtEnd[0];
-    expect(updatedexam.name).toContain("jest update exam");
+    expect(updatedexam.name).toContain("jest test exam");
+    expect(updatedexam.timeOfExam).toEqual(10);
+    expect(updatedexam.numberOfQuestion).toEqual(11);
   });
+});
+afterAll(() => {
+  mongoose.connection.close();
 });

@@ -4,6 +4,10 @@ const License = require("../models/license");
 const Question = require("../models/question");
 const Exam = require("../models/exam");
 const Module = require("../models/module");
+const bcrypt = require("bcrypt");
+const config = require("../utils/config");
+const jwt = require("jsonwebtoken");
+const { token } = require("morgan");
 const usersInDb = async () => {
   const users = await User.find({});
   return users.map((user) => user.toJSON());
@@ -48,8 +52,27 @@ const modulesInLicenseDb = async (licenseId) => {
   return modules.map((module) => module.toJSON());
 };
 const modulesInStateAndLicenseDb = async (stateId, licenseId) => {
-  const modules = await Module.find({ license: licenseId, state: stateId });
+  const modules = await Module.find({ license: licenseId, states: stateId })
+    .select({ name: 1, position: 1 })
+    .sort({ position: 1 });
   return modules.map((module) => module.toJSON());
+};
+const getTokenForTest = async () => {
+  const passwordHash = await bcrypt.hash("secret", 12);
+  const user = new User({
+    username: "root",
+    passwordHash,
+    role: "ADMIN",
+  });
+  await user.save();
+
+  const userForToken = {
+    username: user.username,
+    id: user.id,
+    role: user.role,
+  };
+  const token = jwt.sign(userForToken, config.SECRET);
+  return token;
 };
 module.exports = {
   usersInDb,
@@ -63,4 +86,5 @@ module.exports = {
   questionsInDb,
   modulesInLicenseDb,
   modulesInStateAndLicenseDb,
+  getTokenForTest,
 };

@@ -1,9 +1,8 @@
 const mongoose = require("mongoose");
 const supertest = require("supertest");
-const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const config = require("../utils/config");
-const helper = require("./tests_helper");
+const helper = require("../helpers/tests_helper");
 const app = require("../app");
 const api = supertest(app);
 const State = require("../models/state");
@@ -29,20 +28,7 @@ describe("addition of a new state", () => {
     if (names.find((name) => name)) {
       await State.deleteOne({ name: "test state" });
     }
-    const passwordHash = await bcrypt.hash("secret", 12);
-    const user = new User({
-      username: "root",
-      passwordHash,
-      role: "ADMIN",
-    });
-    await user.save();
-
-    const userForToken = {
-      username: user.username,
-      id: user.id,
-      role: user.role,
-    };
-    token = jwt.sign(userForToken, config.SECRET);
+    token = await helper.getTokenForTest();
   });
 
   test("a valid state can be added if user is authorized", async () => {
@@ -104,20 +90,7 @@ describe("deletion of a state", () => {
       await User.deleteMany({ username: "root" });
     }
 
-    const passwordHash = await bcrypt.hash("secret", 12);
-    const user = new User({
-      username: "root",
-      passwordHash,
-      role: "ADMIN",
-    });
-    await user.save();
-
-    const userForToken = {
-      username: user.username,
-      id: user.id,
-      role: user.role,
-    };
-    token = jwt.sign(userForToken, config.SECRET);
+    token = await helper.getTokenForTest();
 
     const state = {
       name: "delete state",
@@ -166,20 +139,7 @@ describe("update a state", () => {
       await User.deleteMany({ username: "root" });
     }
 
-    const passwordHash = await bcrypt.hash("secret", 12);
-    const user = new User({
-      username: "root",
-      passwordHash,
-      role: "ADMIN",
-    });
-    await user.save();
-
-    const userForToken = {
-      username: user.username,
-      id: user.id,
-      role: user.role,
-    };
-    token = jwt.sign(userForToken, config.SECRET);
+    token = await helper.getTokenForTest();
   });
 
   test("succeeds with status 200 if id is valid and user is authorized", async () => {

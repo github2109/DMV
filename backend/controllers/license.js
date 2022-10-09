@@ -1,8 +1,8 @@
 const License = require("../models/license");
-const { updateModuleAfterRemoveLicense } = require("../controllers/module");
-const { validateLicense } = require("../Validators/validators");
+const { updateModuleAfterRemoveLicense } = require("../services/module");
+const { validateLicense } = require("./validators");
 
-exports.createLicense = async (req, res, next) => {
+exports.createLicenseAPI = async (req, res, next) => {
   try {
     const result = await validateLicense(req.body);
     const checkLicense = await License.findOne({ name: result.name });
@@ -24,7 +24,7 @@ exports.createLicense = async (req, res, next) => {
   }
 };
 
-exports.getListLicenses = async (req, res, next) => {
+exports.getListLicensesAPI = async (req, res, next) => {
   try {
     const licenses = await License.find({});
     res.status(200).json(licenses);
@@ -33,7 +33,7 @@ exports.getListLicenses = async (req, res, next) => {
   }
 };
 
-exports.deleteLicenseById = async (req, res, next) => {
+exports.deleteLicenseByIdAPI = async (req, res, next) => {
   try {
     const licenseId = req.params.id;
     const deletedLicense = await License.findByIdAndRemove({ _id: licenseId });
@@ -49,7 +49,7 @@ exports.deleteLicenseById = async (req, res, next) => {
   }
 };
 
-exports.updateLicenseData = async (req, res, next) => {
+exports.updateLicenseDataAPI = async (req, res, next) => {
   try {
     const result = await validateLicense(req.body);
     const dataId = req.params.id;
