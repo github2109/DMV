@@ -1,6 +1,6 @@
 const User = require("../models/user");
 const Message = require("../models/message");
-const { uploadImagesForMessage } = require("./uploadImages");
+const { uploadImagesForMessage } = require("../services/upload");
 
 exports.sendMessageFromClient = async (req, res, next) => {
   try {
@@ -10,7 +10,10 @@ exports.sendMessageFromClient = async (req, res, next) => {
     if (!user) {
       return res.status(400).json({ message: "User Not Found" });
     }
-    let images = (req.files && Object.values(req.files).flat().length > 0) ? await uploadImagesForMessage(req.files) : [];
+    let images =
+      req.files && Object.values(req.files).flat().length > 0
+        ? await uploadImagesForMessage(req.files)
+        : [];
     const messageSaved = await new Message({
       content: message.content,
       images: images,
@@ -32,7 +35,10 @@ exports.sendMessageFromAdmin = async (req, res, next) => {
     if (!user) {
       return res.status(400).json({ message: "User Not Found" });
     }
-    let images = (req.files && Object.values(req.files).flat().length > 0) ? await uploadImagesForMessage(req.files) : [];
+    let images =
+      req.files && Object.values(req.files).flat().length > 0
+        ? await uploadImagesForMessage(req.files)
+        : [];
     const messageSaved = await new Message({
       content: message.content,
       images: images,
@@ -50,11 +56,13 @@ exports.sendMessageFromAdmin = async (req, res, next) => {
 exports.getMessageByDeviceId = async (req, res, next) => {
   try {
     const deviceId = req.params.deviceId;
+    const {page} = req.query;
+    let pageQuery = page ? page : 1;
     const user = await User.findOne({ deviceId: deviceId });
     if (!user) return res.status(400).json({ message: "User Not Found" });
-    const message = await Message.find({ client: user._id }).sort({
-      createdAt: 1,
-    });
+    const message = (await Message.find({ client: user._id }).sort({
+      createdAt: -1,
+    }).skip((pageQuery-1)*5).limit(5)).reverse();
     return res.status(200).json(message);
   } catch (error) {
     next(error);

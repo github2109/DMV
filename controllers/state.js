@@ -1,26 +1,29 @@
 const State = require("../models/state");
-const { updateModuleAfterRemoveState } = require("../controllers/module");
+const { updateModuleAfterRemoveState } = require("../services/module");
+const { validateState } = require("./validators");
 
-exports.getAllStates = async (req, res, next) => {
+exports.getAllStatesAPI = async (req, res, next) => {
   try {
-    state = await State.find({});
+    const {page} = req.query;
+    const pageQuery = page ? page : 1;
+    state = await State.find({}).skip((pageQuery-1)*10).limit(10);
     res.status(200).json(state);
   } catch (error) {
     next(error);
   }
 };
 
-exports.createState = async (req, res, next) => {
+exports.createStateAPI = async (req, res, next) => {
   try {
-    const { name } = req.body;
-    const check = await State.findOne({ name: name });
+    const result = await validateState(req.body);
+    const check = await State.findOne({ name: result.name });
     if (check) {
       return res.status(500).json({
         message: "This name is already in use. Please use a different name",
       });
     }
     const state = await new State({
-      name,
+      name: result.name,
     });
     const stateSaved = await state.save();
     res.status(201).json(stateSaved);
@@ -29,7 +32,7 @@ exports.createState = async (req, res, next) => {
   }
 };
 
-exports.deleteStateById = async (req, res, next) => {
+exports.deleteStateByIdAPI = async (req, res, next) => {
   try {
     const stateId = req.params.id;
     const deletedState = await State.findByIdAndRemove({ _id: stateId });
@@ -45,13 +48,13 @@ exports.deleteStateById = async (req, res, next) => {
   }
 };
 
-exports.updateStateData = async (req, res, next) => {
+exports.updateStateDataAPI = async (req, res, next) => {
   try {
-    const data = req.body;
+    const result = await validateState(req.body);
     const dataId = req.params.id;
     const updatedState = await State.findByIdAndUpdate(
       { _id: dataId },
-      { name: data.name },
+      { name: result.name },
       { new: true }
     );
     if (!updatedState) {

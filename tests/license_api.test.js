@@ -1,9 +1,6 @@
 const mongoose = require("mongoose");
 const supertest = require("supertest");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-const config = require("../utils/config");
-const helper = require("./tests_helper");
+const helper = require("../helpers/tests_helper");
 const app = require("../app");
 const api = supertest(app);
 const License = require("../models/license");
@@ -30,23 +27,10 @@ describe("addition of a new license", () => {
     if (names.includes("test license")) {
       await License.deleteOne({ name: "test license" });
     }
-    const passwordHash = await bcrypt.hash("secret", 12);
-    const user = new User({
-      username: "root",
-      passwordHash,
-      role: "ADMIN",
-    });
-    await user.save();
-
-    const userForToken = {
-      username: user.username,
-      id: user.id,
-      role: user.role,
-    };
-    token = jwt.sign(userForToken, config.SECRET);
+    token = await helper.getTokenForTest();
   });
 
-  test("a valid state can be added if user is authorized", async () => {
+  test("a valid license can be added if user is authorized", async () => {
     const newLicense = {
       name: "test license",
       image: "null",
@@ -65,7 +49,7 @@ describe("addition of a new license", () => {
     const names = licensesAtEnd.map((license) => license.name);
     expect(names).toContain(newLicense.name);
   });
-  test("fails with status 500 if name is already in use", async () => {
+  test("fails with status 404 if name is already in use", async () => {
     const licenseAtStart = await helper.licensesInDb();
     const newLicense = {
       name: licenseAtStart[0].name,
@@ -74,9 +58,9 @@ describe("addition of a new license", () => {
       .post("/api/license")
       .set("Authorization", `Bearer ${token}`)
       .send(newLicense)
-      .expect(500)
+      .expect(404)
       .expect("Content-Type", /application\/json/);
-    const licenseAtEnd = await helper.licenseInDb();
+    const licenseAtEnd = await helper.licensesInDb();
 
     const names = licenseAtEnd.map((state) => state.name);
     expect(names).toHaveLength(licenseAtStart.length);
@@ -107,20 +91,7 @@ describe("deletion of a license", () => {
       await User.deleteMany({ username: "root" });
     }
 
-    const passwordHash = await bcrypt.hash("secret", 12);
-    const user = new User({
-      username: "root",
-      passwordHash,
-      role: "ADMIN",
-    });
-    await user.save();
-
-    const userForToken = {
-      username: user.username,
-      id: user.id,
-      role: user.role,
-    };
-    token = jwt.sign(userForToken, config.SECRET);
+    token = await helper.getTokenForTest();
 
     const license = {
       name: "delete license",
@@ -169,35 +140,26 @@ describe("update a license", () => {
       await User.deleteMany({ username: "root" });
     }
 
-    const passwordHash = await bcrypt.hash("secret", 12);
-    const user = new User({
-      username: "root",
-      passwordHash,
-      role: "ADMIN",
-    });
-    await user.save();
-
-    const userForToken = {
-      username: user.username,
-      id: user.id,
-      role: user.role,
-    };
-    token = jwt.sign(userForToken, config.SECRET);
+    token = await helper.getTokenForTest();
   });
 
   test("succeeds with status 200 if id is valid and user is authorized", async () => {
     const licensesAtStart = await helper.licensesInDb();
-    const licenseToUpdate = licensesAtStart[0];
+    const licenseToUpdate = licensesAtStart[licensesAtStart.length - 1];
 
     await api
       .put(`/api/licenses/${licenseToUpdate._id}`)
       .set("Authorization", `Bearer ${token}`)
-      .send({ name: "" })
+      .send({
+        name: "test license",
+        image: "null",
+        description: "test add license",
+      })
       .expect(200);
 
     const licensesAtEnd = await helper.licensesInDb();
-    const updatedlicense = licensesAtEnd[0];
-    expect(updatedlicense.name).toContain("Car");
+    const updatedlicense = licensesAtEnd[licensesAtEnd.length - 1];
+    expect(updatedlicense.name).toContain("test license");
   });
 });
 

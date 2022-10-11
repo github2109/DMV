@@ -1,10 +1,11 @@
 const License = require("../models/license");
-const { updateModuleAfterRemoveLicense } = require("../controllers/module");
+const { updateModuleAfterRemoveLicense } = require("../services/module");
+const { validateLicense } = require("./validators");
 
-exports.createLicense = async (req, res, next) => {
+exports.createLicenseAPI = async (req, res, next) => {
   try {
-    const { name, image, description } = req.body;
-    const checkLicense = await License.findOne({ name });
+    const result = await validateLicense(req.body);
+    const checkLicense = await License.findOne({ name: result.name });
     if (checkLicense) {
       return res.status(500).json({
         message:
@@ -12,9 +13,9 @@ exports.createLicense = async (req, res, next) => {
       });
     }
     const license = await new License({
-      name,
-      image,
-      description,
+      name: result.name,
+      image: result.image,
+      description: result.description,
     });
     const licenseSaved = await license.save();
     res.status(201).json(licenseSaved);
@@ -23,16 +24,20 @@ exports.createLicense = async (req, res, next) => {
   }
 };
 
-exports.getListLicenses = async (req, res, next) => {
+exports.getListLicensesAPI = async (req, res, next) => {
   try {
-    const licenses = await License.find({});
+    const { page } = req.query;
+    const pageQuery = page ? page : 1;
+    const licenses = await License.find({})
+      .skip((pageQuery - 1) * 10)
+      .limit(10);
     res.status(200).json(licenses);
   } catch (error) {
     next(error);
   }
 };
 
-exports.deleteLicenseById = async (req, res, next) => {
+exports.deleteLicenseByIdAPI = async (req, res, next) => {
   try {
     const licenseId = req.params.id;
     const deletedLicense = await License.findByIdAndRemove({ _id: licenseId });
@@ -48,16 +53,16 @@ exports.deleteLicenseById = async (req, res, next) => {
   }
 };
 
-exports.updateLicenseData = async (req, res, next) => {
+exports.updateLicenseDataAPI = async (req, res, next) => {
   try {
-    const data = req.body;
+    const result = await validateLicense(req.body);
     const dataId = req.params.id;
     const updatedLisence = await License.findByIdAndUpdate(
       { _id: dataId },
       {
-        name: data.name,
-        image: data.image,
-        description: data.description,
+        name: result.name,
+        image: result.image,
+        description: result.description,
       },
       { new: true }
     );

@@ -1,9 +1,8 @@
 const mongoose = require("mongoose");
 const supertest = require("supertest");
-const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const config = require("../utils/config");
-const helper = require("./tests_helper");
+const helper = require("../helpers/tests_helper");
 const app = require("../app");
 const api = supertest(app);
 const User = require("../models/user");
@@ -33,20 +32,7 @@ describe("addition of a new question", () => {
   beforeEach(async () => {
     const modulesInDb = await helper.modulesInDb();
     module = modulesInDb[0];
-    const passwordHash = await bcrypt.hash("secret", 12);
-    const user = new User({
-      username: "root",
-      passwordHash,
-      role: "ADMIN",
-    });
-    await user.save();
-
-    const userForToken = {
-      username: user.username,
-      id: user.id,
-      role: user.role,
-    };
-    token = jwt.sign(userForToken, config.SECRET);
+    token = await helper.getTokenForTest();
   });
 
   test("a valid question can be added if user is authorized", async () => {
@@ -73,7 +59,7 @@ describe("addition of a new question", () => {
       ],
       isTestQuestion: true,
       image: "null",
-      handBook: null,
+      handBook: "null",
     };
     let questionsAtStart = await helper.questionsForModuleDb(module._id);
     await api
@@ -137,20 +123,7 @@ describe("deletion of a question", () => {
       await User.deleteMany({ username: "root" });
     }
 
-    const passwordHash = await bcrypt.hash("secret", 12);
-    const user = new User({
-      username: "root",
-      passwordHash,
-      role: "ADMIN",
-    });
-    await user.save();
-
-    const userForToken = {
-      username: user.username,
-      id: user.id,
-      role: user.role,
-    };
-    token = jwt.sign(userForToken, config.SECRET);
+    token = await helper.getTokenForTest();
   });
 
   test("succeeds with status 200 if id is valid and user is authorized", async () => {
@@ -189,20 +162,7 @@ describe("update a question", () => {
       await User.deleteMany({ username: "root" });
     }
 
-    const passwordHash = await bcrypt.hash("secret", 12);
-    const user = new User({
-      username: "root",
-      passwordHash,
-      role: "ADMIN",
-    });
-    await user.save();
-
-    const userForToken = {
-      username: user.username,
-      id: user.id,
-      role: user.role,
-    };
-    token = jwt.sign(userForToken, config.SECRET);
+    token = await helper.getTokenForTest();
   });
 
   test("succeeds with status 200 if id is valid and user is authorized", async () => {
@@ -212,7 +172,31 @@ describe("update a question", () => {
     await api
       .put(`/api/questions/${questionToUpdate._id}`)
       .set("Authorization", `Bearer ${token}`)
-      .send({ questionContent: " jest update question" })
+      .send({
+        module: module._id,
+        questionContent: "jest update question",
+        answers: [
+          {
+            content: "Answer 1",
+            isCorrect: false,
+          },
+          {
+            content: "Answer 2",
+            isCorrect: false,
+          },
+          {
+            content: "Answer 3",
+            isCorrect: true,
+          },
+          {
+            content: "Answer 4",
+            isCorrect: false,
+          },
+        ],
+        isTestQuestion: true,
+        image: "null",
+        handBook: "null",
+      })
       .expect(200);
 
     const questionsAtEnd = await helper.questionsInDb();

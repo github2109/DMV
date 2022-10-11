@@ -17,6 +17,5 @@ messageRouter.post(
   middlwares.messageMiddleware,
   sendMessageFromAdmin
 );
-messageRouter.get("/:deviceId", getMessageByDeviceId);
-
+messageRouter.get("/:deviceId/:page?", getMessageByDeviceId);
 module.exports = messageRouter;

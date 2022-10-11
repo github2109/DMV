@@ -1,8 +1,7 @@
 const Question = require("../models/question");
-const {
-  getListModuleIdByStateIdAndLicenseId,
-} = require("../controllers/module");
-const { getExamByExamId } = require("../controllers/exam");
+const { getListModuleIdByStateIdAndLicenseId } = require("../services/module");
+const { getExamByExamId } = require("../services/exam");
+const { validateQuestion } = require("./validators");
 
 exports.getQuestionsForExamAPI = async (req, res, next) => {
   try {
@@ -39,8 +38,12 @@ exports.getQuestionsForExamAPI = async (req, res, next) => {
 };
 exports.getAllQuestionsForModuleAPI = async (req, res, next) => {
   try {
+    const { page } = req.query;
+    const pageQuery = page ? page : 1;
     const moduleId = req.params.moduleId;
-    const questions = await Question.find({ module: moduleId });
+    const questions = await Question.find({ module: moduleId })
+      .skip((pageQuery - 1) * 10)
+      .limit(10);
     return res.status(200).json(questions);
   } catch (error) {
     next(error);
@@ -49,8 +52,8 @@ exports.getAllQuestionsForModuleAPI = async (req, res, next) => {
 
 exports.createQuestionAPI = async (req, res, next) => {
   try {
-    const question = req.body;
-    const savedQuestion = await new Question(question).save();
+    const result = await validateQuestion(req.body);
+    const savedQuestion = await new Question(result).save();
     res.status(201).json(savedQuestion);
   } catch (error) {
     next(error);
@@ -72,10 +75,11 @@ exports.deleteQuestionByIdAPI = async (req, res, next) => {
 };
 exports.updateQuestionByIdAPI = async (req, res, next) => {
   try {
+    const result = await validateQuestion(req.body);
     const questionId = req.params.id;
     const updatedQuestion = await Question.findByIdAndUpdate(
       { _id: questionId },
-      req.body,
+      result,
       { new: true }
     );
     if (!updatedQuestion) {

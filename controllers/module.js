@@ -1,43 +1,7 @@
 const Module = require("../models/module");
 const Question = require("../models/question");
 const State = require("../models/state");
-exports.updateModuleAfterRemoveState = async (stateId) => {
-  try {
-    const modules = await Module.updateMany(
-      { states: stateId },
-      {
-        $pull: {
-          states: stateId,
-        },
-      }
-    );
-    return modules;
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-exports.updateModuleAfterRemoveLicense = async (licenseId) => {
-  try {
-    const modules = await Module.updateMany(
-      { license: licenseId },
-      {
-        $set: {
-          license: null,
-        },
-      }
-    );
-    return modules;
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-exports.getListModuleIdByStateIdAndLicenseId = async (stateId, licenseId) => {
-  return await Module.find({ license: licenseId, states: stateId }).select({
-    _id: 1,
-  });
-};
+const { validateModule } = require("./validators");
 
 exports.getModuleByStateIdAndLicenseIdAPI = async (req, res, next) => {
   try {
@@ -45,7 +9,7 @@ exports.getModuleByStateIdAndLicenseIdAPI = async (req, res, next) => {
     const modules = await Module.find({ license: licenseId, states: stateId })
       .select({ name: 1, position: 1 })
       .sort({ position: 1 });
-    res.json(modules);
+    res.status(200).json(modules);
   } catch (error) {
     next(error);
   }
@@ -54,12 +18,16 @@ exports.getModuleByStateIdAndLicenseIdAPI = async (req, res, next) => {
 exports.getModuleByLicenseIdAPI = async (req, res, next) => {
   try {
     const { licenseId } = req.params;
+    const { page } = req.query;
+    const pageQuery = page ? page : 1;
     const modules = await Module.find({ license: licenseId })
       .select({
         name: 1,
         position: 1,
       })
-      .sort({ position: 1 });
+      .sort({ position: 1 })
+      .skip((pageQuery - 1) * 10)
+      .limit(10);
     res.status(200).json(modules);
   } catch (error) {
     next(error);
@@ -68,12 +36,12 @@ exports.getModuleByLicenseIdAPI = async (req, res, next) => {
 
 exports.createModuleAPI = async (req, res, next) => {
   try {
-    const module = req.body;
-    const check = await Module.findOne({ name: module.name });
+    const result = await validateModule(req.body);
+    const check = await Module.findOne({ name: result.name });
     if (check) {
       return res.status(500).json({ message: "This name already exists" });
     }
-    const moduleSaved = await new Module(module).save();
+    const moduleSaved = await new Module(result).save();
     res.status(201).json(moduleSaved);
   } catch (error) {
     next(error);
@@ -151,8 +119,9 @@ exports.getDetailModuleByModuleIdAPI = async (req, res, next) => {
 
 exports.updateModuleAPI = async (req, res, next) => {
   try {
+    const result = await validateModule(req.body);
     const { moduleId } = req.params;
-    const moduleUpdated = await Module.findByIdAndUpdate(moduleId, req.body, {
+    const moduleUpdated = await Module.findByIdAndUpdate(moduleId, result, {
       new: true,
     });
     res.status(200).json(moduleUpdated);

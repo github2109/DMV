@@ -1,4 +1,5 @@
 const Exam = require("../models/exam");
+const { validateExam } = require("./validators");
 
 exports.createExamAPI = async (req, res, next) => {
   try {
@@ -8,9 +9,9 @@ exports.createExamAPI = async (req, res, next) => {
         message: "Invalid state ID or license ID",
       });
     }
-    const exam = req.body;
+    const result = await validateExam(req.body);
     const examSaved = await new Exam({
-      ...exam,
+      ...result,
       state: stateId,
       license: licenseId,
     }).save();
@@ -36,17 +37,16 @@ exports.updateExamAPI = async (req, res, next) => {
         message: "Invalid exam ID",
       });
     }
-    const updatedQuestion = await Exam.findByIdAndUpdate(
-      { _id: examId },
-      req.body,
-      { new: true }
-    );
-    if (!updatedQuestion) {
+    const result = await validateExam(req.body);
+    const updateExam = await Exam.findByIdAndUpdate({ _id: examId }, result, {
+      new: true,
+    });
+    if (!updateExam) {
       res.status(500).json({
         message: "Something went wrong",
       });
     }
-    res.status(200).json(updatedQuestion);
+    res.status(200).json(updateExam);
   } catch (error) {
     next(error);
   }
@@ -71,18 +71,6 @@ exports.deleteExamByIdAPI = async (req, res, next) => {
   }
 };
 
-exports.getExamByExamId = async (examId) => {
-  try {
-    if (!examId) {
-      return res.status(500).json({
-        message: "Invalid exam ID",
-      });
-    }
-    return await Exam.findById(examId);
-  } catch (error) {
-    next(error);
-  }
-};
 exports.getExamByExamIdAPI = async (req, res, next) => {
   try {
     const { examId } = req.params;
