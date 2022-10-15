@@ -12,6 +12,7 @@ const io = require("socket.io")(server, {
 });
 let clientDeviceId = [];
 let idSocketAdmin;
+
 io.on("connection", (socket) => {
   console.log("User :", socket.id);
   socket.on("join_room", (data) => {  
